@@ -145,7 +145,9 @@ export default function ManifestoPage() {
                     </p>
                     <div className="flex justify-center gap-4">
                         <a href="https://github.com/Open-Dev-Society" className="btn-tech">GITHUB</a>
-                        <a href="#" className="inline-flex items-center gap-2 px-6 py-2 border border-black text-xs font-mono uppercase hover:bg-[var(--color-brand-teal)] hover:border-[var(--color-brand-teal)] hover:text-white transition-colors">LINKEDIN</a>
+                        <a href="https://www.linkedin.com/company/opendevsociety-in/" className="inline-flex items-center gap-2 px-6 py-2 border border-black text-xs font-mono uppercase hover:bg-[var(--color-brand-teal)] hover:border-[var(--color-brand-teal)] hover:text-white transition-colors">LINKEDIN</a>
+                        <a href="https://x.com/opendevsociety" className="inline-flex items-center gap-2 px-6 py-2 border border-black text-xs font-mono uppercase hover:bg-[var(--color-brand-teal)] hover:border-[var(--color-brand-teal)] hover:text-white transition-colors">TWITTER / X</a>
+                        <a href="https://discord.gg/9xywA3pj" className="inline-flex items-center gap-2 px-6 py-2 border border-black text-xs font-mono uppercase hover:bg-[var(--color-brand-teal)] hover:border-[var(--color-brand-teal)] hover:text-white transition-colors">DISCORD</a>
                         <a href="mailto:opendevsociety@gmail.com" className="inline-flex items-center gap-2 px-6 py-2 border border-black text-xs font-mono uppercase hover:bg-[var(--color-brand-teal)] hover:border-[var(--color-brand-teal)] hover:text-white transition-colors">EMAIL</a>
                     </div>
                 </section>

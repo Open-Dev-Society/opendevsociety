@@ -111,13 +111,13 @@ export default function Home() {
               We are a decentralized society of developers, designers, and writers building public goods. <strong className="text-black">No paywalls. No gatekeeping. Just code.</strong>
             </p>
 
-            <div className="flex gap-4">
-              <Link href="https://github.com/Open-Dev-Society" target="_blank" className="btn-tech group">
-                <span className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <Link href="https://github.com/Open-Dev-Society" target="_blank" className="btn-tech group text-center">
+                <span className="flex items-center justify-center gap-2">
                   [ START_CONTRIBUTING ] <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                 </span>
               </Link>
-              <Link href="/manifesto" className="flex items-center gap-2 px-6 py-2 font-mono text-xs uppercase tracking-widest hover:bg-gray-100 transition-colors">
+              <Link href="/manifesto" className="flex items-center justify-center gap-2 px-6 py-2 font-mono text-xs uppercase tracking-widest hover:bg-gray-100 transition-colors">
                 [ READ_MANIFESTO ]
               </Link>
             </div>
@@ -338,11 +338,11 @@ export default function Home() {
             <span className="text-[10px] font-mono border-b border-black pb-0.5">INIT_EDU_PROTOCOL</span>
           </Link>
         </div>
-        <div className="text-center mt-12 flex justify-center items-center gap-4">
-          <Link href="/contribute" className="btn-tech">
+        <div className="text-center mt-12 flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 px-4">
+          <Link href="/contribute" className="btn-tech w-full sm:w-auto text-center">
             VIEW_FULL_OPERATIONS_MANUAL
           </Link>
-          <Link href="/contributors" className="px-6 py-2 font-mono text-xs uppercase tracking-widest border border-gray-300 hover:bg-black hover:text-white transition-colors">
+          <Link href="/contributors" className="px-6 py-2 font-mono text-xs uppercase tracking-widest border border-gray-300 hover:bg-black hover:text-white transition-colors w-full sm:w-auto text-center">
             [ VIEW_ACTIVE_OPERATORS ]
           </Link>
         </div>
@@ -390,14 +390,14 @@ export default function Home() {
           </div>
 
           {/* CTA */}
-          <div className="flex flex-wrap justify-center items-center gap-4 mt-10">
-            <Link href="/partners" className="btn-tech">
+          <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-3 sm:gap-4 mt-10">
+            <Link href="/partners" className="btn-tech w-full sm:w-auto text-center">
               VIEW_ALL_ALLIANCES
             </Link>
-            <Link href="/partners#partner-cta" className="font-mono text-[11px] uppercase tracking-widest border border-gray-300 px-5 py-2.5 hover:bg-black hover:text-white hover:border-black transition-colors">
+            <Link href="/partners#partner-cta" className="font-mono text-[11px] uppercase tracking-widest border border-gray-300 px-5 py-2.5 hover:bg-black hover:text-white hover:border-black transition-colors w-full sm:w-auto text-center">
               FOR_BRANDS →
             </Link>
-            <Link href="/partners#partner-cta" className="font-mono text-[11px] uppercase tracking-widest border border-gray-300 px-5 py-2.5 hover:bg-black hover:text-white hover:border-black transition-colors">
+            <Link href="/partners#partner-cta" className="font-mono text-[11px] uppercase tracking-widest border border-gray-300 px-5 py-2.5 hover:bg-black hover:text-white hover:border-black transition-colors w-full sm:w-auto text-center">
               FOR_COMMUNITIES →
             </Link>
           </div>

@@ -40,9 +40,9 @@ export const Footer = () => {
                     <h4 className="font-mono text-xs uppercase tracking-widest text-gray-400 mb-4">// Community</h4>
                     <ul className="space-y-1.5">
                         <li><a href="https://github.com/Open-Dev-Society" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-600 hover:text-[var(--color-brand-teal)] hover:underline transition-colors">GitHub ↗</a></li>
-                        <li><a href="#" className="text-sm text-gray-600 hover:text-[var(--color-brand-teal)] hover:underline transition-colors">LinkedIn ↗</a></li>
-                        <li><a href="#" className="text-sm text-gray-600 hover:text-[var(--color-brand-teal)] hover:underline transition-colors">Twitter / X ↗</a></li>
-                        <li><a href="#" className="text-sm text-gray-600 hover:text-[var(--color-brand-teal)] hover:underline transition-colors">Discord ↗</a></li>
+                        <li><a href="https://www.linkedin.com/company/opendevsociety-in/" className="text-sm text-gray-600 hover:text-[var(--color-brand-teal)] hover:underline transition-colors">LinkedIn ↗</a></li>
+                        <li><a href="https://x.com/opendevsociety" className="text-sm text-gray-600 hover:text-[var(--color-brand-teal)] hover:underline transition-colors">Twitter / X ↗</a></li>
+                        <li><a href="https://discord.gg/9xywA3pj" className="text-sm text-gray-600 hover:text-[var(--color-brand-teal)] hover:underline transition-colors">Discord ↗</a></li>
                     </ul>
                 </div>
 
