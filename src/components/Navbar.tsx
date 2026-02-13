@@ -45,7 +45,6 @@ export const Navbar = () => {
             exit={{ opacity: 0, y: -10 }}
             className="absolute top-full left-0 w-full bg-white border-b border-dashed border-gray-300 p-8 flex flex-col gap-6 z-40"
           >
-            <Link href="#index" onClick={() => setIsOpen(false)} className="text-xl font-serif italic">Index</Link>
             <Link href="/manifesto" onClick={() => setIsOpen(false)} className="text-xl font-serif italic">Manifesto</Link>
             <Link href="/partners" onClick={() => setIsOpen(false)} className="text-xl font-serif italic">Partners</Link>
             <div className="h-px w-full bg-gray-100" />
