@@ -1,26 +1,65 @@
 @import "tailwindcss";
 
+@theme {
+  --color-background: #ffffff;
+  --color-foreground: #050505;
+
+  /* Brand Accents */
+  --color-brand-teal: #0d9488;
+  --color-brand-rose: #e11d48;
+
+  --color-accent: var(--color-brand-teal);
+  --color-accent-secondary: var(--color-brand-rose);
+  /* Slate 900 - Technical Black/Blue */
+  --color-accent-foreground: #ffffff;
+
+  --font-sans: "Inter",
+    system-ui,
+    sans-serif;
+  --font-serif: "Playfair Display",
+    serif;
+  --font-mono: "JetBrains Mono",
+    monospace;
+
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: 0 0% 100%;
+  --foreground: 0 0% 0%;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-[var(--color-brand-teal)] selection:text-white bg-[size:20px_20px];
+    background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+    /* Subtle dot grid */
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Technical / Editorial Utilities */
+
+.container-narrow {
+  @apply max-w-7xl mx-auto border-x border-dashed border-gray-300 min-h-screen bg-white relative;
+}
+
+.dashed-separator {
+  @apply border-b border-dashed border-gray-300 w-full my-8;
+}
+
+.tech-card {
+  @apply border border-dashed border-gray-300 p-6 transition-all hover:bg-[var(--color-brand-teal)]/5 hover:border-[var(--color-brand-teal)];
+}
+
+.heading-serif {
+  @apply font-serif italic tracking-tight;
+}
+
+.text-mono {
+  @apply font-mono text-xs uppercase tracking-wider text-[var(--color-brand-teal)];
+}
+
+.btn-tech {
+  @apply border border-black px-6 py-2 font-mono text-xs uppercase tracking-widest hover:bg-[var(--color-brand-teal)] hover:border-[var(--color-brand-teal)] hover:text-white transition-colors;
 }
