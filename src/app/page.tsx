@@ -1,13 +1,23 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Globe, Zap, Users, Terminal, Unlock, Heart, TrendingUp, Shield, BookOpen, Package, BarChart3, Code2, PenTool, GraduationCap, Star, GitFork, CircleDot } from "lucide-react";
+import { ArrowRight, Globe, Zap, Users, Terminal, Unlock, Heart, TrendingUp, Shield, BookOpen, Package, BarChart3, Code2, PenTool, GraduationCap, Star, GitFork, CircleDot, MessageSquareQuote, Youtube, Newspaper, Twitter, Instagram, Linkedin } from "lucide-react";
 import Link from "next/link";
 import { Navbar } from "@/components/Navbar";
 import { useState, useEffect } from "react";
 import { featuredModules } from "@/data/projects";
 
 import { getFromCache, saveToCache, CACHE_KEYS } from "@/utils/githubCache";
+import { mentions } from "@/data/mentions";
+
+const sourceIcons: Record<string, typeof Newspaper> = {
+  article: Newspaper,
+  youtube: Youtube,
+  twitter: Twitter,
+  instagram: Instagram,
+  linkedin: Linkedin,
+  other: MessageSquareQuote,
+};
 
 export default function Home() {
   const [stats, setStats] = useState<{ repos: number; stars: number; list: any[]; contributors: Record<string, any[]> }>({
@@ -419,6 +429,53 @@ export default function Home() {
             <span className="text-gray-300">|</span>
             <span>GITHUB STARS: <span className="text-green-600 font-bold">{stats.stars > 0 ? `${stats.stars}+` : '...'}</span></span>
           </div>
+        </div>
+      </section>
+
+      {/* Word of Mouth — Quick Preview */}
+      <section className="py-16 px-8 border-b border-dashed border-gray-300">
+        <div className="text-center mb-10">
+          <h2 className="text-mono text-xs uppercase tracking-widest text-gray-500 mb-4">
+            // SIGNAL_INTERCEPT [COMMUNITY_LOVE]
+          </h2>
+          <h3 className="text-4xl font-serif italic mb-4">Word of <span className="not-italic font-bold">Mouth.</span></h3>
+          <p className="text-gray-600 text-sm max-w-md mx-auto">
+            What the community is saying about Open Dev Society across the internet.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-gray-200 border border-gray-200 mb-10">
+          {mentions.filter(m => m.highlight).slice(0, 3).map((mention, index) => {
+            const Icon = sourceIcons[mention.source] || MessageSquareQuote;
+            return (
+              <a
+                key={index}
+                href={mention.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white p-8 hover:bg-gray-50 transition-colors group block"
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <Icon className="w-4 h-4 text-gray-400" />
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-gray-400">
+                    {mention.source}
+                  </span>
+                </div>
+                <blockquote className="text-sm italic text-gray-700 leading-relaxed mb-4">
+                  {mention.highlight}
+                </blockquote>
+                <div className="text-xs text-gray-500 font-mono">
+                  — {mention.author}
+                </div>
+              </a>
+            );
+          })}
+        </div>
+
+        <div className="text-center">
+          <Link href="/word-of-mouth" className="btn-tech">
+            VIEW_ALL_SIGNALS
+          </Link>
         </div>
       </section>
     </>

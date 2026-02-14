@@ -32,6 +32,7 @@ export const Footer = () => {
                         <li><Link href="/contributors" className="text-sm text-gray-600 hover:text-[var(--color-brand-teal)] hover:underline transition-colors">Contributors</Link></li>
                         <li><Link href="/contribute" className="text-sm text-gray-600 hover:text-[var(--color-brand-teal)] hover:underline transition-colors">Contribute</Link></li>
                         <li><Link href="/partners" className="text-sm text-gray-600 hover:text-[var(--color-brand-teal)] hover:underline transition-colors">Partners & Events</Link></li>
+                        <li><Link href="/word-of-mouth" className="text-sm text-gray-600 hover:text-[var(--color-brand-teal)] hover:underline transition-colors">Word of Mouth</Link></li>
                     </ul>
                 </div>
 

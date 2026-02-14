@@ -23,6 +23,7 @@ export const Navbar = () => {
         <div className="hidden md:flex items-center gap-8 font-mono text-sm">
           <Link href="/manifesto" className="text-gray-500 hover:text-[var(--color-brand-teal)] uppercase tracking-wider transition-colors">[ Manifesto ]</Link>
           <Link href="/partners" className="text-gray-500 hover:text-[var(--color-brand-teal)] uppercase tracking-wider transition-colors">[ Partners ]</Link>
+          <Link href="/word-of-mouth" className="text-gray-500 hover:text-[var(--color-brand-teal)] uppercase tracking-wider transition-colors">[ Love ]</Link>
 
           <a href="https://github.com/Open-Dev-Society" target="_blank" className="flex items-center gap-1 text-black hover:text-[var(--color-brand-teal)] uppercase tracking-wider transition-colors">
             <span>GitHub</span> <ArrowUpRight className="w-3 h-3" />
@@ -47,6 +48,7 @@ export const Navbar = () => {
           >
             <Link href="/manifesto" onClick={() => setIsOpen(false)} className="text-xl font-serif italic">Manifesto</Link>
             <Link href="/partners" onClick={() => setIsOpen(false)} className="text-xl font-serif italic">Partners</Link>
+            <Link href="/word-of-mouth" onClick={() => setIsOpen(false)} className="text-xl font-serif italic">Love</Link>
             <div className="h-px w-full bg-gray-100" />
             <a href="https://github.com/Open-Dev-Society" className="text-mono text-sm uppercase flex items-center gap-2">
               <Github className="w-4 h-4" /> GitHub
