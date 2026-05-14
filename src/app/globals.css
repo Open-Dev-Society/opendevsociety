@@ -63,3 +63,55 @@
 .btn-tech {
   @apply border border-black px-6 py-2 font-mono text-xs uppercase tracking-widest hover:bg-[var(--color-brand-teal)] hover:border-[var(--color-brand-teal)] hover:text-white transition-colors;
 }
+
+/* Certificate document — container query reference so children using cqw scale
+   identically on screen and print, regardless of the host viewport size. */
+.cert-document {
+  container-type: inline-size;
+}
+
+/* Print-only clone — invisible on screen so it doesn't flash before the print
+   dialog opens, made visible inside @media print below. */
+#cert-print-clone {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    background-image: none !important;
+  }
+  /* When the download button injects #cert-print-clone, hide everything else
+     so exactly one A4 landscape page is rendered. */
+  body.printing-cert > *:not(#cert-print-clone) {
+    display: none !important;
+  }
+  #cert-print-clone {
+    display: block !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 297mm !important;
+    height: 210mm !important;
+    aspect-ratio: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    overflow: hidden !important;
+    container-type: inline-size !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  #cert-print-clone * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
