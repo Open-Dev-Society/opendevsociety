@@ -1,0 +1,16 @@
+{
+  "certificates": [
+    {
+      "id": "ODS-2026-DSG9",
+      "name": "Bipin Kumar Madhur",
+      "role": "maintainer",
+      "description": "for stewardship of Open Dev Society — reviewing pull requests, guiding contributors, and keeping public-good software healthy and shipping.",
+      "issuedOn": "2026.05.14",
+      "issuedBy": "Ravi Pratap Singh",
+      "issuerHandle": "@ravixalgorithm",
+      "status": "active",
+      "createdAt": "2026-05-14T15:36:25.345Z",
+      "updatedAt": "2026-05-14T15:36:25.345Z"
+    }
+  ]
+}
