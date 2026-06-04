@@ -457,6 +457,9 @@ export default function Home() {
             <a href="https://stellailoom.com" target="_blank" rel="noopener noreferrer" className="group flex flex-col items-center gap-3 opacity-80 hover:opacity-100 transition-opacity">
               <img src="/partners/stellailoomLogo.svg" alt="StellAILoom" className="h-12 w-auto object-contain" style={{ filter: 'invert(1)' }} />
             </a>
+            <a href="https://atlascloud.ai" target="_blank" rel="noopener noreferrer" className="group flex flex-col items-center gap-3 opacity-80 hover:opacity-100 transition-opacity">
+              <img src="/partners/atlascloud.svg" alt="Atlas Cloud" className="h-12 w-auto object-contain" />
+            </a>
           </div>
 
           {/* Events Preview */}

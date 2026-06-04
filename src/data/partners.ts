@@ -32,6 +32,13 @@ export const partners: Partner[] = [
         description: "A global hub for AI innovation, connecting creators and users. Publish, discover, and experience cutting-edge AI tools—empowering everyone to join the intelligent future.",
         type: "technology",
     },
+    {
+        name: "Atlas Cloud",
+        url: "https://atlascloud.ai",
+        logo: "/partners/atlascloud.svg",
+        description: "A platform providing a unified API for access to hundreds of AI models and AI infrastructure services.",
+        type: "technology",
+    },
 ];
 
 export const events: Event[] = [
