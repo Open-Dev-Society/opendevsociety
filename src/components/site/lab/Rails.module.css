@@ -1,0 +1,257 @@
+/* Architect's scale rails (Rails.tsx). Colours are tokens only: each band carries .tone-inverse / .tone-emerald,
+   so --bg, --line and --fg-subtle resolve to that band. Hidden below 768, where the gutter is narrower than a rail. */
+.layer {
+  --rail: 16px;
+  /* Frame guides on the container edges, or halfway between rail and content when the container fills the screen. */
+  --gx: max(calc((100% - var(--container)) / 2), calc((var(--gutter) + var(--rail)) / 2));
+  --tick: color-mix(in oklab, var(--fg-subtle) 60%, transparent);
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 30;
+  overflow: hidden;
+  pointer-events: none;
+  display: none;
+}
+.marker {
+  --rail: 16px;
+  display: none;
+}
+@media (min-width: 768px) {
+  .layer,
+  .marker {
+    display: block;
+  }
+}
+@media (min-width: 1024px) {
+  .layer,
+  .marker {
+    --rail: 22px;
+  }
+}
+
+/* Tone classes paint a background; on the full-width band only the rails should. */
+.layer > .band,
+.layer > .ref {
+  background: none;
+}
+.band {
+  position: absolute;
+  inset-inline: 0;
+}
+
+/* Ticks from the inner edge: major every 100px, mid every 50, minor every 8, aligned to page Y via --y. */
+.rail {
+  position: absolute;
+  inset-block: 0;
+  width: var(--rail);
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--tick) 1px, transparent 1px), linear-gradient(var(--tick) 1px, transparent 1px),
+    linear-gradient(var(--tick) 1px, transparent 1px);
+  background-size:
+    calc(var(--rail) - 8px) 100px,
+    calc(var(--rail) * 0.4) 50px,
+    4px 8px;
+  background-repeat: repeat-y;
+  background-position-y: var(--y);
+}
+.rail[data-side="l"] {
+  left: 0;
+  background-position-x: right;
+  box-shadow: inset -1px 0 var(--line);
+}
+.rail[data-side="r"] {
+  right: 0;
+  background-position-x: left;
+  box-shadow: inset 1px 0 var(--line);
+}
+
+.guides {
+  position: absolute;
+  inset-block: 0;
+  inset-inline: var(--gx);
+  border-inline: 1px solid var(--line);
+}
+
+/* Page-Y numbers, reading upward just under each major tick. */
+.num {
+  position: absolute;
+  left: 1px;
+  font: 450 9px/1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-subtle);
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+}
+@media (min-width: 1024px) {
+  .num {
+    left: 2px;
+  }
+}
+
+/* A [data-grid] section: a rule between the rails, crosshairs where it meets rails and guides, the letter on the right rail. */
+.ref {
+  position: absolute;
+  inset-inline: 0;
+  height: 0;
+}
+.ref::before {
+  content: "";
+  position: absolute;
+  inset-inline: var(--rail);
+  top: 0;
+  border-top: 1px solid var(--line);
+}
+.cross {
+  position: absolute;
+  top: -4px;
+  width: 9px;
+  height: 9px;
+  margin-left: -4px;
+  background:
+    linear-gradient(var(--fg-subtle), var(--fg-subtle)) center / 9px 1px no-repeat,
+    linear-gradient(var(--fg-subtle), var(--fg-subtle)) center / 1px 9px no-repeat;
+  opacity: 0.7;
+}
+.cross:nth-child(1) {
+  left: var(--rail);
+}
+.cross:nth-child(2) {
+  left: var(--gx);
+}
+.cross:nth-child(3) {
+  left: calc(100% - var(--gx));
+}
+.cross:nth-child(4) {
+  left: calc(100% - var(--rail));
+}
+.letter {
+  position: absolute;
+  top: 5px;
+  right: calc((var(--rail) - 14px) / 2);
+  display: grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  background: var(--bg);
+  box-shadow: inset 0 0 0 1px var(--fg-subtle);
+  font: 500 9px/1 var(--font-mono);
+  color: var(--fg);
+}
+.tag {
+  position: absolute;
+  top: 6px;
+  right: calc(var(--gx) + 8px);
+  display: none;
+  font: 450 10px/1.2 var(--font-mono);
+  color: var(--fg-subtle);
+  white-space: nowrap;
+}
+@media (min-width: 1024px) {
+  .tag {
+    display: block;
+  }
+  .letter {
+    width: 16px;
+    height: 16px;
+    right: calc((var(--rail) - 16px) / 2);
+    font-size: 10px;
+  }
+}
+
+/* The viewport centre on the left rail: an emerald slider with the page Y, and a notch into the page. */
+.marker {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  z-index: 30;
+  width: var(--rail);
+  height: 40px;
+  translate: 0 -50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 1px var(--bg);
+  color: var(--accent-fg);
+  pointer-events: none;
+  transition: opacity var(--d-2) var(--ease-ui);
+}
+.marker[data-on="false"] {
+  opacity: 0;
+}
+.marker::after {
+  content: "";
+  position: absolute;
+  top: calc(50% - 1px);
+  left: 100%;
+  width: 8px;
+  height: 2px;
+  background: var(--accent);
+}
+.marker span {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font: 500 9px/1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marker {
+    transition: none;
+  }
+}
+
+@media print {
+  .layer,
+  .marker {
+    display: none !important;
+  }
+}
+
+/* Footer scale bar: real px, so 200 px on the bar is 200 px on screen. */
+.scale {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  font: 450 10px/1 var(--font-mono);
+  color: var(--fg-subtle);
+}
+.bar {
+  position: relative;
+  flex: none;
+  width: 200px;
+  height: 5px;
+  margin-bottom: 14px;
+  box-shadow: inset 0 0 0 1px var(--fg-subtle);
+  background:
+    linear-gradient(var(--fg-subtle), var(--fg-subtle)) 0 0 / 50px 100% no-repeat,
+    linear-gradient(var(--fg-subtle), var(--fg-subtle)) 100px 0 / 100px 100% no-repeat;
+}
+.mark {
+  position: absolute;
+  top: 9px;
+  translate: -50%;
+  white-space: nowrap;
+}
+.mark:first-child {
+  translate: 0;
+}
+.mark:last-child {
+  translate: -100%;
+}
+.mark::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  height: 3px;
+  border-left: 1px solid var(--fg-subtle);
+}
+.mark:first-child::before {
+  left: 0;
+}
+.mark:last-child::before {
+  left: auto;
+  right: 0;
+}
