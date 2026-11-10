@@ -175,7 +175,7 @@ export function Wall({ builders, size = "home" }: { builders: Builder[]; size?: 
                 "absolute inset-0 rounded-[inherit]",
                 handle
                   ? "bg-(--surface-2)"
-                  : "bg-(--mark) in-data-[phase=armed]:bg-transparent in-data-[phase=in]:transition-[background-color] in-data-[phase=in]:duration-(--d-3) in-data-[phase=in]:ease-(--ease-ui) in-data-[phase=in]:[transition-delay:var(--delay)]",
+                  : "bg-(--mark-soft) in-data-[phase=armed]:bg-transparent in-data-[phase=in]:transition-[background-color] in-data-[phase=in]:duration-(--d-3) in-data-[phase=in]:ease-(--ease-ui) in-data-[phase=in]:[transition-delay:var(--delay)]",
               )}
               style={handle ? undefined : ({ "--delay": `${drawDelay + DRAW}ms` } as React.CSSProperties)}
             />
@@ -197,7 +197,7 @@ export function Wall({ builders, size = "home" }: { builders: Builder[]; size?: 
                   <rect
                     pathLength={1}
                     fill="none"
-                    stroke="var(--accent)"
+                    stroke="var(--mark)"
                     strokeWidth={1.5}
                     strokeDasharray={1}
                     className="[stroke-dashoffset:0] in-data-[phase=armed]:[stroke-dashoffset:1] in-data-[phase=in]:transition-[stroke-dashoffset] in-data-[phase=in]:duration-[600ms] in-data-[phase=in]:ease-(--ease-in-out) in-data-[phase=in]:[transition-delay:var(--delay)]"
@@ -215,7 +215,7 @@ export function Wall({ builders, size = "home" }: { builders: Builder[]; size?: 
                 </svg>
                 <Plus
                   aria-hidden
-                  className="absolute left-1/2 top-1/2 size-[28%] -translate-x-1/2 -translate-y-1/2 text-(--fg) in-data-[phase=armed]:opacity-0 in-data-[phase=in]:transition-opacity in-data-[phase=in]:duration-(--d-3) in-data-[phase=in]:ease-(--ease-ui) in-data-[phase=in]:[transition-delay:var(--delay)]"
+                  className="absolute left-1/2 top-1/2 size-[28%] -translate-x-1/2 -translate-y-1/2 text-(--mark-ink) in-data-[phase=armed]:opacity-0 in-data-[phase=in]:transition-opacity in-data-[phase=in]:duration-(--d-3) in-data-[phase=in]:ease-(--ease-ui) in-data-[phase=in]:[transition-delay:var(--delay)]"
                   style={{ "--delay": `${drawDelay + DRAW + 120}ms` } as React.CSSProperties}
                 />
               </>

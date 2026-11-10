@@ -28,6 +28,15 @@ export type OrgContributor = {
     repos: string[];
 };
 
+// The fields we read from the REST responses.
+type ApiRepo = Pick<OrgRepo, "name" | "description" | "html_url" | "homepage" | "language" | "pushed_at"> & {
+    topics?: string[];
+    stargazers_count: number;
+    forks_count: number;
+    open_issues_count: number;
+};
+type ApiContributor = Pick<OrgContributor, "login" | "avatar_url" | "html_url" | "contributions"> & { type: string };
+
 // Agent accounts GitHub reports as type "User".
 const NON_HUMAN = new Set(["cursoragent"]);
 
@@ -50,7 +59,7 @@ export async function getOrgRepos(): Promise<OrgRepo[]> {
     try {
         const q = encodeURIComponent(`org:${GITHUB_ORG} label:"good first issue" state:open is:issue`);
         const [repos, gfi] = await Promise.all([
-            gh<any[]>(`orgs/${GITHUB_ORG}/repos?per_page=100&type=public`),
+            gh<ApiRepo[]>(`orgs/${GITHUB_ORG}/repos?per_page=100&type=public`),
             gh<{ items: { repository_url: string }[] }>(`search/issues?q=${q}&per_page=100`).catch(() => null),
         ]);
         const gfiCount = (name: string) =>
@@ -94,7 +103,7 @@ export async function getOrgContributors(): Promise<OrgContributor[]> {
         const repos = await getOrgRepos();
         const lists = await Promise.all(
             repos.map((r) =>
-                gh<any[]>(`repos/${GITHUB_ORG}/${r.name}/contributors?per_page=100`).then((cs) =>
+                gh<ApiContributor[]>(`repos/${GITHUB_ORG}/${r.name}/contributors?per_page=100`).then((cs) =>
                     cs.map((c) => ({ ...c, repo: r.name })),
                 ),
             ),

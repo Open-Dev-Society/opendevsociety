@@ -90,7 +90,7 @@ function Tok({ seg, shown, className }: { seg: Seg; shown: number; className?: s
       transition={{ duration: reduce ? 0.1 : 0.16, ease: [0.2, 0, 0, 1] }}
       className={cn(
         "inline-block indent-0 rounded-[4px] [box-decoration-break:clone]",
-        chip ? "bg-(--mark) px-[3px] text-(--inv-bg)" : seg.k === "repo" ? "text-(--inv-accent)" : "",
+        chip ? "bg-(--mark) px-[3px] text-(--mark-fg)" : seg.k === "repo" ? "text-(--inv-accent)" : "",
         className,
       )}
       style={{
@@ -98,7 +98,7 @@ function Tok({ seg, shown, className }: { seg: Seg; shown: number; className?: s
         ...(seg.k === "repo"
           ? {
               backgroundColor: flash ? "var(--mark)" : "transparent",
-              color: flash ? "var(--inv-bg)" : undefined,
+              color: flash ? "var(--mark-fg)" : undefined,
               transition: flash ? "none" : "background-color 900ms var(--ease-out), color 900ms var(--ease-out)",
             }
           : null),

@@ -1,6 +1,4 @@
-import { featuredModules } from "./projects";
-import type { Contributor } from "./contributors";
-import type { OrgContributor, OrgRepo, OrgTotals } from "../lib/github";
+import type { OrgContributor, OrgRepo } from "../lib/github";
 
 // Real snapshot from the GitHub API (gh api orgs/Open-Dev-Society/repos, /repos/*/contributors,
 // search/issues label:"good first issue"), taken 2026-11-10T11:15Z. Used when live fetches in
@@ -538,53 +536,3 @@ export const snapshotContributors: OrgContributor[] = [
     ]
   }
 ];
-
-export const snapshotTotals: OrgTotals = {
-    stars: snapshotRepos.reduce((n, r) => n + r.stars, 0),
-    forks: snapshotRepos.reduce((n, r) => n + r.forks, 0),
-    repos: snapshotRepos.length,
-};
-
-// Legacy shapes below: featured repos in the old GitHub-API shape, for existing pages.
-export const fallbackRepos = featuredModules.flatMap((module, index) => {
-    const repo = snapshotRepos.find((r) => r.name === module.name);
-    if (!repo) return [];
-    return [{
-        id: index + 100,
-        name: repo.name,
-        full_name: `Open-Dev-Society/${repo.name}`,
-        html_url: repo.html_url,
-        description: repo.description,
-        stargazers_count: repo.stars,
-        forks_count: repo.forks,
-        open_issues_count: repo.open_issues,
-        language: repo.language,
-        contributors_url: "", // Not used in fallback mode directly
-        owner: {
-            login: "Open-Dev-Society",
-            avatar_url: "https://avatars.githubusercontent.com/u/177231203?v=4"
-        }
-    }];
-});
-
-export const fallbackContributors: Contributor[] = snapshotContributors.map((c) => ({
-    login: c.login,
-    avatar_url: c.avatar_url,
-    html_url: c.html_url,
-    type: "User",
-    role: c.login === "ravixalgorithm" ? "Founder" : "Contributor"
-}));
-
-export const fallbackStats = {
-    repos: snapshotTotals.repos, // whole org; `list` below is the featured subset
-    stars: snapshotTotals.stars,
-    list: fallbackRepos.map(repo => ({
-        ...repo,
-        customTags: featuredModules.find(m => m.name === repo.name)?.tags
-    })),
-    contributors: featuredModules.reduce((acc, module) => {
-        acc[module.name] = fallbackContributors.filter((c) =>
-            snapshotContributors.find((s) => s.login === c.login)?.repos.includes(module.name));
-        return acc;
-    }, {} as Record<string, any[]>)
-};

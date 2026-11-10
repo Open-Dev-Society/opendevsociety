@@ -21,10 +21,10 @@ The workshop is the metaphor, and the theme is how it looks. A workshop is the o
 
 | Material | On the page | Expresses |
 |---|---|---|
-| **Daylight paper**: near-white bone, no tint, no grain | The page ground | Made *in public*, in the open, nothing hidden |
-| **Blue ink**: cobalt, the color of a pen signature | Names, signatures, the H1's human clause, the primary action | *Signed by name*: people credit their work in ink |
-| **Highlighter**: one yellow mark | Only what is yours: the open seat, your handle, the token that changed in your command | *Seat open*: this one is for you |
-| **The inkwell**: a deep blue-black band | The bench (terminal) and the closing statement | Where the real tools are |
+| **Daylight paper**: a neutral off-white, no tint, no grain | The page ground | Made *in public*, in the open, nothing hidden |
+| **Teal ink**: the logo's teal, the colour we sign in | Names, signatures, the H1's human clause, the primary action | *Signed by name*: people credit their work in ink |
+| **Rose mark**: the logo's rose braces | Only what is yours: the open seat, your handle, the token that changed in your command | *Seat open*: this one is for you |
+| **The inkwell**: a deep teal-black band | The bench (terminal) and the closing statement | Where the real tools are |
 
 Two typefaces carry the same split. **Mona Sans** is the machine: GitHub's own open-source face, set in print. **Newsreader Italic** is the hand: every name, signature and quote, as if signed.
 
@@ -34,7 +34,7 @@ The test for any element: does it show something made in public, name who made i
 
 Premium for a community is craftsmanship, not luxury. Concretely:
 
-1. **Restraint.** One chroma (cobalt) plus one highlighter that only marks "yours". One idea per section. Two signature moments on the whole site and no ambient motion. At most three blue things and one yellow thing in any viewport.
+1. **Restraint.** One chroma (the logo teal) plus one rose mark that only means "yours". One idea per section. Two signature moments on the whole site and no ambient motion. At most three blue things and one yellow thing in any viewport.
 2. **Type does the work.** A wide, confident grotesk against a fine italic serif: the machine next to the hand. The size steps are big. No uppercase kickers, no pills above headings.
 3. **Whitespace with a rhythm.** One section rhythm, one 12-column grid, a left rail for labels. Space is measured, never left over.
 4. **Real imagery only.** Real screenshots of live ODS tools, real GitHub avatars, real partner logos. No illustrations, no 3D, no stock photos, no gradients, no grain, no icon-in-a-circle feature trios.
@@ -90,52 +90,54 @@ Rules:
 
 ## 4. Palette (OKLCH, light, with an inverse band)
 
-These are the values for the foundation's existing tokens in `globals.css`, plus five new ones (marked **new**). Every text pair was measured.
+The colours come from the logo (`public/logo.png`): the teal of the "OS" mark, **#288488**, and the rose of the `{ }` braces, **#d03c5c**. No cobalt or yellow is left anywhere. The values live in one block in `globals.css`. Every text pair was measured (WCAG 2, against `--bg` unless noted):
 
 ```css
 :root {
-  --bg:           oklch(0.975 0.004 95);   /* #f7f7f4 bone daylight */
-  --surface:      oklch(0.995 0.002 95);   /* #fefdfc cards, print frame, certificate */
-  --surface-2:    oklch(0.948 0.006 95);   /* #efeee9 muted band, hovered rows, quiet seats */
-  --fg:           oklch(0.2 0.025 265);    /* #101622 blue-black ink. 16.9:1 on bg */
-  --fg-muted:     oklch(0.43 0.025 265);   /* #49505e 7.6:1 */
-  --fg-subtle:    oklch(0.53 0.02 265);    /* #666c78 4.9:1 bg, 4.5:1 surface-2. Meta only, 12px minimum */
-  --line:         oklch(0.2 0.025 265 / 0.1);
-  --accent:       oklch(0.48 0.2 265);     /* #244ecc cobalt ink. 6.4:1 on bg as text, white on it 6.9:1 */
-  --accent-hover: oklch(0.42 0.19 265);    /* new. #183db2 */
+  --bg:           oklch(0.982 0.002 200);  /* #f8f9fa neutral off-white */
+  --surface:      oklch(0.997 0.001 200);  /* #fdfefe cards, frames, certificate */
+  --surface-2:    oklch(0.955 0.004 200);  /* #edf1f1 muted band, hovered rows */
+  --fg:           oklch(0.21 0.03 212);    /* #051c20 teal-black ink. 16.7:1 (17.5 surface, 15.5 surface-2) */
+  --fg-muted:     oklch(0.44 0.025 212);   /* #43565b 7.3:1, 6.8:1 on surface-2 */
+  --fg-subtle:    oklch(0.52 0.02 212);    /* #5c6c70 5.2:1, 5.4 surface, 4.8 surface-2. Meta only */
+  --line:         oklch(0.21 0.03 212 / 0.1);
+  --accent-brand: #288488;                 /* logo teal. 4.2:1 on bg: large text and focus rings only */
+  --accent:       oklch(0.52 0.085 199);   /* #10777b logo teal one step deeper: links, buttons, signed names. 5.0:1 (5.3 surface, 4.7 surface-2); white on it 5.3:1 */
+  --accent-hover: oklch(0.46 0.08 200);    /* #00656a white on it 6.8:1 */
   --accent-fg:    oklch(1 0 0);
-  --accent-soft:  oklch(0.94 0.03 265);    /* #e1ebff role tags, active chip. Text on it uses --accent-hover (7.5:1) */
-  --mark:         oklch(0.925 0.125 102);  /* new. #f7ea83 highlighter: backgrounds only, text on it is --fg (14.7:1) */
-  --live:         oklch(0.52 0.12 152);    /* new. #227c45 live (<24h) and verified. 4.8:1 */
-  --focus:        var(--accent);
-  --img-outline:  oklch(0.2 0.025 265 / 0.1);
+  --accent-soft:  oklch(0.95 0.025 195);   /* #dcf4f4 tags, active chip. --accent-hover on it 6.0:1, --fg 15.4:1 */
+  --mark:         #d03c5c;                 /* logo rose: what is yours. As a fill, text is --mark-fg (white, 4.7:1). As text on bg only 4.5:1, so use --mark-ink */
+  --mark-fg:      oklch(1 0 0);
+  --mark-soft:    oklch(0.94 0.035 12);    /* #ffe2e5 pale rose fill: the open seat, ::selection. --fg on it 14.5:1 */
+  --mark-ink:     oklch(0.5 0.17 12);      /* #ae2749 rose text on light grounds, 6.3:1 */
+  --live:         oklch(0.52 0.12 152);    /* #227c45 live (<24h) and verified. 5.0:1 */
+  --focus:        var(--accent-brand);     /* 4.2:1 on bg, 4.1:1 on --inv-bg (3:1 needed for non-text) */
 
   /* Inverse band: the inkwell (bench, footer, tooltips) */
-  --inv-bg:        oklch(0.19 0.03 268);   /* #0e1321 */
-  --inv-surface:   oklch(0.245 0.035 268); /* #192031 terminal, raised */
-  --inv-fg:        oklch(0.96 0.006 95);   /* #f3f2ed 16.5:1 */
-  --inv-fg-muted:  oklch(0.8 0.02 265);    /* #b7becb 9.9:1 */
-  --inv-fg-subtle: oklch(0.68 0.02 265);   /* new. #9298a5 6.4:1 bg, 5.6:1 surface */
-  --inv-accent:    oklch(0.76 0.12 262);   /* new. #87b1fd 8.6:1 bg, 7.5:1 surface. Buttons on inverse: bg inv-accent, text inv-bg */
-  --inv-line:      oklch(1 0 0 / 0.1);
+  --inv-bg:        oklch(0.2 0.03 212);    /* #031a1e teal-black */
+  --inv-surface:   oklch(0.255 0.033 212); /* #0d272c terminal, raised */
+  --inv-fg:        oklch(0.965 0.004 200); /* 16.3:1, 14.1:1 on inv-surface */
+  --inv-fg-muted:  oklch(0.8 0.02 205);    /* 9.7:1, 8.4:1 */
+  --inv-fg-subtle: oklch(0.68 0.02 205);   /* 6.3:1, 5.5:1 */
+  --inv-accent:    oklch(0.78 0.1 195);    /* #5ecbcb 9.4:1, 8.1:1. Buttons on inverse: this fill, --inv-bg text (9.4:1) */
+  --inv-mark:      oklch(0.74 0.13 12);    /* #f08695 rose text on dark, 7.4:1 */
 }
 .tone-inverse {
-  /* add to the existing re-pointing */
-  --fg-subtle: var(--inv-fg-subtle);
   --accent: var(--inv-accent);
-  --accent-hover: oklch(0.82 0.1 262);
+  --accent-hover: oklch(0.84 0.09 195);
   --accent-fg: var(--inv-bg);
-  --accent-soft: oklch(0.76 0.12 262 / 0.16);
-  /* --mark stays the same: yellow on ink is still "yours", with --inv-bg text on it */
+  --accent-soft: oklch(0.78 0.1 195 / 0.16);
+  --mark-ink: var(--inv-mark);
+  /* --mark stays the logo rose with white text (4.7:1) on dark too */
 }
-::selection { background: var(--mark); color: oklch(0.2 0.025 265); }
+.site ::selection { background: var(--mark-soft); color: oklch(0.21 0.03 212); }
 ```
 
 Usage rules:
-- **Cobalt** is for the primary button, links (with a `--accent` underline at 30% that goes solid on hover), signed names (`sign` style), the H1's emphasis, the bench's variable tokens (`--inv-accent`) and focus rings. It never appears on icons, borders or decorative fills.
-- **Highlighter** is backgrounds only and marks only what is yours: the open seat, your claimed handle, the token that just changed in the bench, and `::selection`. It never carries meaning without text.
+- **Teal** (`--accent`) is for the primary button, links (with a `--accent` underline at 30% that goes solid on hover), signed names (`sign` style), the H1's emphasis, the bench's variable tokens (`--inv-accent`) and focus rings (`--accent-brand`). The exact logo teal is only for large text and focus rings, because it is 4.2:1 on the page. It never appears on icons, borders or decorative fills.
+- **Rose** (`--mark`, `--mark-soft`, `--mark-ink`) marks only what is yours: the open seat (pale fill, rose outline, rose plus), your claimed handle (rose ring, rose chip in the bench), the token that just changed in the bench, and `::selection`. It never carries meaning without text.
 - **`--live`** means data is live (a commit within 24h) or a certificate is verified. Never decoration.
-- Language dots in the index use GitHub's language colors at 8px, which is the only other chroma allowed.
+- Language dots in the index use GitHub's language colours at 8px, which is the only other chroma allowed.
 - No grain, gradients or glass, except the nav's backdrop blur.
 - Tokens live on `:root`, not on a wrapper class. The certificate print clone is appended to `<body>`, so tokens scoped to a wrapper would vanish in print.
 
@@ -220,7 +222,7 @@ Every contributor has a seat, and one open seat is yours.
   $ cd OpenStock && git switch -c you/first-pr
   $ gh pr create --fill --draft
   ```
-  The `$` is in `--inv-fg-subtle`, the commands in `--inv-fg`, the repo token in `--inv-accent`, and **the handle on a `--mark` chip** with `--inv-bg` text (your highlighter, carried over from the wall). Lines use `white-space: pre-wrap` with a 2ch hanging indent, so nothing clips at 375px. Under them: `Needs the GitHub CLI · cli.github.com` (mono 12, `--inv-fg-subtle`).
+  The `$` is in `--inv-fg-subtle`, the commands in `--inv-fg`, the repo token in `--inv-accent`, and **the handle on a `--mark` chip** with `--mark-fg` text (your highlighter, carried over from the wall). Lines use `white-space: pre-wrap` with a 2ch hanging indent, so nothing clips at 375px. Under them: `Needs the GitHub CLI · cli.github.com` (mono 12, `--inv-fg-subtle`).
 - **Agent** shows a copyable prompt in Mona 15/1.6: `Fork Open-Dev-Society/OpenStock, read its README and CONTRIBUTING, pick one open issue labelled "good first issue" or "help wanted", fix it on a branch named you/first-pr, and open a draft pull request that explains the change.` Under it: `Paste into any coding agent.` Don't claim an AGENTS.md exists.
 - **Motion:** the first time the bench is 35% in view, the commands print at 9ms per character with 90ms between lines and a block caret blinking (`steps(1)`, 1.06s). They print once. After that, when the repo or handle changes, **only the changed tokens** crossfade (opacity plus a 3px y offset, `--d-2`) under a `--mark` flash that fades out over 900ms `--ease-out`. Tabs: spring pill, panel crossfade `--d-2`, height `--d-3 --ease-in-out`.
 
@@ -341,7 +343,7 @@ Order: **Hero (OpenStock proof) → Work (the shelf) → People (the wall) → S
 
   The `Bench` sits in cols 6–12, `position: sticky; top: 96px`. Under it: `Not a coder? Writers, designers and teachers start here →` to `/contribute`.
 - **Mobile:** the bench renders **inside step 1**, right under the chips, so changing the repo visibly changes the commands.
-- **The premium detail:** your handle shows on a highlighter chip in the branch name. It's the same mark as your seat.
+- **The premium detail:** your handle shows on a rose chip in the branch name. It's the same mark as your seat.
 
 ### §5 Word of mouth
 
@@ -365,7 +367,7 @@ Order: **Hero (OpenStock proof) → Work (the shelf) → People (the wall) → S
 - `tone="inverse"`, padding `--section-y`.
 - **Statement** (`display-1` at 0.85×, `max-width: 14ch`): **Technology should belong to** *everyone.* The last word is in `sign` style, `--inv-accent`.
 - Then in `lede` `--inv-fg-muted`: **So we give ours away. We will never lock knowledge, charge for access, or trade trust for money.** Then `Read the manifesto →`.
-- **Actions:** **Make your first PR →** (primary, which reads as light cobalt on ink), **Join the Discord** (secondary), and a `CopyCommand`.
+- **Actions:** **Make your first PR →** (primary, which reads as light teal on ink), **Join the Discord** (secondary), and a `CopyCommand`.
 - **Columns** (`meta` headings in `--inv-fg-subtle`, links in Mona 15 `--inv-fg-muted` → `--inv-fg`):
   - Society: Work, People, Manifesto, Word of mouth, Contribute
   - Credentials: Verify a certificate (an ID `Field` that routes to `/verify/[id]`), Code of conduct
@@ -445,7 +447,7 @@ Inner pages all follow: `Nav`, then the page header, then 1–3 `Section`s, then
 - **Bottom row:** 3 columns over a top hairline.
   - Left: `Issued` over the date (Geist Mono 1.2cqw).
   - Center: `Verify at` over the URL path `/verify/{id}` on the site's domain (Geist Mono 1.0cqw, `--accent`).
-  - Right: the issuer's **signature**, their name in Newsreader Italic 2.2cqw in `--accent` (blue ink) above a hairline, then the name and `@handle` (Mona 500 1.0cqw plus Geist Mono).
+  - Right: the issuer's **signature**, their name in Newsreader Italic 2.2cqw in `--accent` (teal ink) above a hairline, then the name and `@handle` (Mona 500 1.0cqw plus Geist Mono).
 - **Check:** Chrome print preview of `Download PDF` on `/verify/[id]` gives exactly 1 page, A4 landscape, with no clipping, for a 2-line name and a 4-line description.
 
 ## 13. Copy direction

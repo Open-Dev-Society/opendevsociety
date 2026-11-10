@@ -1,80 +1,48 @@
 @import "tailwindcss";
 
-@theme {
-  --color-background: #ffffff;
-  --color-foreground: #050505;
-
-  /* Brand Accents */
-  --color-brand-teal: #0d9488;
-  --color-brand-rose: #e11d48;
-
-  --color-accent: var(--color-brand-teal);
-  --color-accent-secondary: var(--color-brand-rose);
-  /* Slate 900 - Technical Black/Blue */
-  --color-accent-foreground: #ffffff;
-
-  --font-sans: "Inter",
-    system-ui,
-    sans-serif;
-  --font-serif: "Playfair Display",
-    serif;
-  --font-mono: "JetBrains Mono",
-    monospace;
-
-  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-
-:root {
-  --background: 0 0% 100%;
-  --foreground: 0 0% 0%;
-}
-
-@layer base {
-  body {
-    @apply bg-background text-foreground antialiased selection:bg-[var(--color-brand-teal)] selection:text-white bg-[size:20px_20px];
-    background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
-    /* Subtle dot grid */
-  }
-}
-
 /* ─── Redesign tokens: "Signed in ink" (docs/design-brief.md §4–6) ───────────
    The only place the new site's theme lives. Components in src/components/site/
    use these semantic variables and nothing else. Tokens stay on :root: the
    certificate print clone is appended to <body> and needs them. */
 :root {
-  --bg: oklch(0.975 0.004 95); /* bone daylight */
-  --surface: oklch(0.995 0.002 95);
-  --surface-2: oklch(0.948 0.006 95);
-  --fg: oklch(0.2 0.025 265); /* blue-black ink, 16.9:1 on bg */
-  --fg-muted: oklch(0.43 0.025 265); /* 7.6:1 */
-  --fg-subtle: oklch(0.53 0.02 265); /* 4.9:1 on bg; meta only, 12px min */
-  --line: oklch(0.2 0.025 265 / 0.1);
-  --accent: oklch(0.48 0.2 265); /* cobalt ink */
-  --accent-hover: oklch(0.42 0.19 265);
+  /* Palette from the logo (public/logo.png): teal "OS" mark #288488, rose { } braces #d03c5c. Ratios are WCAG 2 on --bg unless noted. */
+  --bg: oklch(0.982 0.002 200); /* #f8f9fa neutral off-white */
+  --surface: oklch(0.997 0.001 200); /* #fdfefe cards, frames, certificate */
+  --surface-2: oklch(0.955 0.004 200); /* #edf1f1 muted band, hovered rows */
+  --fg: oklch(0.21 0.03 212); /* #051c20 teal-black ink. 16.7:1 */
+  --fg-muted: oklch(0.44 0.025 212); /* #43565b 7.3:1, 6.8:1 on surface-2 */
+  --fg-subtle: oklch(0.52 0.02 212); /* #5c6c70 5.2:1, 4.8:1 on surface-2. Meta only */
+  --line: oklch(0.21 0.03 212 / 0.1);
+  --accent-brand: #288488; /* logo teal, 4.2:1: large text and focus rings only */
+  --accent: oklch(0.52 0.085 199); /* #10777b the logo teal one step deeper, for links, buttons, names. 5.0:1; white on it 5.3:1 */
+  --accent-hover: oklch(0.46 0.08 200); /* #00656a white on it 6.8:1 */
   --accent-fg: oklch(1 0 0);
-  --accent-soft: oklch(0.94 0.03 265); /* text on it: --accent-hover */
-  --mark: oklch(0.925 0.125 102); /* highlighter: backgrounds only, marks what is yours */
-  --live: oklch(0.52 0.12 152); /* live (<24h) and verified */
-  --focus: var(--accent);
-  --img-outline: oklch(0.2 0.025 265 / 0.1);
+  --accent-soft: oklch(0.95 0.025 195); /* #dcf4f4 tags, active chip. --accent-hover on it 6.0:1 */
+  --mark: #d03c5c; /* logo rose: what is yours (open seat outline, your handle, you marker). Fill with --mark-fg text, 4.7:1 */
+  --mark-fg: oklch(1 0 0);
+  --mark-soft: oklch(0.94 0.035 12); /* #ffe2e5 pale rose fill: open seat, ::selection. --fg on it 14.5:1 */
+  --mark-ink: oklch(0.5 0.17 12); /* #ae2749 rose as text on light grounds, 6.3:1 */
+  --live: oklch(0.52 0.12 152); /* #227c45 live (<24h) and verified. 5.0:1 */
+  --focus: var(--accent-brand); /* 4.2:1 on bg, 4.1:1 on --inv-bg (non-text, 3:1 needed) */
+  --img-outline: oklch(0.21 0.03 212 / 0.1);
 
-  /* The inkwell: bench, footer, tooltips. Applied by .tone-inverse. */
-  --inv-bg: oklch(0.19 0.03 268);
-  --inv-surface: oklch(0.245 0.035 268);
-  --inv-fg: oklch(0.96 0.006 95);
-  --inv-fg-muted: oklch(0.8 0.02 265);
-  --inv-fg-subtle: oklch(0.68 0.02 265);
-  --inv-accent: oklch(0.76 0.12 262);
+  /* The dark bands: bench, footer, tooltips. Applied by .tone-inverse. */
+  --inv-bg: oklch(0.2 0.03 212); /* #031a1e teal-black */
+  --inv-surface: oklch(0.255 0.033 212); /* #0d272c terminal, raised */
+  --inv-fg: oklch(0.965 0.004 200); /* 16.3:1, 14.1:1 on inv-surface */
+  --inv-fg-muted: oklch(0.8 0.02 205); /* 9.7:1, 8.4:1 */
+  --inv-fg-subtle: oklch(0.68 0.02 205); /* 6.3:1, 5.5:1 */
+  --inv-accent: oklch(0.78 0.1 195); /* #5ecbcb light teal 9.4:1, 8.1:1. Buttons on dark: this fill, --inv-bg text 9.4:1 */
+  --inv-mark: oklch(0.74 0.13 12); /* #f08695 light rose as text on dark, 7.4:1 */
   --inv-line: oklch(1 0 0 / 0.1);
 
   --radius-sm: 8px; /* chips, inputs, seats, inner frames */
   --radius-md: 14px; /* cards, tiles */
   --radius-lg: 20px; /* print frame, terminal */
 
-  --shadow-sm: 0 0 0 1px var(--line), 0 1px 2px oklch(0.2 0.025 265 / 0.04);
-  --shadow-md: 0 0 0 1px var(--line), 0 2px 4px oklch(0.2 0.025 265 / 0.04), 0 12px 28px -14px oklch(0.2 0.025 265 / 0.16);
-  --shadow-lg: 0 0 0 1px var(--line), 0 2px 4px oklch(0.2 0.025 265 / 0.04), 0 32px 64px -32px oklch(0.25 0.06 265 / 0.35);
+  --shadow-sm: 0 0 0 1px var(--line), 0 1px 2px oklch(0.21 0.03 212 / 0.04);
+  --shadow-md: 0 0 0 1px var(--line), 0 2px 4px oklch(0.21 0.03 212 / 0.04), 0 12px 28px -14px oklch(0.21 0.03 212 / 0.16);
+  --shadow-lg: 0 0 0 1px var(--line), 0 2px 4px oklch(0.21 0.03 212 / 0.04), 0 32px 64px -32px oklch(0.25 0.04 212 / 0.35);
 
   --container: 76rem;
   --gutter: clamp(20px, 5vw, 48px);
@@ -115,9 +83,10 @@ body {
   --fg-subtle: var(--inv-fg-subtle);
   --line: var(--inv-line);
   --accent: var(--inv-accent);
-  --accent-hover: oklch(0.82 0.1 262);
+  --accent-hover: oklch(0.84 0.09 195);
   --accent-fg: var(--inv-bg);
-  --accent-soft: oklch(0.76 0.12 262 / 0.16);
+  --accent-soft: oklch(0.78 0.1 195 / 0.16);
+  --mark-ink: var(--inv-mark);
   --img-outline: oklch(1 0 0 / 0.1);
   /* re-declared so var(--line) resolves to the inverse value */
   --shadow-sm: 0 0 0 1px var(--line), 0 1px 2px oklch(0 0 0 / 0.2);
@@ -203,7 +172,7 @@ body {
   letter-spacing: -0.015em;
   hanging-punctuation: first;
 }
-/* Links in running text: cobalt underline at 30% that goes solid on hover. */
+/* Links in running text: teal underline at 30% that goes solid on hover. */
 .ink-link {
   color: var(--accent);
   text-decoration: underline;
@@ -215,7 +184,7 @@ body {
   text-decoration-color: var(--accent);
 }
 
-/* Root of the new shell: (site)/layout.tsx wraps pages in .site once the theme is chosen. Covers the old dot grid. */
+/* Root of the shell: the (site) and (tool) layouts wrap pages in .site. */
 .site {
   min-height: 100dvh;
   background: var(--bg);
@@ -236,8 +205,8 @@ body {
   text-wrap: pretty;
 }
 .site ::selection {
-  background: var(--mark);
-  color: oklch(0.2 0.025 265);
+  background: var(--mark-soft);
+  color: oklch(0.21 0.03 212);
 }
 @media (prefers-reduced-motion: reduce) {
   .site *,
@@ -268,39 +237,6 @@ body {
   html:focus-within {
     scroll-behavior: smooth;
   }
-}
-
-.font-display {
-  font-family: var(--font-display);
-}
-.font-body {
-  font-family: var(--font-body);
-}
-
-/* Technical / Editorial Utilities */
-
-.container-narrow {
-  @apply max-w-7xl mx-auto border-x border-dashed border-gray-300 min-h-screen bg-white relative;
-}
-
-.dashed-separator {
-  @apply border-b border-dashed border-gray-300 w-full my-8;
-}
-
-.tech-card {
-  @apply border border-dashed border-gray-300 p-6 transition-all hover:bg-[var(--color-brand-teal)]/5 hover:border-[var(--color-brand-teal)];
-}
-
-.heading-serif {
-  @apply font-serif italic tracking-tight;
-}
-
-.text-mono {
-  @apply font-mono text-xs uppercase tracking-wider text-[var(--color-brand-teal)];
-}
-
-.btn-tech {
-  @apply border border-black px-6 py-2 font-mono text-xs uppercase tracking-widest hover:bg-[var(--color-brand-teal)] hover:border-[var(--color-brand-teal)] hover:text-white transition-colors;
 }
 
 /* Certificate document — container query reference so children using cqw scale
