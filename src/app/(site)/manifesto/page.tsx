@@ -1,184 +1,171 @@
-import Link from "next/link";
-import { ArrowLeft, Terminal, Shield, Globe, BookOpen, Code2, Users, Heart, Mic, Newspaper, Calendar } from "lucide-react";
+import type { Metadata } from "next";
+import { Badge, Button, Quote, Section, Steps } from "@/components/site";
+import { social } from "@/content";
+import { manualContributors } from "@/data/contributors";
+import { getWorkshop } from "@/lib/workshop";
 
-export default function ManifestoPage() {
-    return (
-        <div className="px-6 py-20">
+export const revalidate = 3600;
 
-            {/* Header */}
-            <header className="mb-20">
-                <Link href="/" className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-gray-500 hover:text-black transition-colors mb-8">
-                    <ArrowLeft className="w-3 h-3" /> Return_Index
-                </Link>
-                <div className="flex items-center gap-3 mb-6">
-                    <div className="w-3 h-3 bg-black rounded-full" />
-                    <span className="font-mono text-sm tracking-widest uppercase">Start_Protocol // V1.0</span>
-                </div>
-                <h1 className="text-6xl md:text-8xl font-serif italic leading-[0.9] tracking-tighter mb-8">
-                    The Open Dev <br />
-                    <span className="not-italic font-bold">Society Manifesto.</span>
-                </h1>
-                <p className="font-mono text-xs text-gray-500 max-w-md">
-                    [DOC_ID: ODS-2024-M] <br />
-                    [CLASSIFICATION: PUBLIC] <br />
-                    [AUTHOR: Ravi Pratap Singh]
-                </p>
-            </header>
+export const metadata: Metadata = {
+  title: "Manifesto: Open Dev Society",
+  description:
+    "Technology should belong to everyone. Why Open Dev Society builds free, open-source tools in public, and the promise behind them.",
+};
 
-            <div className="prose prose-lg max-w-none prose-headings:font-serif prose-p:text-gray-600 prose-p:leading-relaxed">
+const repoUrl = (name: string) => `https://github.com/Open-Dev-Society/${name}`;
 
-                {/* 01 Core Belief */}
-                <section className="mb-24 border-l-2 border-[var(--color-brand-teal)] pl-8 py-2">
-                    <span className="font-mono text-xs font-bold uppercase tracking-widest text-black mb-4 block">// 01_CORE_BELIEF</span>
-                    <p className="text-xl md:text-2xl font-serif italic text-black leading-tight mb-8">
-                        "We live in a world where knowledge is hidden behind paywalls. Where tools are locked in subscriptions. Where newcomers are told they're not 'good enough'."
-                    </p>
-                    <p>
-                        We believe there's a better way. Technology should belong to everyone. Knowledge should be open, free, and accessible. Communities should welcome newcomers with trust, not gatekeeping.
-                    </p>
-                </section>
+// Brief §11: four rules, one sentence each.
+const rules = [
+  { title: "Default to open.", body: "Every line of code and every decision is public." },
+  { title: "No permission needed.", body: "No interviews. Fork it and send the PR." },
+  { title: "Ship, then improve.", body: "Release early and fix it in the open." },
+  { title: "Lift each other.", body: "Everyone teaches, everyone learns." },
+];
 
-                {/* 02 Mission */}
-                <section className="mb-24">
-                    <span className="font-mono text-xs font-bold uppercase tracking-widest text-gray-400 mb-6 block border-b border-gray-200 pb-2">// 02_MISSION_STATEMENT</span>
-                    <h2 className="text-4xl font-serif mb-6">Empowerment through Openness</h2>
-                    <p>
-                        We exist to build free, open-source projects, educational resources, and community experiences that make a real difference.
-                    </p>
-                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-6 list-none pl-0 mt-8">
-                        {[
-                            "Tools without subscription barriers.",
-                            "Knowledge platforms free forever.",
-                            "Education without paywalls.",
-                            "Guidance, not judgment.",
-                            "Resources running on trust.",
-                            "Events that connect and inspire."
-                        ].map((item, i) => (
-                            <li key={i} className="flex items-start gap-3 border border-dashed border-gray-300 p-4">
-                                <span className="w-1.5 h-1.5 bg-[var(--color-brand-teal)] rounded-full mt-2" />
-                                <span className="text-sm">{item}</span>
-                            </li>
-                        ))}
-                    </ul>
-                </section>
+const promise = ["We will never lock knowledge.", "We will never charge for access.", "We will never trade trust for money."];
 
-                {/* 03 Promise */}
-                <section className="mb-24 bg-gray-50 p-10 border border-dashed border-gray-300">
-                    <span className="font-mono text-xs font-bold uppercase tracking-widest text-black mb-4 block">// 03_THE_PROMISE</span>
-                    <div className="flex flex-col gap-4">
-                        <p className="text-lg font-bold">We will never lock knowledge.</p>
-                        <p className="text-lg font-bold">We will never charge for access.</p>
-                        <p className="text-lg font-bold">We will never trade trust for money.</p>
-                        <p className="text-sm text-gray-500 font-mono mt-4">Running on transparency, donations, and community strength.</p>
-                    </div>
-                </section>
+// The old manifesto's FAQ, kept for anyone bringing a project.
+const ownership = [
+  { q: "Can I show the project as my own work?", a: "Yes. You keep full credit. We support your growth, we don't claim it." },
+  { q: "Do I lose ownership?", a: "No. ODS is a platform, not a company claiming your IP." },
+  { q: "Can I take my project back?", a: "Any time. There's no lock-in." },
+];
 
-                {/* 04 Differentiation */}
-                <section className="mb-24">
-                    <span className="font-mono text-xs font-bold uppercase tracking-widest text-gray-400 mb-6 block border-b border-gray-200 pb-2">// 04_DIFFERENTIATION</span>
-                    <h2 className="text-3xl font-serif mb-8">Platform, Not Gatekeeper.</h2>
-                    <div className="grid md:grid-cols-2 gap-12">
-                        <div>
-                            <h3 className="font-bold text-lg mb-4 flex items-center gap-2"><Shield className="w-5 h-5 text-[var(--color-brand-teal)]" /> Ownership</h3>
-                            <p className="text-sm">You retain full credit. Your work remains yours to showcase on your resume. You keep decision-making power.</p>
-                        </div>
-                        <div>
-                            <h3 className="font-bold text-lg mb-4 flex items-center gap-2"><Globe className="w-5 h-5 text-[var(--color-brand-teal)]" /> The Ecosystem</h3>
-                            <p className="text-sm">We provide contributors, visibility, and support. We amplify impact without taking credit.</p>
-                        </div>
-                    </div>
-                    <div className="mt-8 p-4 font-mono text-sm text-center border-t border-b border-gray-200">
-                        "Your project. Your vision. Our community. Our support."
-                    </div>
-                </section>
+const col = "lg:col-span-8 lg:col-start-3";
+const h2 = "display-3 text-(--fg)";
+const body = "text-[17px] leading-[1.7] text-(--fg-muted)";
 
-                {/* 05 Ecosystem */}
-                <section className="mb-24">
-                    <span className="font-mono text-xs font-bold uppercase tracking-widest text-gray-400 mb-6 block border-b border-gray-200 pb-2">// 05_ECOSYSTEM_ARCHITECTURE</span>
-                    <div className="grid grid-cols-1 gap-8">
-                        {[
-                            { icon: Code2, title: "OpenDev Tools", desc: "Simple utilities. (OpenStock, OpenReadme)" },
-                            { icon: BookOpen, title: "OpenDev Library", desc: "Gateway to free books. (BookTrace)" },
-                            { icon: Users, title: "OpenDev Learn", desc: "Roadmaps and mentorship." },
-                            { icon: Terminal, title: "OpenDev Education", desc: "Free courses and workshops." },
-                            { icon: Mic, title: "OpenDev Media", desc: "Podcasts and tutorials." },
-                            { icon: Calendar, title: "OpenDev Events", desc: "Hackathons and conferences." },
-                            { icon: Newspaper, title: "OpenDev News", desc: "Unbiased information." },
-                            { icon: Heart, title: "OpenDev Community", desc: "Home for contributors." }
-                        ].map((item, i) => (
-                            <div key={i} className="flex gap-4 items-start group">
-                                <div className="p-3 bg-gray-100 rounded-none group-hover:bg-[var(--color-brand-teal)] group-hover:text-white transition-colors">
-                                    <item.icon className="w-5 h-5" />
-                                </div>
-                                <div>
-                                    <h3 className="font-bold text-lg">{item.title}</h3>
-                                    <p className="text-sm text-gray-600">{item.desc}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </section>
+export default async function Manifesto() {
+  const { tools, people } = await getWorkshop();
+  const has = (name: string) => tools.some((r) => r.name === name);
+  const founder = manualContributors.find((c) => c.role && /^(?!.*Co-Founder).*Founder/i.test(c.role));
 
-                {/* 06 Connect */}
-                <section className="mb-24">
-                    <span className="font-mono text-xs font-bold uppercase tracking-widest text-gray-400 mb-6 block border-b border-gray-200 pb-2">// 06_CONNECTIVITY</span>
-                    <p className="text-lg font-serif italic mb-8">
-                        "Knowledge isn't just code—it's conversation, collaboration, and connection."
-                    </p>
-                    <div className="grid md:grid-cols-2 gap-6">
-                        <div className="p-6 border border-dashed border-gray-300">
-                            <h4 className="font-bold font-mono text-xs uppercase mb-2">Build Together</h4>
-                            <p className="text-sm">Hackathons and conferences where collaboration sparks innovation.</p>
-                        </div>
-                        <div className="p-6 border border-dashed border-gray-300">
-                            <h4 className="font-bold font-mono text-xs uppercase mb-2">Learn Together</h4>
-                            <p className="text-sm">Mentorship where everyone teaches and learns.</p>
-                        </div>
-                    </div>
-                </section>
+  // "What we build": the old ecosystem list, mapped to real repos where they exist; the rest is labelled planned.
+  type Row = { name: string; what: string; links?: { label: string; href: string }[] };
+  const build: Row[] = [
+    {
+      name: "Tools",
+      what: "Simple utilities, free to use.",
+      links: [
+        ...["OpenStock", "openreadme"].filter(has).map((n) => ({ label: n, href: repoUrl(n) })),
+        { label: `all ${tools.length}`, href: "/projects" },
+      ],
+    },
+    { name: "Library", what: "A gateway to free books.", links: has("booktrace") ? [{ label: "booktrace", href: repoUrl("booktrace") }] : undefined },
+    { name: "Learn", what: "Roadmaps and mentorship." },
+    { name: "Education", what: "Free courses and workshops." },
+    { name: "Media", what: "Podcasts and tutorials." },
+    { name: "Events", what: "Hackathons and conferences.", links: [{ label: "Apretre 3.0 and JWOC 2026", href: "/word-of-mouth#partners" }] },
+    { name: "News", what: "Information without an agenda." },
+    { name: "Community", what: "A home for contributors.", links: [{ label: `${people.length} builders`, href: "/contributors" }] },
+  ];
 
-                {/* 07 The Call */}
-                <section className="mb-24 py-12 border-y border-black text-center">
-                    <h2 className="text-4xl font-serif mb-6">You Belong Here.</h2>
-                    <p className="max-w-xl mx-auto text-gray-600 mb-8">
-                        If you've ever felt you didn't belong. If you've ever struggled to find free resources. Join us. Build with us. Grow with us.
-                    </p>
-                    <div className="flex justify-center gap-4">
-                        <a href="https://github.com/Open-Dev-Society" className="btn-tech">GITHUB</a>
-                        <a href="https://www.linkedin.com/company/opendevsociety-in/" className="inline-flex items-center gap-2 px-6 py-2 border border-black text-xs font-mono uppercase hover:bg-[var(--color-brand-teal)] hover:border-[var(--color-brand-teal)] hover:text-white transition-colors">LINKEDIN</a>
-                        <a href="https://x.com/opendevsociety" className="inline-flex items-center gap-2 px-6 py-2 border border-black text-xs font-mono uppercase hover:bg-[var(--color-brand-teal)] hover:border-[var(--color-brand-teal)] hover:text-white transition-colors">TWITTER / X</a>
-                        <a href="https://discord.gg/9xywA3pj" className="inline-flex items-center gap-2 px-6 py-2 border border-black text-xs font-mono uppercase hover:bg-[var(--color-brand-teal)] hover:border-[var(--color-brand-teal)] hover:text-white transition-colors">DISCORD</a>
-                        <a href="mailto:opendevsociety@gmail.com" className="inline-flex items-center gap-2 px-6 py-2 border border-black text-xs font-mono uppercase hover:bg-[var(--color-brand-teal)] hover:border-[var(--color-brand-teal)] hover:text-white transition-colors">EMAIL</a>
-                    </div>
-                </section>
+  return (
+    <>
+      <header className="mx-auto grid w-full max-w-(--container) grid-cols-1 px-(--gutter) pt-16 lg:grid-cols-12 lg:gap-x-(--grid-gap) lg:pt-24">
+        <div className={col}>
+          <p className="rise t-meta text-(--fg-muted)" style={{ "--i": 0 } as React.CSSProperties}>
+            Manifesto · July 2024
+          </p>
+          <h1 className="rise display-2 mt-6 max-w-[16ch] text-(--fg)" style={{ "--i": 1 } as React.CSSProperties}>
+            Technology should belong to <span className="sign text-(--accent)">everyone.</span>
+          </h1>
+          <p
+            className="rise mt-8 max-w-[52ch] text-[19px] leading-[1.55] text-pretty text-(--fg-muted) md:text-[22px]"
+            style={{ "--i": 2 } as React.CSSProperties}
+          >
+            Knowledge is hidden behind paywalls. Tools are locked in subscriptions. Newcomers are told they&apos;re not good enough.
+            We think there&apos;s a better way, and we&apos;re building it.
+          </p>
+        </div>
+      </header>
 
-                {/* 08 FAQ */}
-                <section className="mb-24">
-                    <span className="font-mono text-xs font-bold uppercase tracking-widest text-gray-400 mb-6 block border-b border-gray-200 pb-2">// 08_FAQ_LOG</span>
-                    <div className="space-y-8">
-                        <div>
-                            <h3 className="font-bold mb-2">Can I showcase projects as my own work?</h3>
-                            <p className="text-sm text-gray-600">Absolutely. You retain full credit. ODS exists to support your growth, not claim your achievements.</p>
-                        </div>
-                        <div>
-                            <h3 className="font-bold mb-2">Do I lose ownership rights?</h3>
-                            <p className="text-sm text-gray-600">No. ODS is a platform, not a company claiming IP.</p>
-                        </div>
-                        <div>
-                            <h3 className="font-bold mb-2">Can I leave or take my project back?</h3>
-                            <p className="text-sm text-gray-600">Yes. If you ever want to move your project out, we support that using a no-lock-in policy.</p>
-                        </div>
-                    </div>
-                </section>
-
-            </div>
-
-            {/* Footer */}
-            <footer className="mt-20 pt-10 border-t border-dashed border-gray-300 text-center font-mono text-xs text-gray-500">
-                <p className="mb-4">OPEN_DEV_SOCIETY // MANIFESTO_PROTOCOL_V1</p>
-                <p>"Because when knowledge is free, innovation is limitless."</p>
-            </footer>
+      <Section className="pt-16 lg:pt-24" containerClassName="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
+        <div className={col}>
+          <h2 className={h2}>Four rules.</h2>
+          <Steps className="mt-8" items={rules} />
         </div>
 
-    );
+        <Quote
+          variant="feature"
+          className="my-20 lg:col-span-10 lg:col-start-2 lg:my-32"
+          quote="Knowledge isn't just code—it's conversation, collaboration, and connection."
+          name={founder?.name ?? "Open Dev Society"}
+          source="Manifesto"
+          year="2024"
+        />
+
+        <div className={col}>
+          <h2 className={h2}>What we build.</h2>
+          <p className={`${body} mt-4 max-w-[64ch]`}>Where a piece already ships, it links to the code. The rest is next.</p>
+          <ul className="mt-8 divide-y divide-(--line) border-y border-(--line)">
+            {build.map((r) => (
+              <li key={r.name} className="grid grid-cols-1 gap-x-6 gap-y-1 py-4 sm:grid-cols-[7.5rem_minmax(0,1fr)_auto] sm:items-baseline">
+                <span className="font-semibold text-(--fg)">{r.name}</span>
+                <span className="text-(--fg-muted)">{r.what}</span>
+                <span className="t-meta">
+                  {r.links ? (
+                    r.links.map((l, i) => (
+                      <span key={l.href}>
+                        {i > 0 && <span className="text-(--fg-subtle)"> · </span>}
+                        <a href={l.href} className="ink-link" {...(l.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+                          {l.label}
+                          {l.href.startsWith("http") ? " ↗" : " →"}
+                        </a>
+                      </span>
+                    ))
+                  ) : (
+                    <Badge>planned</Badge>
+                  )}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Section>
+
+      <Section className="pt-0" containerClassName="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
+        <div className={col}>
+          <div className="tone-inverse rounded-(--radius-lg) p-8 shadow-(--shadow-lg) sm:p-12">
+            <h2 className="t-meta text-(--fg-subtle)">The promise</h2>
+            <ul className="mt-6 space-y-3">
+              {promise.map((l) => (
+                <li key={l} className="t-title text-(--fg)">
+                  {l}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-8 text-(--fg-muted)">Running on transparency, donations and community.</p>
+            {founder && (
+              <p className="t-meta mt-10 border-t border-(--line) pt-6 text-(--fg-muted)">
+                <a href={founder.html_url} target="_blank" rel="noopener noreferrer" className="sign text-[22px] text-(--accent) hover:text-(--accent-hover)">
+                  {founder.name}
+                </a>
+                <span className="ml-2">founder</span>
+              </p>
+            )}
+          </div>
+
+          <h2 className={`${h2} mt-24 lg:mt-32`}>Platform, not gatekeeper.</h2>
+          <p className={`${body} mt-4 max-w-[64ch]`}>
+            Bring your project and it stays yours: the credit, the decisions and the right to leave. We bring contributors,
+            visibility and public review, and we never take the credit. Your project. Your vision. Our community.
+          </p>
+          <dl className="mt-8 divide-y divide-(--line) border-y border-(--line)">
+            {ownership.map((f) => (
+              <div key={f.q} className="py-4">
+                <dt className="font-semibold text-(--fg)">{f.q}</dt>
+                <dd className="mt-1 text-(--fg-muted)">{f.a}</dd>
+              </div>
+            ))}
+          </dl>
+          <div className="mt-8">
+            <Button href={social.discord.href} icon="external" external>
+              Bring it to the Discord
+            </Button>
+          </div>
+        </div>
+      </Section>
+    </>
+  );
 }

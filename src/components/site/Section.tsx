@@ -47,6 +47,8 @@ export function SectionHeader({
   title,
   description,
   as: Heading = "h2",
+  layout = "rail",
+  link,
   className,
 }: {
   eyebrow?: string;
@@ -54,8 +56,57 @@ export function SectionHeader({
   title: React.ReactNode;
   description?: React.ReactNode;
   as?: "h1" | "h2";
+  /** rail: label in cols 1–3 (default). split: heading left, dek and link right (after Linear). center: one centred column. */
+  layout?: "rail" | "split" | "center";
+  /** split and center only: the section's link, set under the dek */
+  link?: { href: string; label: string };
   className?: string;
 }) {
+  if (layout !== "rail") {
+    const label = eyebrow && (
+      <p className="t-meta mb-4 flex items-baseline gap-1.5 text-(--fg-subtle)">
+        <span>{eyebrow}</span>
+        {count && (
+          <>
+            <span aria-hidden>·</span>
+            <span className="t-mono text-(--fg-muted)">{count}</span>
+          </>
+        )}
+      </p>
+    );
+    const more = link && (
+      <a
+        href={link.href}
+        className="group mt-4 inline-flex min-h-11 items-center gap-1.5 text-[15px] font-medium text-(--fg) transition-colors duration-(--d-2) hover:text-(--accent)"
+      >
+        {link.label}
+        <ArrowRight className="size-4 transition-transform duration-(--d-2) ease-(--ease-ui) group-hover:translate-x-0.5" strokeWidth={1.75} />
+      </a>
+    );
+    if (layout === "center")
+      return (
+        <div className={cn("mx-auto mb-10 flex max-w-3xl flex-col items-center text-center lg:mb-14", className)}>
+          {label}
+          <Heading className="display-2 max-w-[20ch] text-(--fg)">{title}</Heading>
+          {description && <p className="t-lede mt-4 max-w-[52ch] text-(--fg-muted)">{description}</p>}
+          {more}
+        </div>
+      );
+    return (
+      <div className={cn("mb-10 grid grid-cols-1 gap-y-4 lg:mb-14 lg:grid-cols-12 lg:items-end lg:gap-x-(--grid-gap)", className)}>
+        <div className="min-w-0 lg:col-span-7">
+          {label}
+          <Heading className="display-2 max-w-[18ch] text-(--fg)">{title}</Heading>
+        </div>
+        {(description || more) && (
+          <div className="min-w-0 lg:col-span-5 lg:pb-1">
+            {description && <p className="t-lede max-w-[46ch] text-(--fg-muted)">{description}</p>}
+            {more}
+          </div>
+        )}
+      </div>
+    );
+  }
   return (
     <div className={cn("mb-8 grid grid-cols-1 gap-y-3 lg:mb-12 lg:grid-cols-12 lg:gap-x-(--grid-gap)", className)}>
       {eyebrow && (

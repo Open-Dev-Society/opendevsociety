@@ -1,267 +1,240 @@
-import Link from "next/link";
-import { ArrowLeft, Code2, PenTool, GraduationCap, Mic, Calendar, Globe, Bug, Terminal, CheckCircle2, Heart } from "lucide-react";
-import { main } from "framer-motion/client";
+import type { Metadata } from "next";
+import { ChevronDown } from "lucide-react";
+import { Bench, Card, Section, SectionHeader, Steps } from "@/components/site";
+import { contactEmail, social } from "@/content";
+import { getWorkshop } from "@/lib/workshop";
 
-export default function ContributePage() {
-    return (
-        <div className="px-6 py-20">
+export const revalidate = 3600;
 
-            {/* Header */}
-            <header className="mb-20">
-                <Link href="/" className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-gray-500 hover:text-black transition-colors mb-8">
-                    <ArrowLeft className="w-3 h-3" /> Return_Index
-                </Link>
-                <div className="flex items-center gap-3 mb-6">
-                    <div className="w-3 h-3 bg-black rounded-full" />
-                    <span className="font-mono text-sm tracking-widest uppercase">Operations_Manual // V1.0</span>
-                </div>
-                <h1 className="text-5xl md:text-7xl font-serif italic leading-[0.9] tracking-tighter mb-8">
-                    Contribution <br />
-                    <span className="not-italic font-bold">Guidelines.</span>
-                </h1>
-                <p className="text-xl text-gray-600 max-w-2xl leading-relaxed mb-8">
-                    Welcome to Open Dev Society! We're building a vibrant community where everyone can contribute—not just developers. Whether you write code, create content, teach, or organize events, you belong here.
-                </p>
+export const metadata: Metadata = {
+  title: "Contribute: Open Dev Society",
+  description:
+    "Your first contribution, from fork to merged. Three commands for coders, and real ways in for writers, designers, teachers and creators.",
+};
 
-                {/* TOC Widget */}
-                <div className="p-6 bg-gray-50 border border-dashed border-gray-300 inline-block">
-                    <h3 className="font-mono text-xs font-bold uppercase mb-4">Table_of_Contents</h3>
-                    <ul className="space-y-2 text-sm font-mono text-gray-600">
-                        <li><a href="#ways" className="hover:text-black hover:underline decoration-dashed">01. Ways_to_Contribute</a></li>
-                        <li><a href="#getting-started" className="hover:text-black hover:underline decoration-dashed">02. Getting_Started</a></li>
-                        <li><a href="#values" className="hover:text-black hover:underline decoration-dashed">03. Core_Values</a></li>
-                        <li><a href="#recognition" className="hover:text-black hover:underline decoration-dashed">04. Recognition_Protocol</a></li>
-                    </ul>
-                </div>
-            </header>
+const ORG = "https://github.com/Open-Dev-Society";
+const GUIDE = `${ORG}/.github/blob/main/CONTRIBUTING.md`;
+const CONDUCT = `${ORG}/OpenStock/blob/main/CODE_OF_CONDUCT.md`;
+const ISSUES = "https://github.com/search?q=org%3AOpen-Dev-Society+is%3Aissue+is%3Aopen&type=issues";
 
-            <div className="prose prose-lg max-w-none prose-headings:font-serif prose-p:text-gray-600 prose-p:leading-relaxed">
+// Brief §11: five ways in, each with who it's for, three tasks and one real link (the old page's href="#" CTAs are gone).
+// The ids keep the old page's anchors.
+const roles = [
+  {
+    id: "code",
+    title: "Code",
+    who: "For developers and engineers",
+    tasks: ["Fix a bug or build a feature.", "Review open pull requests.", "Improve performance and security."],
+    link: { label: "Open issues", href: ISSUES },
+  },
+  {
+    id: "content",
+    title: "Writing",
+    who: "For writers and editors",
+    tasks: ["Write docs and tutorials.", "Turn a fix into a guide or post.", "Translate or proofread what's there."],
+    link: { label: "Contributing guide", href: GUIDE },
+  },
+  {
+    id: "design",
+    title: "Design",
+    who: "For designers",
+    tasks: ["Design logos and graphics.", "Improve a tool's interface.", "Make launch and social assets."],
+    link: { label: "This site is open source too", href: `${ORG}/opendevsociety` },
+  },
+  {
+    id: "education",
+    title: "Teaching",
+    who: "For educators and mentors",
+    tasks: ["Write course material.", "Lead a workshop or session.", "Mentor someone through their first PR."],
+    link: { label: "Join the Discord", href: social.discord.href },
+  },
+  {
+    id: "media",
+    title: "Media",
+    who: "For podcasters and creators",
+    tasks: ["Record a podcast or video.", "Write about a tool you use.", "Share what ships."],
+    link: { label: "Follow on X", href: social.twitter.href },
+  },
+];
 
-                {/* 01 Ways to Contribute */}
-                <section id="ways" className="mb-24">
-                    <span className="font-mono text-xs font-bold uppercase tracking-widest text-gray-400 mb-8 block border-b border-gray-200 pb-2">// 01_OPERATIONAL_ROLES</span>
+const review = [
+  { title: "Open a draft.", body: "Push your branch and open a draft PR early. Say what you changed and why." },
+  { title: "A maintainer reviews it in public.", body: "Comments land on the PR, where anyone can read them." },
+  { title: "You iterate.", body: "Push fixes to the same branch and the PR updates itself." },
+  {
+    title: "It merges, and you're on the wall.",
+    body: (
+      <a href="/contributors" className="ink-link">
+        Find your seat →
+      </a>
+    ),
+  },
+];
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+const values = [
+  ["Open and transparent.", "We build in the open and welcome feedback."],
+  ["Inclusive and welcoming.", "Everyone belongs here, whatever their experience."],
+  ["Free and accessible.", "We never lock knowledge or tools behind paywalls."],
+  ["Community-driven.", "We listen to the people who show up."],
+  ["Quality and impact.", "We aim for changes that make a difference."],
+  ["Respectful and collaborative.", "We treat each other with kindness."],
+];
 
-                        {/* Code */}
-                        <div id="code" className="p-8 border border-dashed border-gray-300 hover:bg-gray-50 transition-colors group">
-                            <div className="flex items-center gap-3 mb-4">
-                                <Code2 className="w-6 h-6" />
-                                <h3 className="text-xl font-bold m-0 font-mono uppercase">Code Ops</h3>
-                            </div>
-                            <p className="text-sm mb-4">For: Developers, Engineers, Innovators.</p>
-                            <ul className="list-disc pl-5 text-sm space-y-1 mb-6">
-                                <li>Fix bugs or implement features.</li>
-                                <li>Review Pull Requests.</li>
-                                <li>Improve performance & security.</li>
-                            </ul>
-                            <a href="https://github.com/Open-Dev-Society" className="text-xs font-mono underline decoration-dashed group-hover:decoration-[var(--color-brand-rose)] group-hover:text-[var(--color-brand-rose)] group-hover:decoration-solid">ACCESS_REPOS -&gt;</a>
-                        </div>
+const ext = { target: "_blank", rel: "noopener noreferrer" } as const;
 
-                        {/* Content */}
-                        <div id="content" className="p-8 border border-dashed border-gray-300 hover:bg-gray-50 transition-colors group">
-                            <div className="flex items-center gap-3 mb-4">
-                                <PenTool className="w-6 h-6" />
-                                <h3 className="text-xl font-bold m-0 font-mono uppercase">Content Ops</h3>
-                            </div>
-                            <p className="text-sm mb-4">For: Writers, Editors, Documentarians.</p>
-                            <ul className="list-disc pl-5 text-sm space-y-1 mb-6">
-                                <li>Write documentation & tutorials.</li>
-                                <li>Create guides and blog posts.</li>
-                                <li>Proofread existing content.</li>
-                            </ul>
-                            <a href="#" className="text-xs font-mono underline decoration-dashed group-hover:decoration-[var(--color-brand-rose)] group-hover:text-[var(--color-brand-rose)] group-hover:decoration-solid">VIEW_DOCS_REQ -&gt;</a>
-                        </div>
+const questions: { q: string; a: React.ReactNode }[] = [
+  {
+    q: "Do I need experience?",
+    a: "No. Pick an open issue, open a draft and ask. Review happens in the open, so you learn as you go.",
+  },
+  {
+    q: "Where do I ask a question?",
+    a: (
+      <>
+        Open a GitHub Discussion on the repo, or ask in the{" "}
+        <a href={social.discord.href} className="ink-link" {...ext}>
+          Discord ↗
+        </a>
+        .
+      </>
+    ),
+  },
+  { q: "I found a bug. What now?", a: "Open an issue labelled bug on that tool's repository." },
+  {
+    q: "Do I keep the credit?",
+    a: "Yes. Every merged PR carries your GitHub name, and your face goes on the wall.",
+  },
+  {
+    q: "Can I bring my own project?",
+    a: (
+      <>
+        Yes, and it stays yours.{" "}
+        <a href="/manifesto" className="ink-link">
+          Read the manifesto →
+        </a>
+      </>
+    ),
+  },
+];
 
-                        {/* Education */}
-                        <div id="education" className="p-8 border border-dashed border-gray-300 hover:bg-gray-50 transition-colors group">
-                            <div className="flex items-center gap-3 mb-4">
-                                <GraduationCap className="w-6 h-6" />
-                                <h3 className="text-xl font-bold m-0 font-mono uppercase">Education Ops</h3>
-                            </div>
-                            <p className="text-sm mb-4">For: Educators, Mentors, Trainers.</p>
-                            <ul className="list-disc pl-5 text-sm space-y-1 mb-6">
-                                <li>Develop course materials.</li>
-                                <li>Lead workshops & sessions.</li>
-                                <li>Mentor newcomers.</li>
-                            </ul>
-                            <a href="#" className="text-xs font-mono underline decoration-dashed group-hover:decoration-[var(--color-brand-rose)] group-hover:text-[var(--color-brand-rose)] group-hover:decoration-solid">JOIN_EDU_GROUP -&gt;</a>
-                        </div>
+export default async function Contribute() {
+  const { benchRepos, people } = await getWorkshop();
+  const open = benchRepos.reduce((a, r) => a + r.openIssues, 0);
 
-                        {/* Media */}
-                        <div id="media" className="p-8 border border-dashed border-gray-300 hover:bg-gray-50 transition-colors group">
-                            <div className="flex items-center gap-3 mb-4">
-                                <Mic className="w-6 h-6" />
-                                <h3 className="text-xl font-bold m-0 font-mono uppercase">Media Ops</h3>
-                            </div>
-                            <p className="text-sm mb-4">For: Podcasters, Designers, Creators.</p>
-                            <ul className="list-disc pl-5 text-sm space-y-1 mb-6">
-                                <li>Create podcasts & videos.</li>
-                                <li>Design logos & graphics.</li>
-                                <li>Create social media assets.</li>
-                            </ul>
-                            <a href="#" className="text-xs font-mono underline decoration-dashed group-hover:decoration-[var(--color-brand-rose)] group-hover:text-[var(--color-brand-rose)] group-hover:decoration-solid">MEDIA_KIT -&gt;</a>
-                        </div>
+  return (
+    <>
+      <header className="mx-auto w-full max-w-(--container) px-(--gutter) pt-16 pb-16 lg:pt-24 lg:pb-24">
+        <SectionHeader
+          as="h1"
+          className="mb-0 lg:mb-0"
+          eyebrow="Contribute"
+          count={`${open} open issues`}
+          title="Your first contribution, from fork to merged."
+          description={`Pick a repo, fork it, open a draft. ${people.length} people have done it so far, and every one of them is on the wall.`}
+        />
+      </header>
 
-                        {/* Events */}
-                        <div id="events" className="p-8 border border-dashed border-gray-300 hover:bg-gray-50 transition-colors group">
-                            <div className="flex items-center gap-3 mb-4">
-                                <Calendar className="w-6 h-6" />
-                                <h3 className="text-xl font-bold m-0 font-mono uppercase">Event Ops</h3>
-                            </div>
-                            <p className="text-sm mb-4">For: Organizers, Facilitators.</p>
-                            <ul className="list-disc pl-5 text-sm space-y-1 mb-6">
-                                <li>Organize hackathons & meetups.</li>
-                                <li>Facilitate workshops.</li>
-                                <li>Moderate community channels.</li>
-                            </ul>
-                            <a href="#" className="text-xs font-mono underline decoration-dashed group-hover:decoration-[var(--color-brand-rose)] group-hover:text-[var(--color-brand-rose)] group-hover:decoration-solid">EVENT_CALENDAR -&gt;</a>
-                        </div>
+      <Section id="start" tone="inverse">
+        <SectionHeader eyebrow="The bench" count="3 commands" title="Three commands, then a review." />
+        <Bench repos={benchRepos} wallHref="/contributors" notCoderHref="#roles" />
+      </Section>
 
-                        {/* Translation */}
-                        <div className="p-8 border border-dashed border-gray-300 hover:bg-gray-50 transition-colors group">
-                            <div className="flex items-center gap-3 mb-4">
-                                <Globe className="w-6 h-6" />
-                                <h3 className="text-xl font-bold m-0 font-mono uppercase">Global Ops</h3>
-                            </div>
-                            <p className="text-sm mb-4">For: Translators, Polyglots.</p>
-                            <ul className="list-disc pl-5 text-sm space-y-1 mb-6">
-                                <li>Translate docs & sites.</li>
-                                <li>Localize UI elements.</li>
-                                <li>Adapt content for culture.</li>
-                            </ul>
-                            <a href="#" className="text-xs font-mono underline decoration-dashed group-hover:decoration-[var(--color-brand-rose)] group-hover:text-[var(--color-brand-rose)] group-hover:decoration-solid">TRANSLATE_NOW -&gt;</a>
-                        </div>
-
-                    </div>
-                </section>
-
-                {/* 02 Getting Started */}
-                <section id="getting-started" className="mb-24">
-                    <span className="font-mono text-xs font-bold uppercase tracking-widest text-gray-400 mb-6 block border-b border-gray-200 pb-2">// 02_INITIALIZATION_SEQUENCE</span>
-
-                    <div className="bg-black text-white p-8 rounded-sm font-mono text-sm shadow-2xl overflow-x-auto">
-                        <div className="flex gap-2 mb-6 border-b border-white/20 pb-4">
-                            <div className="w-3 h-3 rounded-full bg-red-500" />
-                            <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                            <div className="w-3 h-3 rounded-full bg-green-500" />
-                        </div>
-
-                        <div className="space-y-6">
-                            <div>
-                                <span className="text-[var(--color-brand-teal)]">$</span> <span className="text-[var(--color-brand-rose)]">init_sequence</span> --step=1
-                                <p className="mt-2 text-gray-400"># Explore Our Projects</p>
-                                <p className="ml-4">&gt; Visit GitHub: OpenStock, OpenReadme, BookTrace...</p>
-                            </div>
-
-                            <div>
-                                <span className="text-[var(--color-brand-teal)]">$</span> <span className="text-[var(--color-brand-rose)]">connect_network</span> --step=2
-                                <p className="mt-2 text-gray-400"># Join Community</p>
-                                <p className="ml-4">&gt; Discord: [LINK_PENDING]</p>
-                                <p className="ml-4">&gt; Email: opendevsociety@gmail.com</p>
-                            </div>
-
-                            <div>
-                                <span className="text-[var(--color-brand-teal)]">$</span> <span className="text-[var(--color-brand-rose)]">find_task</span> --step=3
-                                <p className="mt-2 text-gray-400"># Look for labels:</p>
-                                <ul className="ml-4 list-none">
-                                    <li>- "good first issue" (Newcomers)</li>
-                                    <li>- "help wanted" (Expertise)</li>
-                                    <li>- "documentation" (Writers)</li>
-                                </ul>
-                            </div>
-
-                            <div>
-                                <span className="text-[var(--color-brand-teal)]">$</span> <span className="text-[var(--color-brand-rose)]">execute_commit</span> --step=4
-                                <p className="mt-2 text-gray-400"># Submit Work</p>
-                                <p className="ml-4">&gt; Code: Pull Request</p>
-                                <p className="ml-4">&gt; Creative: Share via channels</p>
-                            </div>
-
-                            <div className="animate-pulse">
-                                <span className="text-[var(--color-brand-teal)]">$</span> <span className="inline-block w-2 h-4 bg-[var(--color-brand-teal)] align-middle" />
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* 03 Values */}
-                <section id="values" className="mb-24">
-                    <span className="font-mono text-xs font-bold uppercase tracking-widest text-gray-400 mb-6 block border-b border-gray-200 pb-2">// 03_CORE_VALUES</span>
-                    <div className="grid md:grid-cols-2 gap-6">
-                        {[
-                            "Open & Transparent",
-                            "Inclusive & Welcoming",
-                            "Free & Accessible",
-                            "Community-Driven",
-                            "Quality & Impact",
-                            "Respectful & Collaborative"
-                        ].map((val, i) => (
-                            <div key={i} className="flex items-center gap-3 p-4 border border-dashed border-gray-300">
-                                <CheckCircle2 className="w-5 h-5 text-[var(--color-brand-teal)]" />
-                                <span className="font-bold">{val}</span>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="mt-8 p-6 bg-gray-50 border-l-4 border-black">
-                        <h4 className="font-bold mb-2 flex items-center gap-2"><Heart className="w-4 h-4" /> Code of Conduct</h4>
-                        <p className="text-sm">
-                            All contributors must follow our Code of Conduct. Be respectful, welcoming, and report violations to opendevsociety@gmail.com.
-                        </p>
-                    </div>
-                </section>
-
-                {/* 04 Recognition */}
-                <section id="recognition" className="mb-24">
-                    <span className="font-mono text-xs font-bold uppercase tracking-widest text-gray-400 mb-6 block border-b border-gray-200 pb-2">// 04_RECOGNITION_PROTOCOL</span>
-                    <p className="mb-6">We believe in celebrating contributions!</p>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                        <div className="p-4 border border-dashed border-gray-300">
-                            <span className="block text-2xl mb-2">📜</span>
-                            <span className="text-xs font-bold uppercase">Public Credits</span>
-                        </div>
-                        <div className="p-4 border border-dashed border-gray-300">
-                            <span className="block text-2xl mb-2">📣</span>
-                            <span className="text-xs font-bold uppercase">Social Shoutouts</span>
-                        </div>
-                        <div className="p-4 border border-dashed border-gray-300">
-                            <span className="block text-2xl mb-2">🏅</span>
-                            <span className="text-xs font-bold uppercase">Badges</span>
-                        </div>
-                        <div className="p-4 border border-dashed border-gray-300">
-                            <span className="block text-2xl mb-2">👕</span>
-                            <span className="text-xs font-bold uppercase">Swag / Merch</span>
-                        </div>
-                    </div>
-                </section>
-
-                {/* 05 FAQ */}
-                <section className="mb-24">
-                    <span className="font-mono text-xs font-bold uppercase tracking-widest text-gray-400 mb-6 block border-b border-gray-200 pb-2">// 05_SUPPORT_LOG</span>
-                    <div className="space-y-6">
-                        <div>
-                            <h4 className="font-bold flex items-center gap-2"><Terminal className="w-4 h-4" /> General Questions?</h4>
-                            <p className="text-sm pl-6">Open a GitHub Discussion or ask in Discord.</p>
-                        </div>
-                        <div>
-                            <h4 className="font-bold flex items-center gap-2"><Bug className="w-4 h-4" /> Found a bug?</h4>
-                            <p className="text-sm pl-6">Open an issue with the label 'bug' on the relevant repository.</p>
-                        </div>
-                    </div>
-                </section>
-
-            </div>
-
-            {/* Footer */}
-            <footer className="mt-20 pt-10 border-t border-dashed border-gray-300 text-center font-mono text-xs text-gray-500">
-                <p className="mb-4">OPEN_DEV_SOCIETY // OPERATION_HANDBOOK_V1</p>
-                <div className="flex justify-center gap-4 mb-4">
-                    <Link href="/manifesto" className="underline decoration-dashed hover:decoration-solid">READ_MANIFESTO</Link>
-                    <a href="https://github.com/Open-Dev-Society" className="underline decoration-dashed hover:decoration-solid">GITHUB</a>
-                </div>
-                <p>"Let's build the future together, openly."</p>
-            </footer>
+      <Section id="roles">
+        <SectionHeader
+          eyebrow="Not a coder?"
+          count={`${roles.length} ways in`}
+          title="Code is one way in. Here are four more."
+          description="Writers, designers, teachers and creators ship here too. Every contribution is credited by name."
+        />
+        <div className="grid grid-cols-1 gap-(--grid-gap) md:grid-cols-2 lg:grid-cols-6">
+          {roles.map((r, i) => (
+            <Card key={r.id} className={`flex flex-col ${i < 3 ? "lg:col-span-2" : "lg:col-span-3"}`}>
+              <div id={r.id} className="scroll-mt-24" />
+              <h3 className="t-title text-(--fg)">{r.title}</h3>
+              <p className="t-meta mt-1 text-(--fg-subtle)">{r.who}</p>
+              <ul className="mt-5 flex-1 space-y-1.5 text-sm text-(--fg-muted)">
+                {r.tasks.map((t) => (
+                  <li key={t}>{t}</li>
+                ))}
+              </ul>
+              <a href={r.link.href} className="ink-link t-meta mt-6 inline-flex min-h-11 items-center self-start" {...ext}>
+                {r.link.label} ↗
+              </a>
+            </Card>
+          ))}
         </div>
-    )
+      </Section>
+
+      <Section id="review" tone="muted">
+        <SectionHeader
+          eyebrow="Review"
+          count={`${review.length} steps`}
+          title="How review works."
+          description="Every pull request is reviewed in the open, by a maintainer, on GitHub."
+        />
+        <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
+          <Steps className="lg:col-span-9 lg:col-start-4" items={review} />
+        </div>
+      </Section>
+
+      <Section id="values">
+        <SectionHeader
+          eyebrow="Conduct"
+          count={`${values.length} values`}
+          title={
+            <span id="conduct" className="scroll-mt-24">
+              Code of conduct.
+            </span>
+          }
+          description="Be respectful and welcoming. Harassment and discrimination are not tolerated, anywhere we work."
+        />
+        <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
+          <div className="lg:col-span-9 lg:col-start-4">
+            <dl className="grid grid-cols-1 border-t border-(--line) md:grid-cols-2 md:gap-x-(--grid-gap)">
+              {values.map(([v, line]) => (
+                <div key={v} className="border-b border-(--line) py-4">
+                  <dt className="font-semibold text-(--fg)">{v}</dt>
+                  <dd className="mt-1 text-(--fg-muted)">{line}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="mt-8 text-(--fg-muted)">
+              Report anything to{" "}
+              <a href={`mailto:${contactEmail}`} className="ink-link">
+                {contactEmail}
+              </a>
+              .{" "}
+              <a href={CONDUCT} className="ink-link whitespace-nowrap" {...ext}>
+                Read the full code of conduct ↗
+              </a>
+            </p>
+          </div>
+        </div>
+      </Section>
+
+      <Section id="questions" className="pt-0">
+        <SectionHeader eyebrow="Questions" count={`${questions.length} answers`} title="Questions, answered." />
+        <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
+          <div className="divide-y divide-(--line) border-y border-(--line) lg:col-span-9 lg:col-start-4">
+            {questions.map((f) => (
+              <details
+                key={f.q}
+                className="group [interpolate-size:allow-keywords] [&::details-content]:h-0 [&::details-content]:overflow-hidden [&::details-content]:transition-[height,content-visibility] [&::details-content]:[transition-behavior:allow-discrete] [&::details-content]:duration-(--d-3) [&::details-content]:ease-(--ease-in-out) open:[&::details-content]:h-auto"
+              >
+                <summary className="t-title flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 py-5 text-(--fg) [&::-webkit-details-marker]:hidden">
+                  {f.q}
+                  <ChevronDown
+                    aria-hidden
+                    className="size-5 shrink-0 text-(--fg-subtle) transition-transform duration-(--d-3) ease-(--ease-in-out) group-open:rotate-180"
+                    strokeWidth={1.75}
+                  />
+                </summary>
+                <p className="max-w-[64ch] pb-6 text-(--fg-muted)">{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </Section>
+    </>
+  );
 }
