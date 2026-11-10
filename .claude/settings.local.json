@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(curl -s -o nul -w \"HTTP %{http_code}\\\\n\" http://localhost:3000/certificate)",
+      "Bash(curl -s http://localhost:3000/certificate)",
+      "Bash(curl -s -o nul -w \"GET /certificate -> HTTP %{http_code}, redirect: %{redirect_url}\\\\n\" http://localhost:3000/certificate)",
+      "Bash(curl -s -o nul -w \"GET /certificate/login -> HTTP %{http_code}\\\\n\" http://localhost:3000/certificate/login)",
+      "Bash(curl -s -I http://localhost:3000/certificate)",
+      "Bash(curl -s -o nul -w \"HTTP %{http_code}\\\\n\" http://localhost:3000/api/certs)",
+      "Bash(curl -s -o nul -w \"HTTP %{http_code}\\\\n\" http://localhost:3000/verify/ODS-TEST-FAKE)",
+      "Bash(curl -s -o nul -w \"HTTP %{http_code} loc=%{redirect_url}\\\\n\" http://localhost:3000/certificate/manage)",
+      "Bash(curl -s -o nul -w \"HTTP %{http_code} loc=%{redirect_url}\\\\n\" http://localhost:3000/certificate)",
+      "Bash(curl -s -o nul -w \"GET /certificate -> %{http_code}\\\\n\" http://localhost:3000/certificate)",
+      "Bash(curl -s -o nul -w \"GET /verify/X -> %{http_code}\\\\n\" http://localhost:3000/verify/X)"
+    ]
+  }
+}
