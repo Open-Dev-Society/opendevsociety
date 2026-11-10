@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { CopyButton } from "@/app/(site)/manifesto/CopyButton";
-import type { OrgRepo } from "@/lib/github";
+import type { Issue, OrgRepo } from "@/lib/github";
 import { FORK_COMMAND } from "../Footer";
 import { LabButton } from "../lab-hero/LabButton";
 import { Plate } from "../lab/Plate";
 import { Container } from "../Section";
-import type { Issue } from "./data";
+
 import { band, display, ext, focus, label } from "./ui";
 
 // The /contribute role anchors (ids on its "Not a coder?" rows).

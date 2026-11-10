@@ -1,5 +1,5 @@
 import { ago } from "@/lib/format";
-import type { Activity } from "./data";
+import type { Activity } from "@/lib/github";
 import { TypeLine } from "./live";
 import { Container } from "../Section";
 import { band, display, ext, focus, label } from "./ui";
@@ -31,7 +31,7 @@ export function Now({ activity, now }: { activity: Activity[]; now: number }) {
 
         <ol className="border-t border-(--fg) lg:col-span-8">
           {feed.map((a, i) => (
-            <li key={`${a.url}-${a.at}`} className={i > 4 ? "max-sm:hidden" : ""}>
+            <li key={`${a.url}-${a.at}`} className={i > 3 ? "max-sm:hidden" : ""}>
               <a
                 href={a.url}
                 {...ext}

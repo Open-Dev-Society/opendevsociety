@@ -1,8 +1,8 @@
-import { getOrgTotals } from "@/lib/github";
+import { getActivity, getCommitsThisWeek, getGoodFirstIssues, getOrgTotals } from "@/lib/github";
 import { getWorkshop } from "@/lib/workshop";
 import { DitherEdge } from "../lab/DitherEdge";
 import { About } from "./About";
-import { getActivity, getCommitsThisWeek, getGoodFirstIssues } from "./data";
+
 import { Founders } from "./Founders";
 import { Now } from "./Now";
 import { People } from "./People";
