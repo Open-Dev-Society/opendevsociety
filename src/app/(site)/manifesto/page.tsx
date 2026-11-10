@@ -130,7 +130,7 @@ export default async function Manifesto() {
   const body = "text-[17px] leading-[1.7] text-(--fg) hyphens-auto sm:text-justify [&>p+p]:indent-6";
 
   return (
-    <article className="mx-auto w-full max-w-(--container) px-(--gutter) pt-10 pb-24 lg:pt-14 lg:pb-32">
+    <article data-grid="Manifesto" className="mx-auto w-full max-w-(--container) px-(--gutter) pt-10 pb-24 lg:pt-14 lg:pb-32">
       {/* The header strip: what this is, before anything else. */}
       <header className="border-y-[3px] border-double border-(--fg) py-2.5">
         <p className="t-mono flex flex-wrap justify-between gap-x-6 gap-y-1 text-[12px] text-(--fg-muted)">

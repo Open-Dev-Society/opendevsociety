@@ -57,7 +57,7 @@ export default async function ContributorsPage() {
   const total = contributors.reduce((n, r) => n + r.contributions, 0);
 
   return (
-    <div className="mx-auto w-full max-w-(--container) px-(--gutter) pt-14 pb-24 lg:pt-20">
+    <div data-grid="Contributors" className="mx-auto w-full max-w-(--container) px-(--gutter) pt-14 pb-24 lg:pt-20">
       <Record
         name="Contributors"
         as="h1"
@@ -92,7 +92,7 @@ export default async function ContributorsPage() {
         ))}
       </ol>
 
-      <section aria-labelledby="ledger" className="mt-24">
+      <section data-grid="All contributors" aria-labelledby="ledger" className="pt-24">
         <div className="border-t-[3px] border-double border-(--fg)" />
         <h2 id="ledger" className="t-mono mt-3 text-[12px] text-(--fg-muted)">
           ALL CONTRIBUTORS · <span className="text-(--fg)">{contributors.length}</span> people · <span className="text-(--fg)">{total.toLocaleString("en-US")}</span> commits

@@ -203,7 +203,7 @@ export default async function Contribute() {
   ];
 
   return (
-    <article className="mx-auto w-full max-w-(--container) px-(--gutter) pt-10 pb-(--section-y) md:pt-16">
+    <article data-grid="Contribute" className="mx-auto w-full max-w-(--container) px-(--gutter) pt-10 pb-(--section-y) md:pt-16">
       {/* The header: a ruled form with the facts at a glance. */}
       <header className="border-y-[3px] border-double border-(--fg)">
         <div className="t-mono flex flex-wrap justify-between gap-x-6 gap-y-1 border-b border-(--line) py-2.5 text-[12px] text-(--fg-subtle)">
