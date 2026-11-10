@@ -57,18 +57,6 @@ function useCalm() {
   );
 }
 
-function useDesktop() {
-  return useSyncExternalStore(
-    (cb) => {
-      const q = matchMedia("(min-width: 1024px)");
-      q.addEventListener("change", cb);
-      return () => q.removeEventListener("change", cb);
-    },
-    () => matchMedia("(min-width: 1024px)").matches,
-    () => false,
-  );
-}
-
 /**
  * A token that crossfades (opacity + 3px) under a --mark flash when its value changes after the first paint.
  * `shown` is how many characters are printed so far; the rest keeps its width but is invisible, so wrapping never jumps.
@@ -307,7 +295,6 @@ export function Bench({
   /** the "Not a coder?" link: "/contribute" on Home, an in-page anchor on /contribute */
   notCoderHref?: string;
 }) {
-  const desktop = useDesktop();
   const reduce = useCalm();
   const [handle] = useHandle();
   const [pick, setPick] = useState(repos[0]?.name ?? "OpenStock");
@@ -341,13 +328,13 @@ export function Bench({
     setTimeout(tick, LINE_MS);
   }, []);
 
+  // Both placements (phone, desktop) attach; the hidden one never intersects, so whichever is visible starts it.
   const attach = useCallback(
     (el: HTMLElement | null) => {
-      io.current?.disconnect();
       if (!el || started.current) return;
-      io.current = new IntersectionObserver(
-        ([e]) => {
-          if (!e.isIntersecting) return;
+      io.current ??= new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((e) => e.isIntersecting)) return;
           io.current?.disconnect();
           print();
         },
@@ -390,7 +377,7 @@ export function Bench({
                     onChange={setPick}
                     options={repos.map((r) => ({ value: r.name, label: r.name, count: r.openIssues }))}
                   />
-                  {!desktop && terminal}
+                  <div className="lg:hidden">{terminal}</div>
                 </div>
               ),
             },
@@ -408,17 +395,15 @@ export function Bench({
             },
           ]}
         />
-        {!desktop && <div className="mt-6">{notCoder}</div>}
+        <div className="mt-6 lg:hidden">{notCoder}</div>
       </div>
 
-      {desktop && (
-        <div className={cn("min-w-0 lg:col-span-7")}>
-          <div className="sticky top-24 space-y-5">
-            {terminal}
-            {notCoder}
-          </div>
+      <div className="min-w-0 max-lg:hidden lg:col-span-7">
+        <div className="sticky top-24 space-y-5">
+          {terminal}
+          {notCoder}
         </div>
-      )}
+      </div>
     </div>
   );
 }

@@ -6,14 +6,15 @@ import {
   FORK_COMMAND,
   Masthead,
   PartnerCard,
-  Print,
   Quote,
   RepoIndex,
   RepoTile,
   Section,
   SectionHeader,
   SectionLink,
+  Showpiece,
   SourceLine,
+  StatRow,
   Wall,
 } from "@/components/site";
 import { mentions } from "@/data/mentions";
@@ -64,95 +65,131 @@ const partnerLines: Record<string, string> = {
 };
 
 export default async function Home() {
-  const { now, tools, index, featured, builders, people, lastPush, thisWeek, benchRepos, openstockPrint } = await getWorkshop();
+  const [{ now, tools, index, featured, builders, people, lastPush, thisWeek, benchRepos, openstockPrint }, totals] = await Promise.all([
+    getWorkshop(),
+    getOrgTotals(),
+  ]);
   const seat = people.length + 1;
+  const [lead, second, third] = featured;
 
   return (
     <>
-      {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="mx-auto w-full max-w-(--container) px-(--gutter) pt-16 lg:pt-24">
-        <p className="rise t-meta flex flex-wrap items-center gap-x-2 gap-y-1 text-(--fg-muted)" style={{ "--i": 0 } as React.CSSProperties}>
-          <span>Est. July 2024</span>
-          <span aria-hidden>·</span>
-          <span className="tabular-nums">{tools.length} tools</span>
-          <span aria-hidden>·</span>
-          <span className="tabular-nums">{people.length} builders</span>
-          <span aria-hidden>·</span>
-          <span className="inline-flex items-center gap-1.5 tabular-nums">
-            {isLive(lastPush, now) && <span className="size-1.5 rounded-full bg-(--live)" aria-hidden />}
-            last commit {ago(lastPush, now)}
-          </span>
-        </p>
-        <h1 className="rise display-1 mt-6 max-w-[14ch] text-(--fg)" style={{ "--i": 1 } as React.CSSProperties}>
-          Software for everyone, built by <span className="sign text-(--accent)">anyone who shows up.</span>
-        </h1>
-        <p className="rise t-lede mt-6 max-w-[52ch] text-(--fg-muted)" style={{ "--i": 2 } as React.CSSProperties}>
-          A public workshop of developers, designers and writers making free, open-source tools. No paywalls. No interviews. Send a
-          pull request and you&apos;re one of us.
-        </p>
-        <div className="rise mt-8 flex flex-col gap-3 sm:flex-row sm:items-center" style={{ "--i": 3 } as React.CSSProperties}>
-          <Button href="#start" size="lg" icon="arrow">
-            Make your first PR
-          </Button>
-          <CopyCommand command={FORK_COMMAND} className="sm:w-[24rem]" />
+      {/* ── Hero: headline split (Linear), the showpiece on the ink plate (Cursor), the proof row (Stripe) ── */}
+      <section className="pt-12 lg:pt-14">
+        <div className="mx-auto grid w-full max-w-(--container) grid-cols-1 gap-y-6 px-(--gutter) lg:grid-cols-12 lg:items-end lg:gap-x-(--grid-gap)">
+          <div className="lg:col-span-8">
+            <p className="rise t-meta text-(--fg-muted)" style={{ "--i": 0 } as React.CSSProperties}>
+              Open Dev Society · est. July 2024
+            </p>
+            <h1 className="rise display-1 mt-5 max-w-[14ch] text-(--fg)" style={{ "--i": 1 } as React.CSSProperties}>
+              Software for everyone, built by{" "}
+              <span className="sign text-(--accent)">
+                <span className="mark-sweep">anyone who shows up.</span>
+              </span>
+            </h1>
+          </div>
+          <div className="lg:col-span-4 lg:pb-2">
+            <p className="rise t-lede max-w-[44ch] text-(--fg-muted)" style={{ "--i": 2 } as React.CSSProperties}>
+              A public workshop of developers, designers and writers making free, open-source tools. No paywalls. No interviews. Send a
+              pull request and you&apos;re one of us.
+            </p>
+            <div className="rise mt-6 flex flex-col gap-3" style={{ "--i": 3 } as React.CSSProperties}>
+              <Button href="#start" size="lg" icon="arrow" className="sm:self-start">
+                Make your first PR
+              </Button>
+              <CopyCommand command={FORK_COMMAND} className="w-full" />
+            </div>
+          </div>
         </div>
-        <Print className="rise mt-12 lg:mt-16" priority {...openstockPrint} />
+
+        <div className="rise mx-auto mt-12 w-full max-w-[88rem] px-(--gutter) lg:mt-14" style={{ "--i": 3 } as React.CSSProperties}>
+          <Showpiece {...openstockPrint} />
+        </div>
+
+        <div className="mx-auto mt-16 w-full max-w-(--container) px-(--gutter) lg:mt-20">
+          <StatRow
+            items={[
+              { value: compact(totals.stars), label: "stars across the org" },
+              { value: compact(totals.forks), label: "forks" },
+              { value: String(people.length), label: "builders, by name" },
+              { value: String(tools.length), label: "free tools" },
+              { value: ago(lastPush, now), label: "since the last commit", live: isLive(lastPush, now) },
+            ]}
+          />
+        </div>
       </section>
 
-      {/* ── Work: the shelf ──────────────────────────────────── */}
+      {/* ── Work: the showcase (Stripe bento, Works captions), then the whole shelf ── */}
       <Section id="work">
         <SectionHeader
+          layout="split"
           eyebrow="Work"
           count={`${tools.length} tools`}
           title={`${tools.length} tools. 0 paywalls.`}
           description={
             thisWeek.length ? `Free to use, free to fork. Pushed to this week: ${listNames(thisWeek)}.` : "Free to use, free to fork."
           }
+          link={{ href: "/projects", label: "All tools" }}
         />
-        <div className="-mx-(--gutter) flex snap-x snap-mandatory scroll-px-(--gutter) gap-3 overflow-x-auto px-(--gutter) pb-2 lg:mx-0 lg:grid lg:grid-cols-3 lg:gap-(--grid-gap) lg:overflow-visible lg:px-0 lg:pb-0">
-          {featured.map(({ repo, shot }) => (
-            <RepoTile key={repo.name} repo={repo} shot={shot} className="w-[78vw] max-w-sm shrink-0 snap-start lg:w-auto lg:max-w-none" />
-          ))}
+        <div className="grid grid-cols-1 gap-x-(--grid-gap) gap-y-12 lg:grid-cols-12 lg:gap-y-16">
+          {lead && <RepoTile variant="plate" {...lead} repo={lead.repo} className="lg:col-span-7 lg:h-[34rem]" />}
+          {second && <RepoTile variant="plate" {...second} repo={second.repo} className="lg:col-span-5 lg:h-[34rem]" />}
+          {third && <RepoTile variant="plate" {...third} repo={third.repo} className="lg:col-span-12 lg:h-[22rem]" />}
         </div>
-        <div className="mt-16">
+
+        <div className="mt-20 lg:mt-28">
+          <h3 className="t-title mb-6 text-(--fg)">
+            The whole shelf <span className="t-mono ml-1 text-(--fg-subtle)">{index.length}</span>
+          </h3>
           <RepoIndex repos={index} />
         </div>
         <SectionLink href="/projects">All tools</SectionLink>
       </Section>
 
-      {/* ── People: the wall ─────────────────────────────────── */}
+      {/* ── People: the wall, one centred column ────────────── */}
       <Section id="people" tone="muted">
         <SectionHeader
+          layout="center"
           eyebrow="People"
           count={`${people.length} builders`}
           title={`${people.length} people built all of this. Seat ${seat} is yours.`}
           description="Every merged pull request puts a face on this wall. No interview, no invite."
         />
         <Wall builders={builders} size="home" />
-        <Masthead className="mt-8" />
-        <SectionLink href="/contributors">Everyone, by name</SectionLink>
+        <Masthead className="mx-auto mt-10 max-w-3xl text-center" />
+        <SectionLink href="/contributors" className="justify-center">Everyone, by name</SectionLink>
       </Section>
 
-      {/* ── Start: the bench ─────────────────────────────────── */}
-      <Section id="start" tone="inverse">
-        <SectionHeader eyebrow="Start" count="3 commands" title="Three commands from here to the wall." />
+      {/* ── Start: the bench, in the lit inkwell (Resend) ───── */}
+      <Section id="start" tone="inverse" className="ink-wash">
+        <SectionHeader
+          layout="split"
+          eyebrow="Start"
+          count="3 commands"
+          title="Three commands from here to the wall."
+          description="Pick a repo with open issues. The bench writes the commands with it, and with your handle once you claim a seat."
+        />
         <Bench repos={benchRepos} />
       </Section>
 
-      {/* ── Word of mouth ────────────────────────────────────── */}
+      {/* ── Word of mouth: one voice, credit roll (cinematic), then two ── */}
       <Section id="signal">
-        <SectionHeader eyebrow="Word of mouth" count={`${mentions.length} mentions`} title="What people wrote when they found it." />
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-(--grid-gap)">
-          <Quote variant="feature" className="lg:col-span-8 lg:pr-12" quote={quotes[0].text} name={quotes[0].name} source={quotes[0].source} year={quotes[0].year} href={quotes[0].href} />
-          <div className="flex flex-col gap-10 lg:col-span-4">
-            {quotes.slice(1).map((q) => (
-              <Quote key={q.href} quote={q.text} name={q.name} source={q.source} year={q.year} href={q.href} />
-            ))}
-          </div>
+        <SectionHeader
+          layout="split"
+          eyebrow="Word of mouth"
+          count={`${mentions.length} mentions`}
+          title="What people wrote when they found it."
+          link={{ href: "/word-of-mouth", label: `All ${mentions.length} mentions` }}
+        />
+        <Quote variant="cinematic" className="py-6 lg:py-12" quote={quotes[0].text} name={quotes[0].name} source={quotes[0].source} year={quotes[0].year} href={quotes[0].href} />
+        <div className="mt-16 grid grid-cols-1 gap-x-(--grid-gap) gap-y-10 md:grid-cols-2">
+          {quotes.slice(1).map((q) => (
+            <Quote key={q.href} className="border-t border-(--line) pt-8" quote={q.text} name={q.name} source={q.source} year={q.year} href={q.href} />
+          ))}
         </div>
         <SourceLine className="mt-12" items={outlets} all={{ label: `All ${mentions.length} mentions`, href: "/word-of-mouth" }} />
 
-        <h3 className="t-title mt-16 text-(--fg)">Who backs the work</h3>
+        <h3 className="t-title mt-20 text-(--fg)">Who backs the work</h3>
         <div className="mt-6 grid grid-cols-1 gap-(--grid-gap) md:grid-cols-3">
           {partners.map((p) => (
             <PartnerCard key={p.name} name={p.name} logo={p.logo} invertLogo={p.invertLogo} href={p.url} line={partnerLines[p.name] ?? p.description} />
@@ -168,4 +205,3 @@ export default async function Home() {
     </>
   );
 }
-
