@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Badge, Button, Quote, Section, Steps } from "@/components/site";
 import { social } from "@/content";
-import { catalog } from "@/data/catalog";
 import { manualContributors } from "@/data/contributors";
-import { getOrgContributors, getOrgRepos } from "@/lib/github";
+import { getWorkshop } from "@/lib/workshop";
 
 export const revalidate = 3600;
 
@@ -37,8 +36,7 @@ const h2 = "display-3 text-(--fg)";
 const body = "text-[17px] leading-[1.7] text-(--fg-muted)";
 
 export default async function Manifesto() {
-  const [repos, people] = await Promise.all([getOrgRepos(), getOrgContributors()]);
-  const tools = repos.filter((r) => catalog[r.name]);
+  const { tools, people } = await getWorkshop();
   const has = (name: string) => tools.some((r) => r.name === name);
   const founder = manualContributors.find((c) => c.role && /^(?!.*Co-Founder).*Founder/i.test(c.role));
 
@@ -82,7 +80,7 @@ export default async function Manifesto() {
         </div>
       </header>
 
-      <Section containerClassName="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
+      <Section className="pt-16 lg:pt-24" containerClassName="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
         <div className={col}>
           <h2 className={h2}>Four rules.</h2>
           <Steps className="mt-8" items={rules} />
