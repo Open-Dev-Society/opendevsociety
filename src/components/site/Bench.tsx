@@ -44,12 +44,17 @@ const agentPrompt = (repo: string, handle: string): Seg[] => [
 
 const plain = (segs: Seg[]) => segs.map((s) => s.s).join("");
 
-/** prefers-reduced-motion, but false until mounted so the first client render matches the server's. */
+/** prefers-reduced-motion. False on the server and during hydration, so the first client render matches it. */
 function useCalm() {
-  const reduce = useReducedMotion();
-  const [calm, setCalm] = useState(false);
-  useEffect(() => setCalm(reduce === true), [reduce]);
-  return calm;
+  return useSyncExternalStore(
+    (cb) => {
+      const q = matchMedia("(prefers-reduced-motion: reduce)");
+      q.addEventListener("change", cb);
+      return () => q.removeEventListener("change", cb);
+    },
+    () => matchMedia("(prefers-reduced-motion: reduce)").matches,
+    () => false,
+  );
 }
 
 function useDesktop() {
@@ -71,19 +76,21 @@ function useDesktop() {
 function Tok({ seg, shown, className }: { seg: Seg; shown: number; className?: string }) {
   const reduce = useReducedMotion();
   const value = seg.s;
-  const prev = useRef(value);
+  const [seen, setSeen] = useState(value);
   const [gen, setGen] = useState(0);
   const [flash, setFlash] = useState(false);
 
+  // Value changed since last render: re-key (crossfade) and start the flash. Derived during render, no effect.
+  if (seen !== value) {
+    setSeen(value);
+    setGen(gen + 1);
+    setFlash(seg.k !== "handle" && !reduce); // the handle chip is already --mark; it only crossfades
+  }
   useEffect(() => {
-    if (prev.current === value) return;
-    prev.current = value;
-    setGen((g) => g + 1);
-    if (seg.k === "handle" || reduce) return; // the handle chip is already --mark; it only crossfades
-    setFlash(true);
+    if (!flash) return;
     const id = requestAnimationFrame(() => requestAnimationFrame(() => setFlash(false)));
     return () => cancelAnimationFrame(id);
-  }, [value, seg.k, reduce]);
+  }, [flash]);
 
   const n = Math.min(shown, value.length);
   const chip = seg.k === "handle";
@@ -116,12 +123,10 @@ function Tok({ seg, shown, className }: { seg: Seg; shown: number; className?: s
 }
 
 function Segs({ segs, shown }: { segs: Seg[]; shown: number }) {
-  let left = shown;
   return (
     <>
       {segs.map((seg, i) => {
-        const n = left;
-        left = Math.max(0, left - seg.s.length);
+        const n = Math.max(0, shown - segs.slice(0, i).reduce((a, x) => a + x.s.length, 0));
         return seg.k === "t" ? (
           <span key={i}>
             {seg.s.slice(0, n)}
@@ -204,11 +209,9 @@ function Terminal({
   }, [mode]);
 
   // chars printed per line; the caret sits on the line being printed
-  let before = 0;
-  const shown = lens.map((len) => {
-    const n = done ? len : Math.max(0, Math.min(len, typed - before));
-    before += len;
-    return n;
+  const shown = lens.map((len, i) => {
+    const before = lens.slice(0, i).reduce((a, b) => a + b, 0);
+    return done ? len : Math.max(0, Math.min(len, typed - before));
   });
   const active = done ? lines.length - 1 : Math.max(0, shown.findIndex((n, i) => n < lens[i]));
 
