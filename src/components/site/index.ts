@@ -3,7 +3,7 @@ export { Container, Section, SectionHeader, SectionLink, Eyebrow } from "./Secti
 export { Button } from "./Button";
 export { Card, Badge } from "./Card";
 export { Quote, cleanQuote } from "./Quote";
-export { StatGroup, compact, type StatItem } from "./Stat";
+export { StatGroup, StatRow, compact, type StatItem } from "./Stat";
 export { Avatar, AvatarStack, sizedAvatar, type Person } from "./Avatar";
 export { CopyCommand } from "./CopyCommand";
 export { Nav, type NavLink } from "./Nav";
@@ -21,3 +21,4 @@ export { Tooltip } from "./Tooltip";
 export { Wall, type Builder } from "./Wall";
 export { Bench } from "./Bench";
 export { Masthead } from "./Masthead";
+export { Plate, Showpiece } from "./Plate";
