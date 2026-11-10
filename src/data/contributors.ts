@@ -3,7 +3,7 @@ export interface Contributor {
     name?: string;
     avatar_url: string;
     html_url: string;
-    role?: string; // e.g., "Core Operator", "Maintainer", "Algorithmist"
+    role?: string; // "Founder", "Co-Founder" or "Maintainer" (maintainers not in GitHub's stats are added by getOrgContributors)
     twitter?: string;
     type: 'User' | 'Bot';
 }
@@ -30,7 +30,7 @@ export const manualContributors: Contributor[] = [
         name: "Bipin kumar Madhur",
         avatar_url: "https://github.com/bipin325.png",
         html_url: "https://github.com/bipin325",
-        role: "Core Maintainer",
+        role: "Maintainer",
         type: "User"
     },
     {
@@ -38,7 +38,7 @@ export const manualContributors: Contributor[] = [
         name: "Mahin Chauhan",
         avatar_url: "https://github.com/error404p.png",
         html_url: "https://github.com/error404p",
-        role: "Core Maintainer",
+        role: "Maintainer",
         type: "User"
     },
     // Add more manual entries here
