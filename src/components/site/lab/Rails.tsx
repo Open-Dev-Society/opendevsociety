@@ -33,13 +33,16 @@ function measure(site: HTMLElement): Sheet {
     at = bottom;
   }
   if (at < height) bands.push({ top: at, bottom: height, tone: "" });
-  const refs = [...document.querySelectorAll<HTMLElement>("[data-grid]")].map((el, i) => ({
-    y: Math.round(el.getBoundingClientRect().top + y),
-    letter: String.fromCharCode(65 + i),
-    name: el.dataset.grid ?? "",
-    tone: toneOf(el.closest(".tone-inverse, .tone-emerald")),
-  }));
-  return { height, start, bands, refs: refs.filter((r) => r.y >= start) };
+  const refs = [...document.querySelectorAll<HTMLElement>("[data-grid]")]
+    .map((el) => ({ el, y: Math.round(el.getBoundingClientRect().top + y) }))
+    .filter((r) => r.y >= start)
+    .map(({ el, y }, i) => ({
+      y,
+      letter: String.fromCharCode(65 + i),
+      name: el.dataset.grid ?? "",
+      tone: toneOf(el.closest(".tone-inverse, .tone-emerald")),
+    }));
+  return { height, start, bands, refs };
 }
 
 /**
