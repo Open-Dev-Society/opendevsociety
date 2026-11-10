@@ -4,6 +4,7 @@ import {
   Button,
   CopyCommand,
   FORK_COMMAND,
+  Masthead,
   PartnerCard,
   Print,
   Quote,
@@ -14,14 +15,12 @@ import {
   SectionLink,
   SourceLine,
   Wall,
-  type IndexRepo,
 } from "@/components/site";
-import { catalog } from "@/data/catalog";
-import { manualContributors } from "@/data/contributors";
 import { mentions } from "@/data/mentions";
 import { partners } from "@/data/partners";
 import { ago, compact, isLive } from "@/lib/format";
-import { getOrgContributors, getOrgRepos, getOrgTotals } from "@/lib/github";
+import { getOrgContributors, getOrgTotals } from "@/lib/github";
+import { getWorkshop, listNames } from "@/lib/workshop";
 
 // Matches the GitHub lib's cache, so "last commit 14h ago" stays true.
 export const revalidate = 3600;
@@ -34,8 +33,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const list = (xs: string[]) => (xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}`);
-const DAY = 864e5;
 
 // Brief §10 §5: the three quotes, excerpted with honest ellipses, matched to their mention for source, year and link.
 const quotes = [
@@ -66,73 +63,9 @@ const partnerLines: Record<string, string> = {
   "Atlas Cloud": "One API for hundreds of models.",
 };
 
-function masthead() {
-  const by = (re: RegExp) => manualContributors.filter((c) => c.role && re.test(c.role));
-  const sign = (cs: typeof manualContributors) =>
-    cs.map((c, i) => (
-      <span key={c.login}>
-        {i > 0 && (i === cs.length - 1 ? " and " : ", ")}
-        <a href={c.html_url} target="_blank" rel="noopener noreferrer" className="sign text-(--fg) hover:text-(--accent)">
-          {c.name}
-        </a>
-      </span>
-    ));
-  return (
-    <p className="text-sm text-(--fg-muted)">
-      Founded by {sign(by(/^(?!.*Co-Founder).*Founder/i))}. Co-founded by {sign(by(/Co-Founder/i))}. Maintained with {sign(by(/Maintainer/i))}.
-    </p>
-  );
-}
-
-// Data loading lives outside the component so render stays pure; the page revalidates hourly anyway.
-async function load() {
-  const [repos, people] = await Promise.all([getOrgRepos(), getOrgContributors()]);
-  return { repos, people, now: Date.now() };
-}
-
 export default async function Home() {
-  const { repos, people, now } = await load();
-
-  const builtBy = (name: string) => people.filter((p) => p.repos.includes(name));
-  const tools = repos.filter((r) => catalog[r.name]);
-  const lastPush = tools.reduce((a, r) => (r.pushed_at > a ? r.pushed_at : a), "");
-  const thisWeek = tools.filter((r) => now - Date.parse(r.pushed_at) < 7 * DAY).map((r) => r.name);
-
-  const summary = (r: (typeof tools)[number]) => ({
-    name: r.name,
-    url: r.html_url,
-    tagline: catalog[r.name].tagline,
-    language: r.language,
-    pushedAgo: ago(r.pushed_at, now),
-    stars: r.stars,
-    builders: builtBy(r.name).length,
-    badge: catalog[r.name].badge,
-  });
-  const index: IndexRepo[] = [...tools]
-    .sort((a, b) => Number(b.name === "OpenStock") - Number(a.name === "OpenStock") || b.stars - a.stars || b.pushed_at.localeCompare(a.pushed_at))
-    .map((r) => ({ ...summary(r), audience: catalog[r.name].audience, goodFirst: r.good_first_issues }));
-  const featured = ["kine-ui", "openreadme", "kitbash"].flatMap((n) => tools.filter((r) => r.name === n));
-
-  const openstock = tools.find((r) => r.name === "OpenStock")!;
-  const osPeople = builtBy("OpenStock");
+  const { now, tools, index, featured, builders, people, lastPush, thisWeek, benchRepos, openstockPrint } = await getWorkshop();
   const seat = people.length + 1;
-
-  // The wall: everyone in the contributor graph, most contributions first; core crew named and ringed.
-  const core = new Map(manualContributors.map((c) => [c.login.toLowerCase(), c]));
-  const builders = people.map((p) => ({
-    login: p.login,
-    name: core.get(p.login.toLowerCase())?.name,
-    avatar: p.avatar_url,
-    url: p.html_url,
-    contributions: p.contributions,
-    repos: p.repos,
-    core: core.has(p.login.toLowerCase()),
-  }));
-  // The bench: public tools with open issues, OpenStock first.
-  const benchRepos = tools
-    .filter((r) => r.open_issues > 0)
-    .sort((a, b) => Number(b.name === "OpenStock") - Number(a.name === "OpenStock") || b.open_issues - a.open_issues)
-    .map((r) => ({ name: r.name, openIssues: r.open_issues }));
 
   return (
     <>
@@ -163,20 +96,7 @@ export default async function Home() {
           </Button>
           <CopyCommand command={FORK_COMMAND} className="sm:w-[24rem]" />
         </div>
-        <Print
-          className="rise mt-12 lg:mt-16"
-          priority
-          desktop={{ src: "/shots/openstock-desktop.jpg", width: 2880, height: 1800 }}
-          mobile={{ src: "/shots/openstock-mobile.jpg", width: 1170, height: 2532 }}
-          alt="OpenStock, live: index prices, the market clock and a chart"
-          url={(openstock.homepage ?? openstock.html_url).replace(/^https?:\/\//, "")}
-          href={openstock.homepage ?? openstock.html_url}
-          name="OpenStock"
-          tagline={catalog.OpenStock.tagline}
-          people={osPeople.map((p) => ({ src: p.avatar_url, name: p.login }))}
-          builders={osPeople.length}
-          stats={`★ ${compact(openstock.stars)} · ${compact(openstock.forks)} forks`}
-        />
+        <Print className="rise mt-12 lg:mt-16" priority {...openstockPrint} />
       </section>
 
       {/* ── Work: the shelf ──────────────────────────────────── */}
@@ -186,12 +106,12 @@ export default async function Home() {
           count={`${tools.length} tools`}
           title={`${tools.length} tools. 0 paywalls.`}
           description={
-            thisWeek.length ? `Free to use, free to fork. Pushed to this week: ${list(thisWeek)}.` : "Free to use, free to fork."
+            thisWeek.length ? `Free to use, free to fork. Pushed to this week: ${listNames(thisWeek)}.` : "Free to use, free to fork."
           }
         />
         <div className="-mx-(--gutter) flex snap-x snap-mandatory scroll-px-(--gutter) gap-3 overflow-x-auto px-(--gutter) pb-2 lg:mx-0 lg:grid lg:grid-cols-3 lg:gap-(--grid-gap) lg:overflow-visible lg:px-0 lg:pb-0">
-          {featured.map((r) => (
-            <RepoTile key={r.name} repo={summary(r)} shot={catalog[r.name].shot} className="w-[78vw] max-w-sm shrink-0 snap-start lg:w-auto lg:max-w-none" />
+          {featured.map(({ repo, shot }) => (
+            <RepoTile key={repo.name} repo={repo} shot={shot} className="w-[78vw] max-w-sm shrink-0 snap-start lg:w-auto lg:max-w-none" />
           ))}
         </div>
         <div className="mt-16">
@@ -209,7 +129,7 @@ export default async function Home() {
           description="Every merged pull request puts a face on this wall. No interview, no invite."
         />
         <Wall builders={builders} size="home" />
-        <div className="mt-8">{masthead()}</div>
+        <Masthead className="mt-8" />
         <SectionLink href="/contributors">Everyone, by name</SectionLink>
       </Section>
 

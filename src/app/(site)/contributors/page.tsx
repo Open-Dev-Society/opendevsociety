@@ -1,170 +1,81 @@
-"use client";
+import type { Metadata } from "next";
+import { ArrowUpRight } from "lucide-react";
+import { Avatar, Ledger, Masthead, Section, SectionHeader, SectionLink, Wall } from "@/components/site";
+import { getWorkshop } from "@/lib/workshop";
 
-import { useState, useEffect } from "react";
-import { Navbar } from "@/components/Navbar";
-import { manualContributors, Contributor } from "@/data/contributors";
-import { featuredModules } from "@/data/projects";
+// Matches the GitHub lib's cache.
+export const revalidate = 3600;
 
-import { getFromCache, saveToCache, CACHE_KEYS } from "@/utils/githubCache";
-import { Terminal, Github, Twitter, Shield, Code2, Cpu, ArrowLeft } from "lucide-react";
-import { motion } from "framer-motion";
-import Link from "next/link";
+export async function generateMetadata(): Promise<Metadata> {
+  const { builders } = await getWorkshop();
+  return {
+    title: `People: ${builders.length} builders, credited by name · Open Dev Society`,
+    description: `Everyone who has shipped code to Open Dev Society, by name and contribution. Seat ${builders.length + 1} is open.`,
+  };
+}
 
-export default function ContributorsPage() {
-    const [contributors, setContributors] = useState<Contributor[]>([]);
-    const [loading, setLoading] = useState(true);
+const MAX_REPOS = 3;
 
-    useEffect(() => {
-        async function fetchAllContributors() {
-            // 1. Try Cache First
-            const cached = getFromCache<Contributor[]>(CACHE_KEYS.CONTRIBUTORS);
-            if (cached) {
-                setContributors(cached);
-                setLoading(false);
-                console.log("Loaded contributors from local cache");
-                return;
-            }
+export default async function PeoplePage() {
+  const { builders } = await getWorkshop();
+  const seat = builders.length + 1;
 
-            const allContributorsMap = new Map<string, Contributor>();
+  return (
+    <>
+      <Section className="pt-16 lg:pt-24">
+        <SectionHeader
+          as="h1"
+          eyebrow="People"
+          count={`${builders.length} builders`}
+          title={`${builders.length} people, credited by name.`}
+          description="Everyone with a merged pull request in an Open Dev Society repo. Hover a face to see what they built."
+        />
+        <Masthead className="mb-8" />
+        <Wall builders={builders} size="page" />
+      </Section>
 
-            // 2. Add Manual Contributors first (they take precedence for roles)
-            manualContributors.forEach(c => {
-                allContributorsMap.set(c.login.toLowerCase(), c);
-            });
-
-            // 3. Fetch from GitHub for each featured module
-            let fetchedCount = 0;
-            await Promise.all(featuredModules.map(async (repoConfig) => {
-                try {
-                    const res = await fetch(`/api/github/repos/Open-Dev-Society/${repoConfig.name}/contributors?per_page=10`);
-                    if (res.ok) {
-                        const data = await res.json();
-                        data.forEach((c: any) => {
-                            if (c.type === 'User') {
-                                fetchedCount++;
-                                const existing = allContributorsMap.get(c.login.toLowerCase());
-                                if (!existing) {
-                                    allContributorsMap.set(c.login.toLowerCase(), {
-                                        login: c.login,
-                                        avatar_url: c.avatar_url,
-                                        html_url: c.html_url,
-                                        type: 'User',
-                                        role: 'Contributor' // Default role
-                                    });
-                                }
-                            }
-                        });
-                    }
-                } catch (e) {
-                    console.warn(`Failed to fetch for ${repoConfig.name}`, e);
-                }
-            }));
-
-
-
-            const finalList = Array.from(allContributorsMap.values());
-            setContributors(finalList);
-            setLoading(false);
-
-            // 5. Save to Cache
-            saveToCache(CACHE_KEYS.CONTRIBUTORS, finalList);
-        }
-
-        fetchAllContributors();
-    }, []);
-
-    return (
-        <div className="min-h-screen bg-white">
-            {/* We reuse the Navbar from layout, but layout wraps children. 
-            Wait, layout.tsx ALREADY adds Navbar. We don't need to add it here. 
-            Checking layout.tsx... Yes, it wraps {children}.
-        */}
-
-            <div className="px-6 py-20 max-w-5xl mx-auto">
-
-                {/* Header */}
-                <header className="mb-20">
-                    <Link href="/" className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-gray-500 hover:text-black transition-colors mb-8">
-                        <ArrowLeft className="w-3 h-3" /> Return_Index
-                    </Link>
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="w-3 h-3 bg-[var(--color-brand-teal)] rounded-full animate-pulse" />
-                        <span className="font-mono text-sm tracking-widest uppercase text-gray-500">System_Personnel // V1.0</span>
-                    </div>
-                    <h1 className="text-5xl md:text-7xl font-serif italic mb-8 leading-[0.9] tracking-tighter">
-                        Active <span className="not-italic font-bold">Operators.</span>
-                    </h1>
-                    <p className="font-mono text-xs text-gray-500 max-w-md">
-                        [DIRECTORY_STATUS: ONLINE] <br />
-                        The architects, maintainers, and contributors building the Open Dev Society.
-                    </p>
-                </header>
-
-                {/* Directory Grid */}
-                {loading ? (
-                    <div className="font-mono text-xs text-gray-400 animate-pulse">
-                        INITIALIZING_DIRECTORY_SCAN...
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {contributors.map((person, i) => (
-                            <motion.div
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: i * 0.05 }}
-                                key={person.login}
-                                className="group border border-dashed border-gray-300 p-6 hover:bg-gray-50 transition-all hover:border-gray-400"
-                            >
-                                <div className="flex items-start justify-between mb-6">
-                                    <img
-                                        src={person.avatar_url}
-                                        alt={person.login}
-                                        className="w-16 h-16 rounded-full border-2 border-white shadow-sm grayscale group-hover:grayscale-0 transition-all"
-                                    />
-                                    <div className="flex gap-2">
-                                        {person.html_url && (
-                                            <Link href={person.html_url} target="_blank" className="text-gray-400 hover:text-black">
-                                                <Github className="w-4 h-4" />
-                                            </Link>
-                                        )}
-                                        {person.twitter && (
-                                            <Link href={person.twitter} target="_blank" className="text-gray-400 hover:text-black">
-                                                <Twitter className="w-4 h-4" />
-                                            </Link>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <h3 className="font-bold font-mono text-lg mb-1">
-                                        {person.name || person.login}
-                                    </h3>
-                                    <div className="flex items-center gap-2 mb-4">
-                                        <span className={`text-[10px] font-mono px-2 py-0.5 border ${person.role?.includes("Founder") || person.role?.includes("Architect")
-                                            ? "bg-black text-white border-black"
-                                            : "bg-gray-100 text-gray-500 border-gray-200"
-                                            } uppercase tracking-wider`}>
-                                            {person.role || "OPERATOR"}
-                                        </span>
-                                    </div>
-
-                                    <div className="text-[10px] font-mono text-gray-400 truncate">
-                                        ID: {person.login}
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                )}
-
-                <div className="mt-20 pt-10 border-t border-dashed border-gray-300 text-center">
-                    <p className="font-serif italic text-2xl mb-6">"Code is the currency. Trust is the network."</p>
-                    <Link href="https://github.com/Open-Dev-Society" target="_blank" className="btn-tech inline-block">
-                        [ JOIN_THE_NETWORK ]
-                    </Link>
-                </div>
-
-            </div>
-        </div>
-    );
+      <Section tone="muted">
+        <SectionHeader eyebrow="The ledger" count={`${builders.length} rows`} title="Who built what." />
+        <Ledger
+          caption="Contributors by number of contributions"
+          columns={[
+            { key: "who", label: "Builder", width: "minmax(0,1fr)" },
+            { key: "n", label: "Contributions", width: "8rem", mono: true, align: "end" },
+            { key: "repos", label: "Repos", width: "minmax(0,16rem)" },
+            { key: "go", label: "", width: "1.5rem", align: "end" },
+          ]}
+          rows={builders.map((b) => ({
+            key: b.login,
+            cells: {
+              who: (
+                <span className="flex min-w-0 items-center gap-3">
+                  <Avatar src={b.avatar} name="" size={32} />
+                  <span className="min-w-0 truncate">
+                    {b.name && <span className="sign mr-2 text-(--fg)">{b.name}</span>}
+                    <a href={b.url} target="_blank" rel="noopener noreferrer" className="t-mono text-(--fg-muted) hover:text-(--fg)">
+                      @{b.login}
+                    </a>
+                  </span>
+                </span>
+              ),
+              n: (
+                <span>
+                  {b.contributions.toLocaleString("en-US")}
+                  <span className="md:hidden"> contributions</span>
+                </span>
+              ),
+              repos:
+                b.repos.slice(0, MAX_REPOS).join(", ") + (b.repos.length > MAX_REPOS ? ` +${b.repos.length - MAX_REPOS}` : ""),
+              go: (
+                <a href={b.url} target="_blank" rel="noopener noreferrer" aria-label={`@${b.login} on GitHub`} className="inline-grid size-6 place-items-center text-(--fg-subtle) hover:text-(--fg)">
+                  <ArrowUpRight className="size-4" strokeWidth={1.75} />
+                </a>
+              ),
+            },
+          }))}
+        />
+        <SectionLink href="/contribute">Seat {seat} is open</SectionLink>
+      </Section>
+    </>
+  );
 }
