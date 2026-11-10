@@ -41,7 +41,7 @@ export async function getWorkshop() {
     avatar: p.avatar_url,
     url: p.html_url,
     contributions: p.contributions,
-    repos: p.repos,
+    repos: p.repos.filter((r) => catalog[r]), // only public tools, never .github or the site repo
     core: core.has(p.login.toLowerCase()),
   }));
 

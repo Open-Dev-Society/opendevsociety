@@ -61,7 +61,7 @@ export default async function PeoplePage() {
               n: (
                 <span>
                   {b.contributions.toLocaleString("en-US")}
-                  <span className="md:hidden"> contributions</span>
+                  <span className="md:hidden"> {b.contributions === 1 ? "contribution" : "contributions"}</span>
                 </span>
               ),
               repos:
