@@ -1,8 +1,13 @@
-# Open Dev Society: design brief (C2, "The open workshop")
+# Open Dev Society: design brief ("Signed in ink")
 
-Art direction for the whole site. Concept C ("Builder's workshop") is the direction. This brief is the design system, the IA and the page templates every builder works from. Where this brief and concept C disagree, this brief wins. Where it is silent, choose the quieter option.
+The art direction and design system for the **whole site**. Concept C ("Builder's workshop") sets the idea and the structure: a workshop, a project shelf, a contributor wall and a first-PR path. Its look (beige paper, kiln orange, Bricolage) is replaced by the theme below, at the user's request. See the three themes side by side at **`/concepts/themes`**; the first one is this brief.
 
-Data is real and live: `getOrgRepos()`, `getOrgTotals()` and `getOrgContributors()` in `src/lib/github.ts` (revalidate 3600, snapshot fallback in `src/data/fallback.ts`). Never hard-code a count. Every number below (21,406★, 2,669 forks, 24 builders, 15 tools, 17 mentions) is the 2026-11-10 snapshot and is used here only as an example.
+Where this brief and C disagree, this brief wins. Where it is silent, choose the quieter option.
+
+**Sources to build from**
+- **Data** is real and live: `getOrgRepos()`, `getOrgTotals()` and `getOrgContributors()` in `src/lib/github.ts` (revalidate 3600, snapshot fallback in `src/data/fallback.ts`). Never hard-code a count. The numbers below (21,406★, 2,669 forks, 24 builders, 15 tools, 17 mentions) are the 2026-11-10 snapshot and are only examples.
+- **Copy:** `src/content/*.ts` holds the old copy, and its README lists the dead copy to cut. The rewritten lines in section 13 override it.
+- **Foundation:** semantic tokens in `src/app/globals.css` and components in `src/components/site/` (from Claude Code 4). This brief sets their values and specs and adds a few tokens. It does not rename anything that exists.
 
 ---
 
@@ -10,262 +15,268 @@ Data is real and live: `getOrgRepos()`, `getOrgTotals()` and `getOrgContributors
 
 > **Technology should belong to everyone, so we build it in public, sign every piece with the names of the people who made it, and keep a seat open for whoever shows up next.**
 
-Short form for the team: **made in public, signed by name, seat open.**
+Short form: **made in public, signed by name, seat open.**
 
-Why the workshop direction carries it: a workshop is the opposite of a storefront. Things are made there, not sold. The tools hang on the wall for anyone to use, unfinished work is in plain view, apprentices learn by doing, and each finished piece carries its maker's mark. Every visual decision maps onto the idea:
+The workshop is the metaphor, and the theme is how it looks. A workshop is the opposite of a storefront: things are made there, not sold, tools hang on the wall for anyone, and every finished piece carries its maker's mark. The theme turns that into three materials:
 
-| Workshop | On the page | Expresses |
+| Material | On the page | Expresses |
 |---|---|---|
-| Paper and the bench top | Warm paper ground, card surfaces | Made by hand, not by a vendor |
-| The kiln | One orange accent, used only where something gets *made* (the primary action, the open seat, the changed token in a command) | Making |
-| Ink and tools | Ink bands for the bench (terminal) and the closing statement | The real tools, not a mock |
-| Maker's marks | Every artifact is **signed**: names and faces sit next to the work (hero print caption, repo rows, the wall) | Credited by name |
-| The open seat | One empty, outlined seat on the wall that you can claim | Anyone who shows up |
+| **Daylight paper**: near-white bone, no tint, no grain | The page ground | Made *in public*, in the open, nothing hidden |
+| **Blue ink**: cobalt, the color of a pen signature | Names, signatures, the H1's human clause, the primary action | *Signed by name*: people credit their work in ink |
+| **Highlighter**: one yellow mark | Only what is yours: the open seat, your handle, the token that changed in your command | *Seat open*: this one is for you |
+| **The inkwell**: a deep blue-black band | The bench (terminal) and the closing statement | Where the real tools are |
 
-The test for any element: does it show something being made in public, name who made it, or open a seat? If it does none of those, cut it.
+Two typefaces carry the same split. **Mona Sans** is the machine: GitHub's own open-source face, set in print. **Newsreader Italic** is the hand: every name, signature and quote, as if signed.
+
+The test for any element: does it show something made in public, name who made it, or open a seat? If not, cut it.
 
 ## 2. What "premium" means here
 
 Premium for a community is craftsmanship, not luxury. Concretely:
 
-1. **Restraint.** One accent hue. One idea per section. Two signature moments on the whole site and no other ambient motion. At most three kiln-orange things in any viewport.
-2. **Type does the work.** Bricolage Grotesque used across its whole range (optical size and width axes), not left at one weight. Big type gets room around it. No uppercase kickers, no pills above headings.
+1. **Restraint.** One chroma (cobalt) plus one highlighter that only marks "yours". One idea per section. Two signature moments on the whole site and no ambient motion. At most three blue things and one yellow thing in any viewport.
+2. **Type does the work.** A wide, confident grotesk against a fine italic serif: the machine next to the hand. The size steps are big. No uppercase kickers, no pills above headings.
 3. **Whitespace with a rhythm.** One section rhythm, one 12-column grid, a left rail for labels. Space is measured, never left over.
-4. **Real imagery only.** Real product screenshots of live ODS tools, real GitHub avatars, real partner logos. No illustrations, no 3D, no stock photos, no gradient blobs, no icon-in-a-circle feature trios.
-5. **Honest numbers.** Live, sourced, formatted (`21.4k`). Small numbers are not shown as stars (see the index rules). No "1,000+ members".
+4. **Real imagery only.** Real screenshots of live ODS tools, real GitHub avatars, real partner logos. No illustrations, no 3D, no stock photos, no gradients, no grain, no icon-in-a-circle feature trios.
+5. **Honest numbers.** Live, sourced and formatted (`21.4k`). Small numbers are never dressed up as stars. No "1,000+ members".
 6. **Captions like a museum label.** Small, precise, signed: what it is, who made it, the numbers, a link.
-7. **Motion that confirms cause.** Things move because you did something, or once to show what a section means. Never to decorate.
+7. **Motion that confirms cause.** Things move because you did something, or once to show what a section means.
 8. **Finish.** Hairlines instead of borders, concentric radii, tabular numbers, `text-wrap: balance/pretty`, focus rings, reduced motion, nothing clipped at 375px.
 
 ### References studied (take composition and restraint, not the look)
 
-- **Cursor** (cursor.com): the product, shown at real scale, is the hero image. The headline stays modest and the visual dominates the lower two thirds. *Take:* the hero "print" of OpenStock.
-- **Mux** (mux.com): a single orange on warm grey, mono for machine text only. *Take:* the discipline of one chroma.
-- **Turborepo** (turbo.build): one live number and one copyable command next to the primary CTA. *Take:* the command chip.
-- **Astro Docs** (docs.astro.build): contributor faces used as texture beside the headline. *Take:* faces as proof. We go further with the wall.
+- **Cursor** (cursor.com): the product, shown at real scale, is the hero image. The headline stays modest and the visual owns the lower two thirds. *Take:* the hero print of OpenStock.
+- **Mux** (mux.com): one saturated color on a quiet ground, mono for machine text only. *Take:* one chroma, used with discipline.
+- **Turborepo** (turbo.build): one live number and one copyable command beside the CTA. *Take:* the command chip.
+- **Astro Docs** (docs.astro.build): contributor faces as texture beside the headline. *Take:* faces as proof. We go further with the wall.
 - **Linear, Stripe:** hairlines, editorial measure, dense precise captions. **Teenage Engineering:** labelling objects like instruments, with the product as the art. **Raycast:** chips and keys that feel physical.
 
 ## 3. Type system
 
-Load with `next/font/google` in `src/app/layout.tsx`. Remove `Playfair_Display` and `Rock_3D` once no page uses them.
+Load with `next/font/google` in `src/app/layout.tsx`, replacing Inter, Playfair, JetBrains and Rock 3D once no page uses them. `--font-sans`, `--font-sign` and `--font-mono` go on `<body>`. The foundation already maps `--font-display` and `--font-body` to `--font-sans`.
 
 ```ts
-const display = Bricolage_Grotesque({ subsets: ["latin"], axes: ["opsz", "wdth"], variable: "--font-display", display: "swap" });
-const sans    = Inter({ subsets: ["latin"], axes: ["opsz"], variable: "--font-sans", display: "swap" });
-const mono    = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" });
+const sans = Mona_Sans({ subsets: ["latin"], axes: ["wdth"], variable: "--font-sans", display: "swap" });
+const sign = Newsreader({ subsets: ["latin"], style: "italic", axes: ["opsz"], variable: "--font-sign", display: "swap" });
+const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" });
 ```
 
-- **Bricolage Grotesque** is the display face: headings, big numbers, the certificate name. It is our personality. Use the axes so it is ours, not TanStack's.
-- **Inter** is the text face: body, UI and captions.
-- **JetBrains Mono** is for **machine text only**: commands, paths, IDs, handles, dates in tables, counts in captions. Never for labels or kickers.
+- **Mona Sans** (display and text). GitHub's open-source (OFL) typeface, the native voice of open source. Its width axis gives one family both a wide, confident display cut and a calm text cut.
+- **Newsreader Italic** (signatures). Used only for names, signatures, quotes and the H1's human clause: the hand that signs the work. Its optical sizes keep it crisp from 14 to 96px.
+- **Geist Mono** (machine text). A neutral, tight mono for commands, IDs, handles and counts that doesn't fight Mona's width. Never used for labels or kickers.
 
-| Token | Face | Size (375 → 1440) | Line height | Weight | Axes | Tracking |
+| Token | Face | Size (375 → 1440) | Line height | Weight | Width / opsz | Tracking |
 |---|---|---|---|---|---|---|
-| `display-1` | Bricolage | `clamp(2.75rem, 1.6rem + 4.6vw, 5.5rem)` 44→88 | 0.95 | 650 | opsz 96, wdth 88 | -0.04em |
-| `display-2` | Bricolage | `clamp(2.25rem, 1.6rem + 2.4vw, 3.5rem)` 36→56 | 1.0 | 620 | opsz 72, wdth 92 | -0.032em |
-| `display-3` | Bricolage | `clamp(1.75rem, 1.4rem + 1.2vw, 2.25rem)` 28→36 | 1.05 | 600 | opsz 40, wdth 95 | -0.025em |
-| `title` | Bricolage | 1.375rem / 22 | 1.2 | 600 | opsz 24, wdth 100 | -0.012em |
-| `lede` | Inter | 1.1875rem / 19 (17 on mobile) | 1.55 | 400 | opsz auto | -0.011em |
-| `body` | Inter | 1rem / 16 (long-form 1.0625rem / 17) | 1.6 (long-form 1.7) | 400 | | -0.006em |
-| `small` | Inter | 0.875rem / 14 | 1.5 | 400 | | 0 |
-| `meta` | Inter | 0.8125rem / 13 | 1.4 | 500 | | 0 |
-| `mono` | JetBrains | 0.8125rem / 13 (min 12) | 1.5 | 450 | | 0 |
+| `display-1` | Mona | `clamp(2.75rem, 1.5rem + 4.4vw, 5.25rem)` 44→84 | 0.96 | 680 | wdth 112 | -0.035em |
+| `display-2` | Mona | `clamp(2.25rem, 1.6rem + 2.4vw, 3.5rem)` 36→56 | 1.02 | 650 | wdth 108 | -0.03em |
+| `display-3` | Mona | `clamp(1.75rem, 1.4rem + 1.2vw, 2.25rem)` 28→36 | 1.08 | 620 | wdth 104 | -0.022em |
+| `title` | Mona | 1.375rem / 22 | 1.2 | 600 | wdth 100 | -0.012em |
+| `lede` | Mona | 1.1875rem / 19 (17 on mobile) | 1.55 | 400 | wdth 100 | -0.005em |
+| `body` | Mona | 1rem / 16 (long-form 1.0625rem / 17) | 1.6 (long-form 1.7) | 400 | wdth 100 | 0 |
+| `small` | Mona | 0.875rem / 14 | 1.5 | 400 | | 0 |
+| `meta` | Mona | 0.8125rem / 13 | 1.4 | 500 | | 0.005em |
+| `mono` | Geist Mono | 0.8125rem / 13 (min 12) | 1.5 | 450 | | 0 |
+| `sign` | Newsreader Italic | **1.08em** of the surrounding text (the italic reads small) | inherit | 400 | opsz auto | -0.01em |
+| `quote-feature` | Newsreader Italic | `clamp(1.75rem, 1.3rem + 1.6vw, 2.75rem)` 28→44 | 1.2 | 400 | opsz 72 | -0.015em |
 
 Rules:
-- Set `font-variation-settings` per token as a CSS class (`.t-display-1 { font-variation-settings: "opsz" 96, "wdth" 88; }`). Use `font-weight` for weight, not `"wght"`.
-- Headings get `text-wrap: balance`, paragraphs get `text-wrap: pretty`. Measure: body ≤ 64ch, lede ≤ 52ch.
-- Numbers in tables, captions and counters use `font-variant-numeric: tabular-nums` (Inter or mono). Static display numbers may use Bricolage.
-- Sentence case everywhere. No uppercase, no letter-spaced mono kickers, no `SNAKE_CASE` or `// V1.0` strings (the old site's hacker cosplay goes).
-- Only one `display-1` per page (the H1). The H1 is `display-1` on Home and `display-2` on every other page.
-- Size steps never collide: a tile title is never the same size as its section's H2 (the flagship tile matching the H2 at 48px was a C bug).
+- Width goes in `font-variation-settings: "wdth" 112` (one class per token). Weight goes in `font-weight`.
+- **The `sign` rule.** Newsreader appears only for: the H1's emphasis clause, people's names in signatures and captions (`Signed by 21 builders`, the masthead names, quote attributions' names, the certificate's recipient and issuer), pull quotes, and the `Claim it` action. Never in body text, buttons or headings as a whole.
+- Headings use `text-wrap: balance` and paragraphs `text-wrap: pretty`. Measure: body ≤ 64ch, lede ≤ 52ch.
+- Counts and dates use `tabular-nums` (Mona or Geist Mono).
+- Sentence case everywhere. No uppercase, no letter-spaced kickers, no `SNAKE_CASE` or `// V1.0` strings (the old site's hacker cosplay goes).
+- There is one `display-1` per page, and only on Home. Inner pages use `display-2` for the H1.
+- Size steps never collide: a tile title is never the size of its section's H2.
 
-## 4. Palette (OKLCH, light first)
+## 4. Palette (OKLCH, light, with an inverse band)
 
-Evolved from C: the paper is a touch lighter and less yellow, ink-3 is darkened to pass AA, and the kiln is split into a display orange and a text-safe deep orange. Contrast was measured, not estimated.
+These are the values for the foundation's existing tokens in `globals.css`, plus five new ones (marked **new**). Every text pair was measured.
 
 ```css
 :root {
-  /* Ground */
-  --paper:      oklch(0.958 0.012 80);   /* #f5f0e8  page ground */
-  --paper-2:    oklch(0.925 0.018 78);   /* #ede5d9  bands, hovered rows, quiet seats */
-  --card:       oklch(0.992 0.006 80);   /* #fffcf8  cards, print frame, certificate */
+  --bg:           oklch(0.975 0.004 95);   /* #f7f7f4 bone daylight */
+  --surface:      oklch(0.995 0.002 95);   /* #fefdfc cards, print frame, certificate */
+  --surface-2:    oklch(0.948 0.006 95);   /* #efeee9 muted band, hovered rows, quiet seats */
+  --fg:           oklch(0.2 0.025 265);    /* #101622 blue-black ink. 16.9:1 on bg */
+  --fg-muted:     oklch(0.43 0.025 265);   /* #49505e 7.6:1 */
+  --fg-subtle:    oklch(0.53 0.02 265);    /* #666c78 4.9:1 bg, 4.5:1 surface-2. Meta only, 12px minimum */
+  --line:         oklch(0.2 0.025 265 / 0.1);
+  --accent:       oklch(0.48 0.2 265);     /* #244ecc cobalt ink. 6.4:1 on bg as text, white on it 6.9:1 */
+  --accent-hover: oklch(0.42 0.19 265);    /* new. #183db2 */
+  --accent-fg:    oklch(1 0 0);
+  --accent-soft:  oklch(0.94 0.03 265);    /* #e1ebff role tags, active chip. Text on it uses --accent-hover (7.5:1) */
+  --mark:         oklch(0.925 0.125 102);  /* new. #f7ea83 highlighter: backgrounds only, text on it is --fg (14.7:1) */
+  --live:         oklch(0.52 0.12 152);    /* new. #227c45 live (<24h) and verified. 4.8:1 */
+  --focus:        var(--accent);
+  --img-outline:  oklch(0.2 0.025 265 / 0.1);
 
-  /* Ink */
-  --ink:        oklch(0.215 0.012 65);   /* #1d1814  15.5:1 on paper */
-  --ink-2:      oklch(0.44 0.02 65);     /* #5b5047  6.9:1 on paper  secondary text */
-  --ink-3:      oklch(0.515 0.022 68);   /* #70655a  5.0:1 paper, 4.5:1 paper-2, 5.5:1 card  meta (12px min) */
-  --line:       oklch(0.215 0.012 65 / 0.10);
-  --line-2:     oklch(0.215 0.012 65 / 0.06);
-
-  /* Kiln */
-  --kiln:       oklch(0.585 0.17 40);    /* #cb4e1a  primary button bg (white text 4.5:1), display text ≥24px only (4.0:1) */
-  --kiln-deep:  oklch(0.5 0.145 39);     /* #a43d17  links and small kiln text (5.7:1 paper), button hover */
-  --kiln-wash:  oklch(0.925 0.038 58);   /* #fbe1ce  changed-token highlight, selection, open-seat hover (kiln-deep on it 5.1:1) */
-
-  /* Status (only meaning, never decoration) */
-  --moss:       oklch(0.5 0.09 145);     /* #407142  live (<24h), verified. 5.1:1 on paper */
-
-  /* Ink band (the bench, the closing footer, tooltips). Also the seed of a future dark theme. */
-  --night:        oklch(0.205 0.012 60); /* #1b1612 */
-  --night-2:      oklch(0.255 0.013 60); /* #28211d  terminal surface, raised */
-  --night-ink:    oklch(0.95 0.012 80);  /* #f3eee6  15.5:1 */
-  --night-ink-2:  oklch(0.78 0.016 75);  /* #beb6ac  9.0:1 */
-  --night-ink-3:  oklch(0.66 0.016 75);  /* #989188  5.8:1 night, 5.1:1 night-2 */
-  --night-kiln:   oklch(0.72 0.15 48);   /* #ef8448  kiln on ink: 6.9:1 night, 6.1:1 night-2 */
-  --night-line:   oklch(1 0 0 / 0.09);
+  /* Inverse band: the inkwell (bench, footer, tooltips) */
+  --inv-bg:        oklch(0.19 0.03 268);   /* #0e1321 */
+  --inv-surface:   oklch(0.245 0.035 268); /* #192031 terminal, raised */
+  --inv-fg:        oklch(0.96 0.006 95);   /* #f3f2ed 16.5:1 */
+  --inv-fg-muted:  oklch(0.8 0.02 265);    /* #b7becb 9.9:1 */
+  --inv-fg-subtle: oklch(0.68 0.02 265);   /* new. #9298a5 6.4:1 bg, 5.6:1 surface */
+  --inv-accent:    oklch(0.76 0.12 262);   /* new. #87b1fd 8.6:1 bg, 7.5:1 surface. Buttons on inverse: bg inv-accent, text inv-bg */
+  --inv-line:      oklch(1 0 0 / 0.1);
 }
+.tone-inverse {
+  /* add to the existing re-pointing */
+  --fg-subtle: var(--inv-fg-subtle);
+  --accent: var(--inv-accent);
+  --accent-hover: oklch(0.82 0.1 262);
+  --accent-fg: var(--inv-bg);
+  --accent-soft: oklch(0.76 0.12 262 / 0.16);
+  /* --mark stays the same: yellow on ink is still "yours", with --inv-bg text on it */
+}
+::selection { background: var(--mark); color: oklch(0.2 0.025 265); }
 ```
 
 Usage rules:
-- Kiln is for: the primary button, H1 emphasis (`anyone who shows up.`), the open seat, changed tokens in the bench, focus rings (`--kiln-deep`), and `::selection` (`--kiln-wash` background, `--ink` text). Nothing else. No orange icons, tags or borders.
-- Kiln text below 24px is always `--kiln-deep` (or `--night-kiln` on ink).
-- `--moss` means "live" (a commit within 24h) or "verified". It is never decorative.
+- **Cobalt** is for the primary button, links (with a `--accent` underline at 30% that goes solid on hover), signed names (`sign` style), the H1's emphasis, the bench's variable tokens (`--inv-accent`) and focus rings. It never appears on icons, borders or decorative fills.
+- **Highlighter** is backgrounds only and marks only what is yours: the open seat, your claimed handle, the token that just changed in the bench, and `::selection`. It never carries meaning without text.
+- **`--live`** means data is live (a commit within 24h) or a certificate is verified. Never decoration.
 - Language dots in the index use GitHub's language colors at 8px, which is the only other chroma allowed.
-- Paper grain: keep C's SVG noise, `position: fixed`, `opacity: 0.22`, `mix-blend-mode: multiply`, not over images, ink bands or the certificate.
-- Tokens live on `:root`, not on a wrapper class. The certificate print clone is appended to `<body>`, so tokens scoped to a wrapper would vanish in print. The concept route may scope them while it is a concept; production must not.
+- No grain, gradients or glass, except the nav's backdrop blur.
+- Tokens live on `:root`, not on a wrapper class. The certificate print clone is appended to `<body>`, so tokens scoped to a wrapper would vanish in print.
 
-Dark mode is out of scope for v1. The `--night-*` set is designed so a dark theme can map onto it later.
+Dark mode: not in v1. The inverse set is built so a full dark theme can map onto it later.
 
 ## 5. Grid, spacing, shape, depth
 
-- **Container:** `max-width: 76rem` (1216px) of content, `padding-inline: clamp(20px, 5vw, 48px)`. Full bleed is only for band backgrounds (People, Bench, footer).
-- **Grid:** 12 columns, `column-gap: 24px` (16px below 768). Below 768, think in 4 columns.
-- **Section header (the rail):** cols 1–3 hold the label (`meta`, ink-3) and a live count under it (`mono`, ink-2). Cols 4–12 hold the H2 (`display-2`) and an optional dek (`lede`, ink-2, ≤ 52ch). On mobile the rail collapses to one line above the H2: `Work · 15 tools`. This replaces C's `0n — KICKER` pill everywhere.
-- **Spacing scale (px):** 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96, 128, 160. Nothing off-scale.
-- **Section rhythm:** `--section: clamp(5rem, 3rem + 7vw, 9rem)` (80→144) as `padding-block` on every section, one value site-wide. Header to content is 48px (32 on mobile).
-- **Radii:** `--r-xs: 6px` (chips, kbd), `--r-sm: 10px` (inputs, inner frames, seats), `--r-md: 16px` (cards, tiles), `--r-lg: 22px` (print frame, terminal), `999px` for buttons only. Concentric: inner radius = outer radius minus padding.
-- **Depth:** no element has both a border and a shadow.
-  - `--e-0: 0 0 0 1px var(--line)` hairline
-  - `--e-1: 0 0 0 1px oklch(0.215 0.012 65 / 0.07), 0 1px 2px oklch(0.215 0.012 65 / 0.04), 0 8px 24px -12px oklch(0.215 0.012 65 / 0.12)` cards
-  - `--e-2: 0 0 0 1px oklch(0.215 0.012 65 / 0.08), 0 2px 4px oklch(0.215 0.012 65 / 0.04), 0 28px 64px -28px oklch(0.4 0.06 50 / 0.35)` the print, the terminal, hovered tiles (a warm, long shadow)
-- **Breakpoints:** Tailwind defaults (640 / 768 / 1024 / 1280).
+Set these foundation values:
+
+```css
+--container: 76rem;                       /* 1216px content */
+--gutter: clamp(20px, 5vw, 48px);          /* page padding-inline (replaces the 16/24 step) */
+--grid-gap: 24px;                          /* new; 16px below 768 */
+--section-y: clamp(5rem, 3rem + 7vw, 9rem);/* 80→144, the one rhythm, every section */
+--radius-sm: 8px;                          /* chips, inputs, seats, inner frames */
+--radius-md: 14px;                         /* cards, tiles */
+--radius-lg: 20px;                         /* print frame, terminal */
+/* --radius-xl: remove. Pills (999px) are for buttons only. Inner radius = outer radius - padding. */
+--shadow-sm: 0 0 0 1px var(--line), 0 1px 2px oklch(0.2 0.025 265 / 0.04);
+--shadow-md: 0 0 0 1px var(--line), 0 2px 4px oklch(0.2 0.025 265 / 0.04), 0 12px 28px -14px oklch(0.2 0.025 265 / 0.16);
+--shadow-lg: 0 0 0 1px var(--line), 0 2px 4px oklch(0.2 0.025 265 / 0.04), 0 32px 64px -32px oklch(0.25 0.06 265 / 0.35); /* new: print, terminal, hovered tiles */
+```
+
+- **Grid:** 12 columns, `--grid-gap`. Below 768, think in 4 columns.
+- **Section header (the rail):** cols 1–3 hold the label (`meta`, `--fg-subtle`) with a live count under it (`mono`, `--fg-muted`). Cols 4–12 hold the H2 (`display-2`) and an optional dek (`lede`, `--fg-muted`). On mobile the rail collapses to one line above the H2: `Work · 15 tools`. The section's `→` link sits **under** the content, right-aligned, never beside the H2.
+- **Spacing scale (px):** 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96, 128, 160. Nothing off-scale. Header to content is 48 (32 on mobile).
+- **Depth:** an element never has both a border and a shadow. Rows separate with hairlines (`--line`), not cards.
 
 ## 6. Motion
 
 Principles:
 1. Motion confirms cause. A thing moves because you did something, or exactly once to show what a section means (the two signatures).
-2. Only the hero has a load-in. No scroll-reveal fades on sections; content is simply there.
+2. Only the hero has a load-in. No scroll-reveal fades on sections.
 3. Exits are faster than entrances. Hover-out is slower than hover-in.
-4. Animate only `transform`, `opacity`, `filter`, `background-color`, `box-shadow`, and `clip-path`/`stroke-dashoffset` for the two signatures.
-5. `prefers-reduced-motion: reduce` removes every transform and blur. Opacity changes stay at ≤ 150ms, and both signatures render in their final state.
-
-Tokens:
+4. Animate only `transform`, `opacity`, `filter`, `background-color`, `box-shadow`, and `stroke-dashoffset` for the two signatures.
+5. Under `prefers-reduced-motion: reduce`, no transforms or blurs. Opacity changes stay at ≤ 150ms, and both signatures render in their final state.
 
 ```css
---ease-out:    cubic-bezier(0.16, 1, 0.3, 1);   /* entrances, reveals, seat pop */
+--ease-out:    cubic-bezier(0.16, 1, 0.3, 1);   /* entrances, reveals, seat pop (replaces the foundation's value) */
 --ease-ui:     cubic-bezier(0.2, 0, 0, 1);      /* hovers, presses, state changes */
---ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);  /* things that travel or resize: height, outline draw */
---d-1: 100ms;  /* press */
---d-2: 160ms;  /* hover in, color, crossfades */
---d-3: 240ms;  /* hover out, tab panels, height */
---d-4: 360ms;  /* reveals, seat claim */
---d-5: 560ms;  /* hero items */
+--ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);  /* travel and resize: height, outline draw */
+--d-1: 100ms; --d-2: 160ms; --d-3: 240ms; --d-4: 360ms; --d-5: 560ms;
 ```
 
 | Interaction | Spec |
 |---|---|
-| Hero load | Items rise `translateY(8px) + blur(4px) → 0`, opacity 0→1, `--d-5` `--ease-out`, stagger 60ms: dateline, H1, lede, CTAs, print. |
-| Button hover / press | bg `--d-2 --ease-ui`; `:active` `scale(0.97)` `--d-1`; trailing arrow `translateX(2px)` `--d-2`. |
-| Navigating tile hover | `translateY(-2px)` and `--e-1 → --e-2`, in `--d-2`, out `--d-3`. **Only** tiles that go somewhere new get a lift. Rows get `--paper-2` bg. Nothing else lifts. |
-| Nav active pill and segmented controls | Framer `layoutId`, `{ type: "spring", duration: 0.35, bounce: 0 }` (as in C). |
-| Mobile menu sheet | open `opacity 0→1, translateY(-8px)→0` 280ms `--ease-out`; close 180ms `--ease-ui`. |
-| Tooltip | 80ms hover intent, appear `--d-2` opacity + `scale(.97→1)` from its anchor side. Moving between seats swaps instantly with no re-delay. |
-| Copy → check | Icon crossfade with `blur(2px)` `--d-2`, revert after 1.6s (keep C's morph). |
-| Images | Fade in on decode, opacity `--d-3`. No blur-up. |
+| Hero load | Items rise `translateY(8px) + blur(4px) → 0`, opacity 0→1, `--d-5 --ease-out`, stagger 60ms: dateline, H1, lede, actions, print. |
+| Button | bg `--d-2 --ease-ui`; `:active` `scale(0.97)` `--d-1`; trailing arrow `translateX(2px)` `--d-2`. |
+| Tile that navigates | `translateY(-2px)` and `--shadow-md → --shadow-lg`, in `--d-2`, out `--d-3`. Only navigating tiles lift. Rows get `--surface-2`. Nothing else lifts. |
+| Nav pill and segmented controls | Framer `layoutId`, `{ type: "spring", duration: 0.35, bounce: 0 }`. |
+| Mobile menu sheet | open `opacity`, `translateY(-8px)→0`, 280ms `--ease-out`; close 180ms `--ease-ui`. |
+| Tooltip | 80ms hover intent, appear `--d-2` opacity and `scale(.97→1)`. Moving between seats swaps instantly. |
+| Copy → check | Icon crossfade with `blur(2px)`, `--d-2`, reverting after 1.6s. |
+| Images | Fade in on decode over `--d-3`. No blur-up. |
+| Links | Underline from 30% to 100% `--accent`, `--d-2`. |
 
-Banned: parallax, scroll-jacking, marquees, cursor followers, count-up numbers, typewriter headlines, tilt cards, ambient pings (the moss dot only appears when the data is live, and it does not pulse).
+Banned: parallax, scroll-jacking, marquees, cursor followers, count-up numbers, typewriter headlines, tilt cards, ambient pings or pulses.
 
 ## 7. Signature moments
 
-Two moments, and they are one story: **you take a seat, then the bench shows you how to earn it.**
+Two moments that tell one story: **you take a seat, and the bench shows you how to earn it.**
 
 ### Signature 1: "Take a seat" (the wall)
 
-The People section shows every contributor as a seat, plus one open seat that is yours.
+Every contributor has a seat, and one open seat is yours.
 
-- **Fill (once):** when the wall is 35% in view (IntersectionObserver, then unobserve), seats appear in reading order. Each one goes opacity 0→1 and `scale(.92→1)` over 280ms `--ease-out`, staggered 14ms (24 seats take about 620ms in total). 200ms after the last seat, the open seat's dashed outline **draws itself**: an SVG `rect` with `stroke-dasharray` and `stroke-dashoffset` animating to 0 over 600ms `--ease-in-out`, in `--kiln`. Then its `+` fades in over `--d-2`.
-- **The open seat:** sits at position N+1 directly after the last face. It has a 1.5px dashed kiln outline, `--paper` fill and a `+`. Under the wall: `Seat 25 is open.` (meta) with the `Claim it` button.
-- **Claiming:** clicking the seat (or `Claim it`) opens an inline field under the wall, not a modal. The field is mono with an `@` prefix and the placeholder `your-github-handle`. Validate `/^[a-z\d](?:[a-z\d-]{0,38})$/i` and load `https://github.com/${handle}.png?size=96` (client-only, no API call).
-  - On load, the avatar fills the seat: `scale(.9→1)` and opacity over `--d-4 --ease-out`, and the dashed outline crossfades to a solid 2px kiln ring over `--d-3`. The caption swaps (crossfade with a 4px slide, `--d-2`) to `Saved for @handle. It's yours after your first merged PR.` with a `Show me how ↓` link to the bench.
-  - On error, the caption reads `No GitHub account called @handle.` in ink-2. No shake, no red.
-  - The handle is kept in `localStorage["ods.handle"]` (wrapped in try/catch) and offered back with a small `×` to clear it. It also feeds the bench (signature 2).
-- **Hover or focus on a seat:** the tooltip (ink) reads `Name or @login`, then `1,204 contributions · OpenStock, kitbash +3`. Every seat is a link to the GitHub profile with an `aria-label` carrying the same text. On touch, a tap opens the profile.
-- **Never more empty than full:** seats are contributors, plus the open seat, plus quiet empties only to finish the last row. Quiet empties are `--paper-2` squares with no `+` and no hover.
+- **Fill (once):** when the wall is 35% in view (IntersectionObserver, then unobserve), seats appear in reading order. Each goes opacity 0→1 and `scale(.92→1)`, 280ms `--ease-out`, staggered 14ms (24 seats take about 620ms in total). 200ms after the last seat, the open seat's outline **draws itself**: an SVG `rect`, 1.5px, `--accent`, `stroke-dasharray`/`stroke-dashoffset` → 0 over 600ms `--ease-in-out`. Then its fill floods to `--mark` (`--d-3`) and the `+` fades in.
+- **The open seat** sits at position N+1, directly after the last face. Under the wall: `Seat 25 is open.` (meta) and **`Claim it`** (`sign` style, `--accent`, underlined).
+- **Claiming** opens an inline field under the wall, not a modal: Geist Mono with an `@` prefix and the placeholder `your-github-handle`. Validate `/^[a-z\d](?:[a-z\d-]{0,38})$/i` and load `https://github.com/${handle}.png?size=96` (client-only, no API call).
+  - On load, the avatar fills the seat: `scale(.9→1)` and opacity, `--d-4 --ease-out`. The seat keeps a 2px `--mark` ring, so your face stays highlighted on the wall. The caption swaps (crossfade with a 4px slide, `--d-2`) to: `Saved for` *@handle* `. It's yours after your first merged PR.` and `Show me how ↓`.
+  - On error: `No GitHub account called @handle.` in `--fg-muted`. No shake, no red.
+  - Keep the handle in `localStorage["ods.handle"]` (try/catch), with a small `×` to clear it. It feeds signature 2.
+- **Hover or focus on a seat:** an inverse tooltip with the *name* (`sign`) or @login, then `1,204 contributions · OpenStock, kitbash +3`. Each seat is a link to the GitHub profile, with the same text in `aria-label`. On touch, a tap opens the profile.
+- **Never more empty than full:** contributors, plus the open seat, plus quiet `--surface-2` seats only to finish the last row (no `+`, no hover).
 
 ### Signature 2: "The bench" (your first PR, printed live)
 
-The bench is C's best idea, made correct and current.
-
-- A terminal (`--night-2` surface, `--r-lg`, `--e-2`) on the ink band. Its title bar has a segmented control, **Terminal | Agent**, and a copy button.
-- **Terminal** shows the correct contributor flow, using the selected repo and the claimed handle (default `you`):
+- A terminal (`--inv-surface`, `--radius-lg`, `--shadow-lg`) on the inkwell band. Its title bar has a segmented control, **Terminal | Agent**, and a copy button.
+- **Terminal** shows the correct fork flow, using the selected repo and the claimed handle (default `you`):
   ```
   $ gh repo fork Open-Dev-Society/OpenStock --clone
   $ cd OpenStock && git switch -c you/first-pr
   $ gh pr create --fill --draft
   ```
-  The `$` is in `--night-ink-3`, the commands in `--night-ink`, and the variable tokens (repo, handle) in `--night-kiln`. Lines use `white-space: pre-wrap` with a 2ch hanging indent, so nothing clips or scrolls sideways at 375px. Under the commands: `Needs the GitHub CLI · cli.github.com` (mono 12, night-ink-3).
-- **Agent** shows a copyable prompt in Inter 15/1.6: `Fork Open-Dev-Society/OpenStock, read its README and CONTRIBUTING, pick one open issue labelled "good first issue" or "help wanted", fix it on a branch named you/first-pr, and open a draft pull request that explains the change.` Under it: `Paste into any coding agent.` Don't claim an AGENTS.md exists.
-- **Motion:** the first time the bench is 35% in view, the commands print line by line, 9ms per character with 90ms between lines and a block caret blinking (`steps(1)`, 1.06s). They print once and never again. After that, when the repo or handle changes, **only the changed tokens** crossfade (opacity plus a 3px y offset, `--d-2`) and get a `--kiln-wash` at 18% alpha highlight that fades out over 900ms `--ease-out`. Tab switches move the sliding pill (spring) while the panel crossfades over `--d-2` and its height animates over `--d-3 --ease-in-out`.
-- The handle you claimed in signature 1 shows up in the branch name. That link between the two moments is the point.
+  The `$` is in `--inv-fg-subtle`, the commands in `--inv-fg`, the repo token in `--inv-accent`, and **the handle on a `--mark` chip** with `--inv-bg` text (your highlighter, carried over from the wall). Lines use `white-space: pre-wrap` with a 2ch hanging indent, so nothing clips at 375px. Under them: `Needs the GitHub CLI · cli.github.com` (mono 12, `--inv-fg-subtle`).
+- **Agent** shows a copyable prompt in Mona 15/1.6: `Fork Open-Dev-Society/OpenStock, read its README and CONTRIBUTING, pick one open issue labelled "good first issue" or "help wanted", fix it on a branch named you/first-pr, and open a draft pull request that explains the change.` Under it: `Paste into any coding agent.` Don't claim an AGENTS.md exists.
+- **Motion:** the first time the bench is 35% in view, the commands print at 9ms per character with 90ms between lines and a block caret blinking (`steps(1)`, 1.06s). They print once. After that, when the repo or handle changes, **only the changed tokens** crossfade (opacity plus a 3px y offset, `--d-2`) under a `--mark` flash that fades out over 900ms `--ease-out`. Tabs: spring pill, panel crossfade `--d-2`, height `--d-3 --ease-in-out`.
 
 ## 8. IA and routes
 
-| Route | Name in nav | Purpose | Status |
+| Route | Nav label | Purpose | Status |
 |---|---|---|---|
 | `/` | (logo) | The workshop: proof, shelf, wall, bench, word of mouth, closing | redesign |
-| `/projects` | Work | Every tool, the shelf and the full index | redesign |
-| `/contributors` | People | The full wall and the ledger of contributors | redesign |
+| `/projects` | Work | Every tool: the shelf and the full index | redesign |
+| `/contributors` | People | The full wall and the ledger | redesign |
 | `/manifesto` | Manifesto | The idea, long form | redesign |
 | `/word-of-mouth` | Word of mouth | Every mention, plus partners and events (`#partners`) | redesign, absorbs `/partners` |
 | `/contribute` | **Contribute** (button) | The bench, roles for non-coders, review, conduct, FAQ | redesign |
-| `/certificate`, `/certificate/login`, `/certificate/manage` | (not in nav) | Internal tool, password-gated | restyle to the tool template, `robots: noindex` |
-| `/verify/[id]` | (not in nav) | Public certificate verification | restyle to the document template |
+| `/certificate`, `/certificate/login`, `/certificate/manage` | (not in nav) | Internal, password-gated | tool template, `robots: { index: false }` |
+| `/verify/[id]` | (not in nav) | Public certificate check | document template |
 
-Redirects go in `next.config.ts` `redirects()`, all `permanent: true`:
-- `/partners` → `/word-of-mouth#partners`. Verify with `curl -sI 127.0.0.1:3000/partners` that the `location` keeps the hash.
-
-Anchor compatibility: `/partners#partner-cta` is now `/word-of-mouth#partner-cta` (keep that id on the partner CTA). `/contribute#values` must still land, so put `id="values"` on the code-of-conduct section's wrapper and `id="conduct"` on its heading.
-
-Nav (all pages except the tool template): logo, then Work, People, Manifesto, Word of mouth, then a `★ 21.4k` chip (links to the org), then a **Contribute** button. On Home the sliding pill follows the section in view and links scroll to the anchors (`#work`, `#people`, `#start`, `#signal`). On inner pages it marks the current route.
-
-Remove from the site: `SidebarPanels`, the dashed `max-w-5xl` frame and the dot-grid body background in `(site)/layout.tsx`, and the root `body` styles in `globals.css` (keep only the print block, see section 12).
+- **Redirects** (`next.config.ts` `redirects()`, `permanent: true`): `/partners` → `/word-of-mouth#partners`. Verify that `curl -sI 127.0.0.1:3000/partners` keeps the hash in `location`.
+- **Anchors:** the partner CTA keeps `id="partner-cta"`. `/contribute#values` must still land, so put `id="values"` on the conduct section's wrapper and `id="conduct"` on its heading.
+- **Nav (every non-tool page):** logo, then Work, People, Manifesto, Word of mouth, then a `★ 21.4k` chip (to the org), then a **Contribute** button. On Home the spring pill follows the section in view and links scroll to `#work`, `#people`, `#start`, `#signal`. On inner pages it marks the route.
+- **Remove:** `SidebarPanels`, the dashed `max-w-5xl` frame, and the dot-grid body background and old `@theme` brand colors in `globals.css`. Keep the certificate print block.
 
 ## 9. Component inventory
 
-Shared components live in `src/components/ods/`. Tokens and base styles live in `src/styles/ods.css`, imported once by the root layout. Everything is a Server Component unless marked **client**.
+Existing components in `src/components/site/` keep their names; their specs are below. New ones go in the same folder. Everything is a Server Component unless marked **client**.
 
 | Component | Spec |
 |---|---|
-| `SiteNav` **client** | Sticky, 64px tall. Background `--paper` at 80% with `backdrop-filter: blur(12px) saturate(1.4)`. A hairline `--line` appears after 8px of scroll. Logo (`/logo.png`, 24px) plus `Open Dev Society` (Inter 600/15). Links are Inter 500/14, ink-2 → ink, with the spring pill (`--paper-2`). Stars chip: mono 13, `--e-0`, `--r-xs`. Below 768: logo, Contribute and a menu button; the sheet lists links in `display-3`, then the stars chip and socials. |
-| `SiteFooter` | The closing statement on every non-tool page (spec in section 10 §6). `--night` band. |
-| `PageHero` | Inner-page header: the rail on the left (label plus live count), `display-2` H1 and a `lede` dek. `padding-top: 96px` (64 on mobile), bottom is `--section`/2. |
-| `Section` | `id`, `label`, `count`, `title`, `dek`, `href` and `hrefLabel`. Renders the rail header and ends with a right-aligned `hrefLabel →` link (Inter 500/14, ink-2) **under** the content, not beside the H2. Variants: `paper` (default), `band` (`--paper-2`, full bleed), `night`. |
-| `Button` | Heights 44 (md) and 52 (lg), pill, Inter 500/15, padding-inline 20 (lg 24) with 16 on the arrow side. `primary`: `--kiln` bg, white, hover `--kiln-deep`, with an inner top highlight `inset 0 1px 0 oklch(1 0 0 / .2)`. `secondary`: `--card` with `--e-1`. `ghost`: text with a 2px arrow nudge. `on-night`: `--night-2` with `--night-line` hairline. Full width below 640. |
-| `CommandChip` **client** | Mono 13 in `--card` (or `--night-2`), `--e-0`, `--r-sm`, height 44. `$` in ink-3. Copy icon on the right, with the copy→check morph. Truncates with a fade mask, never wraps. |
-| `Print` | A screenshot frame. `--card` passe-partout of 8px (6 on mobile), `--r-lg` outside and `--r-sm` inside, `--e-2`. A 32px top strip shows the real URL in mono 12, ink-3 (`openstock-ods.vercel.app`), with no fake traffic lights. The image is `next/image` with explicit `sizes`. Under it, a **caption** row: left is the name (`title`) plus what it is (`small`, ink-2); right is the signature: avatar stack (5 × 24px, ring `--card`), `22 builders` and `★ 21.4k · 2.7k forks` (mono 13, tabular), then `Open it ↗`. |
-| `RepoTile` | Featured tile: `--card`, `--r-md`, `--e-1`, padding 20 (24 at lg). An image area at 16:10 (inner `--r-sm`) or, for kitbash, a `--night` panel with the tagline set in `display-3`. Then the name (`title`), tagline (`small`, ink-2), and a meta row: language dot · `pushed 3d ago` · `N builders` · `★` only if ≥ 50. The whole tile is one link (stretched `::after`); it lifts on hover. |
-| `RepoIndex` **client** (filter only) | A ledger. Above it, a `SegmentedControl`: `All · For everyone · For builders and agents`. Rows (hairline-separated, 56px, hover `--paper-2`) hold name (Inter 600/16) · tagline (ink-2) · audience (meta) · language dot · `pushed 3d ago` (mono 13) · signal (`★ 21.4k` if ≥ 50, else `N builders`) · `↗` (nudges 2px on hover). Below 768, each row is two lines: name and signal, then the tagline. A `First issues (n)` link (kiln-deep, meta) shows **only when n > 0**. |
-| `SegmentedControl` **client** | `--paper-2` track, `--card` pill with `--e-1` and the spring. Inter 500/14. `role="tablist"` with arrow-key support. On night, the track is `--night` and the pill `--night-2`. |
-| `Wall` **client** (fill animation and claim) | Square seats on a grid: 16 columns at ≥ 1024, 12 at ≥ 640, 8 below. Gap 6px, seat radius `--r-sm`, 1px inner outline `oklch(0 0 0 / .08)` on avatars. Core crew (`src/data/contributors.ts`) get a 2px `--kiln-wash` ring. Includes `YourSeat` and the claim field (section 7). Takes `size: "home" \| "page"`; page seats are 1.25× larger. |
-| `Tooltip` **client** | `--night` bg, night-ink, Inter 13/1.4, `--r-xs`, padding 8/10, max 260px, 6px offset, no arrow. |
-| `Bench` **client** | Section 7, signature 2. Takes `repos` (name and open_issues) and reads the handle from the wall's store (a tiny `useSyncExternalStore` over localStorage, no context provider). |
-| `Steps` | Ordered list. Each step has a numeral (`display-3`, `--night-kiln` on night, `--kiln-deep` on paper), a title (`title`) and a body (`body`, ink-2), separated by hairlines. |
-| `Quote` | `feature`: `display-3` text in ink with hanging punctuation (`hanging-punctuation: first`, plus a negative text-indent fallback), attribution in meta: `Tattva Tarang · Medium · 2025 ↗`. `compact`: Inter 500/17 with the same attribution. Quote marks come from CSS `quotes`, never typed in, and the text is trimmed of straight and curly quotes at both ends (this fixes C's doubled-quote bug). |
-| `SourceLine` | One line of meta links separated by ` · `: `Also covered by Daily.dev · Hello GitHub · MAGI//ARCHIVE · Reddit · Threads · Facebook`, then `All 17 mentions →`. |
-| `PartnerCard` | `--card`, `--e-1`, `--r-md`. Logo at 32px height, grayscale and 80% opacity → color on hover (`--d-2`, from C), plus one line we wrote (`small`, ink-2), never clamped. |
-| `Stat` | Inline only: number (Inter 600, tabular) plus a label (ink-2). Lives in captions, rails and the dateline. **There is no standalone stats strip anywhere.** |
-| `Ledger` | Generic hairline table for mentions, contributors and certificates: sticky header row in meta ink-3, 52px rows, mono for IDs and dates, horizontal scroll inside its own container on mobile only when there are more than 3 columns. |
-| `CertificateDocument` | Shared by `/certificate` (editable) and `/verify/[id]` (read-only). Spec in section 12. |
-| `Field` | Inputs: 44px tall, `--card`, `--e-0`, `--r-sm`, Inter 15. Focus is a 2px `--kiln-deep` ring with 2px offset. The label above is meta ink-2; errors go below in ink-2 with an icon. Never red fills. |
-| `Status` | Small pill (`--r-xs`): `Verified`/`Active` in moss text on moss at 12% alpha; `Revoked` in kiln-deep on kiln-wash. Always text plus icon, never color alone. |
+| `Nav` **client** (exists) | Sticky, 64px. `--bg` at 82% with `backdrop-filter: blur(12px) saturate(1.4)`. A hairline appears after 8px of scroll. Logo (`/logo.png`, 24px) plus `Open Dev Society` (Mona 600/15, wdth 104). Links are Mona 500/14, `--fg-muted` → `--fg`, with the spring pill (`--surface-2`). Stars chip: mono 13, `--shadow-sm`, `--radius-sm`. Contribute is a `Button md primary`. Below 768: logo, Contribute and a menu button; the full-height sheet lists links in `display-3`, then the stars chip and socials, and closes on route change and Escape. |
+| `Footer` (exists) | The closing statement on every non-tool page (§6 of section 10), `tone="inverse"`. |
+| `Section`, `Container` (exist) | `tone`: `default`, `muted` (People), `inverse` (bench, footer). Padding is `--section-y`. |
+| `SectionHeader` (exists) | Becomes **the rail** (section 5): `eyebrow` is the rail label, plus a new `count` prop, then the H2 and `description`. `action` renders under the content, not beside the title. `align="center"` is not used. `as="h1"` uses `display-2`. |
+| `Eyebrow` (exists) | The rail label: `meta` in `--fg-subtle`, **not** accent-colored, no index numerals. |
+| `Button` (exists) | Heights 44 (md) and 52 (lg), pill, Mona 500/15. Padding-inline 20 (lg 24), with 16 on the arrow side. `primary`: `--accent` bg, `--accent-fg` text, `--accent-hover` on hover, inner top highlight `inset 0 1px 0 oklch(1 0 0 / .18)`. `secondary`: `--surface` with `--shadow-sm`. `ghost`: text with a 2px arrow nudge. In `tone-inverse` the tokens re-point by themselves. Full width below 640. |
+| `CopyCommand` **client** (exists) | Geist Mono 13 in a `--surface` chip with `--shadow-sm`, `--radius-sm`, 44px tall. `$` in `--fg-subtle`. Copy icon on the right, with the copy→check morph. Truncates with a fade mask, never wraps. |
+| `Card`, `Badge` (exist) | Card: `--surface`, `--radius-md`, `--shadow-md`, padding 20 (24 at lg). Badge: `--radius-sm`, Mona 500/12, height 22; `accent` = `--accent-soft` bg with `--accent-hover` text, `live` = `--live` text on `--live` at 12% alpha. |
+| `Quote` (exists, uses `cleanQuote`) | `feature`: `quote-feature` (Newsreader Italic) with hanging punctuation. `compact`: Newsreader Italic 22/1.35. Attribution in `meta`: the *name* in `sign` style, then `· Medium · 2025 ↗` in `--fg-muted`. Quote marks come from CSS `quotes`, never typed in. Text is trimmed of straight and curly quotes at both ends, which fixes C's doubled-quote bug. |
+| `StatGroup` / `compact` (exist) | Inline only: number (Mona 600, tabular) plus a label (`--fg-muted`), inside captions, rails and the dateline. **There is no standalone stats strip anywhere.** |
+| `Avatar`, `AvatarStack` (exist) | Avatars are circles in stacks and `--radius-sm` squares on the wall. 1px `--img-outline` inset. Stack of 5 × 24px with a 2px `--surface` ring and -6px overlap. Load with `&s=` sized to 2× display. |
+| `Print` (new) | A screenshot frame. `--surface` passe-partout of 8px (6 on mobile), `--radius-lg` outside and `--radius-sm` inside, `--shadow-lg`. A 32px top strip shows the real URL in mono 12, `--fg-subtle`; no fake traffic lights. `next/image` with `sizes`. **Caption** row underneath: left is the name (`title`) and what it is (`small`, `--fg-muted`); right is `AvatarStack`, `Signed by` *21 builders* (`sign`, accent), `★ 21.4k · 2.7k forks` (mono 13), and `Open it ↗`. |
+| `RepoTile` (new) | `Card` with a 16:10 image (inner `--radius-sm`), or for kitbash an inverse panel with its tagline in `display-3`. Then the name (`title`), tagline (`small`), and a meta row: language dot · `pushed 3d ago` · `N builders` · `★` only if ≥ 50. The whole tile is one link (stretched `::after`) and lifts on hover. |
+| `RepoIndex` **client** (filter only, new) | A `SegmentedControl` (`All · For everyone · For builders and agents`), then hairline rows 56px tall, hover `--surface-2`. Each row: name (Mona 600/16) · tagline (`--fg-muted`) · audience (`meta`) · language dot · `pushed 3d ago` (mono 13) · signal (`★ 21.4k` if ≥ 50, else `N builders`) · `↗`. Below 768, two lines per row. `First issues (n)` (accent link, `meta`) shows **only when n > 0**. |
+| `SegmentedControl` **client** (new) | `--surface-2` track, `--surface` pill with `--shadow-sm` and the spring. Mona 500/14. `role="tablist"` with arrow keys. In `tone-inverse`, the track is `--inv-bg` and the pill `--inv-surface`. |
+| `Wall` **client** (new) | Square seats in 16 columns at ≥ 1024, 12 at ≥ 640, 8 below. 6px gap, `--radius-sm`. Core crew (`src/data/contributors.ts`) get a 2px `--accent-soft` ring. Includes `YourSeat` and the claim field (section 7). Takes `size: "home" \| "page"`; page seats are 1.25×. |
+| `Tooltip` **client** (new) | `--inv-bg`, `--inv-fg`, Mona 13/1.4, `--radius-sm`, padding 8/10, max 260px, 6px offset, no arrow. |
+| `Bench` **client** (new) | Section 7, signature 2. Takes `repos` (name and open_issues) and reads the handle through a tiny `useSyncExternalStore` over localStorage (no context provider). |
+| `Steps` (new) | Ordered list with hairline separators. Each step: a numeral (`display-3`, `--accent`), a title (`title`) and a body (`body`, `--fg-muted`). |
+| `SourceLine` (new) | One line of `meta` links separated by ` · `: `Also covered by Daily.dev · Hello GitHub · MAGI//ARCHIVE · Reddit · Threads · Facebook`, then `All 17 mentions →`. |
+| `PartnerCard` (new) | `Card`. Logo at 32px height, grayscale and 80% opacity → color on hover (`--d-2`), then one line we wrote (`small`, `--fg-muted`), never clamped. |
+| `Ledger` (new) | Hairline table for mentions, contributors, certificates and events. Header row in `meta` `--fg-subtle`, rows 52px, mono for IDs and dates. Below 768 it becomes stacked rows; never a table wider than the screen. |
+| `Field` (new) | 44px, `--surface`, `--shadow-sm`, `--radius-sm`, Mona 15. Focus is a 2px `--focus` ring with 2px offset. The label above is `meta` `--fg-muted`; errors go below in `--fg-muted` with an icon. Never red fills. |
+| `CertificateDocument` (new) | Shared by `/certificate` (editable) and `/verify/[id]` (read-only). Section 12. |
 
-Data helpers (put them in `src/lib/format.ts`, nowhere else):
-`compact(n)` → `Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 })`, so 21406 becomes `21.4k`; `ago(iso)` → `3d ago` / `14h ago`; `isLive(iso)` → under 24h.
-Catalog: create `src/data/catalog.ts` mapping each repo name to `{ tagline, audience: "everyone" | "builders", shot?: string, featured?: boolean }`. Hide `.github` and `opendevsociety` from public lists. `den` gets an `alpha` meta tag.
+Data helpers: `compact` already exists in `Stat`. Add `ago(iso)` (`3d ago`, `14h ago`) and `isLive(iso)` (under 24h) in `src/lib/format.ts`.
+Catalog: add `src/data/catalog.ts` mapping each repo name to `{ tagline, audience: "everyone" | "builders", shot?: string, featured?: boolean }`. Hide `.github` and `opendevsociety` from public lists. `den` gets an `alpha` Badge.
 
-Taglines (≤ 56 characters, written by us, faithful to each README):
-
-| Repo | Audience | Tagline |
+| Repo | Audience | Tagline (≤ 56 chars, ours, faithful to the README) |
 |---|---|---|
 | OpenStock | everyone | Market prices, alerts and company data. Free. |
 | kitbash | builders | Tells your agent what already exists on GitHub. |
@@ -285,212 +296,231 @@ Taglines (≤ 56 characters, written by us, faithful to each README):
 
 ## 10. Home, section by section
 
-Order: **Hero (OpenStock proof) → Work (the shelf) → People (the wall) → Start (the bench) → Word of mouth → closing footer.** The principles leave the home page and live on `/manifesto`; the closing footer carries the manifesto line. The conversion path is proof, then faces, then "how do I get my face there", in three scrolls.
+Order: **Hero (OpenStock proof) → Work (the shelf) → People (the wall) → Start (the bench) → Word of mouth → closing footer.** The principles move to `/manifesto`, and the footer carries the manifesto line. The path runs proof, then faces, then "how do I get my face there", in three scrolls.
 
 ### §1 Hero
 
-- **Purpose:** state the idea and show a real thing it made, in one viewport.
 - **Content:**
-  - Dateline (meta, ink-2): `Est. July 2024 · 15 tools · 24 builders · last commit 14h ago`. The last part comes from max `pushed_at`, with an 8px moss dot before it only when `isLive`. It does not pulse.
-  - H1 (`display-1`, `max-width: 12.5ch` so it sets in three lines at 1440): **Software for everyone, built by <span kiln>anyone who shows up.</span>**
-  - Lede (`lede`, ink-2): **A public workshop of developers, designers and writers making free, open-source tools. No paywalls. No interviews. Send a pull request and you're one of us.**
-  - Actions: `Button lg primary` **Make your first PR →** (to `#start`), then `CommandChip` `gh repo fork Open-Dev-Society/OpenStock --clone`.
-  - `Print` of OpenStock: a desktop capture, with the caption signed by its builders and live numbers.
-- **Layout (≥ 1024):** cols 1–9 hold dateline, H1, then lede (cols 1–6) and the actions row, 96px under the nav. The `Print` spans cols 1–12, 64px under the actions, at 16:10. At 1440×900 its top 200px must be visible above the fold (Cursor composition). Below 1024: stacked. The print uses the **mobile** OpenStock capture (390×844), cropped to 4:5 with `object-position: top`.
-- **The premium detail:** the caption. A museum label signed by 22 people with the real URL in the frame strip. It's proof without a stats strip.
+  - Dateline (`meta`, `--fg-muted`): `Est. July 2024 · 15 tools · 24 builders · last commit 14h ago`. The last part comes from max `pushed_at`, with a 6px `--live` dot only when `isLive`. It doesn't pulse.
+  - H1 (`display-1`, `max-width: 14ch`, balanced): **Software for everyone, built by** *anyone who shows up.* The italic clause is `sign` style in `--accent`.
+  - Lede (`lede`, `--fg-muted`): **A public workshop of developers, designers and writers making free, open-source tools. No paywalls. No interviews. Send a pull request and you're one of us.**
+  - Actions: `Button lg primary` **Make your first PR →** (to `#start`), then `CopyCommand` `gh repo fork Open-Dev-Society/OpenStock --clone`.
+  - `Print` of OpenStock (desktop capture), with its caption signed and the numbers live.
+- **Layout (≥ 1024):** cols 1–9 hold the dateline, H1, lede (cols 1–6) and the actions, 96px under the nav. The `Print` spans cols 1–12, 64px under the actions, at 16:10, with its top 200px visible at 1440×900 (Cursor composition). Below 1024 everything stacks, and the print uses the **mobile** OpenStock capture, cropped to 4:5 with `object-position: top`.
+- **The premium detail:** the caption is a museum label signed by 21 people in ink, with the real URL in the frame strip. It gives the proof without needing a stats strip.
 
-### §2 Work: "the shelf"
+### §2 Work: the shelf
 
 - **Rail:** `Work` / `15 tools`.
-- **H2:** **15 tools. 0 paywalls.** Dek: **Free to use, free to fork. Pushed to this week: OpenStock, kitbash, openreadme and ports.** (Computed from `pushed_at` within 7 days, joined naturally.)
-- **Content:** three featured `RepoTile`s (cols 4/4/4): **kine-ui** (live-site capture), **openreadme** (live-site capture of a generated banner), **kitbash** (night panel with its tagline; it is the agent-era tool). Then `RepoIndex` with all 15 repos, OpenStock first (it is in the hero but the index is complete), sorted by stars then `pushed_at`. Below it: `All tools →` to `/projects`.
-- **Layout:** tiles row, then 32px, then the segmented filter, then the ledger. Below 768 the featured tiles become a horizontal snap scroller (`snap-x snap-mandatory`, cards `78vw`, 12px gap, `scroll-padding-inline` equal to the page padding), and the ledger rows take two lines.
-- **The premium detail:** the **For builders and agents** filter. It shows that half of ODS's recent work (kitbash, zomb, ports, tearcopy, settle-ui) is tooling for building with AI. That moves the site out of the pre-AI era with facts, not a chatbot.
+- **H2:** **15 tools. 0 paywalls.**
+- **Dek:** **Free to use, free to fork. Pushed to this week: OpenStock, kitbash, openreadme and ports.** Computed from `pushed_at` within 7 days.
+- **Content:** three featured `RepoTile`s (cols 4/4/4): **kine-ui** (live-site capture), **openreadme** (live-site capture), **kitbash** (an inverse panel; it's the agent-era tool). Then the `RepoIndex` of all 15 repos: OpenStock first, then by stars, then by `pushed_at`. Then `All tools →` to `/projects`.
+- **Mobile:** the featured tiles become a snap scroller (`snap-x snap-mandatory`, cards at 78vw, 12px gap, `scroll-padding-inline: var(--gutter)`), and index rows take two lines.
+- **The premium detail:** the **For builders and agents** filter. It shows that much of ODS's recent work (kitbash, zomb, ports, tearcopy, settle-ui) is tooling for building with AI. That's current with facts, not with a chatbot.
 
-### §3 People: "the wall" (signature 1)
+### §3 People: the wall (signature 1)
 
-- **Band:** `--paper-2`, full bleed.
+- `tone="muted"`, full bleed.
 - **Rail:** `People` / `24 builders`.
-- **H2:** **24 people built all of this. Seat 25 is yours.** (N and N+1 are live.) Dek: **Every merged pull request puts a face on this wall. No interview, no invite.**
-- **Content:** the `Wall` (home size), then the claim line, then a one-line **masthead** in `small` ink-2: `Founded by Ravi Pratap Singh. Co-founded by Priyanshu Bhardwaj. Maintained with Bipin Kumar Madhur and Mahin Chauhan.` Names link to GitHub. This replaces C's four person cards, so no face appears twice. Then `Everyone, by name →` to `/contributors`.
-- **Layout:** the wall spans cols 1–12. At 1440 with 16 columns, 24 faces plus the open seat plus 7 quiet seats fill exactly 2 rows.
-- **The premium detail:** the open seat that draws its own outline, and that you can fill with your own face.
+- **H2:** **24 people built all of this. Seat 25 is yours.** (N and N+1 are live.)
+- **Dek:** **Every merged pull request puts a face on this wall. No interview, no invite.**
+- **Content:** the `Wall`, then the claim line, then a one-line masthead in `small` `--fg-muted` with the names in `sign`: `Founded by` *Ravi Pratap Singh*`. Co-founded by` *Priyanshu Bhardwaj*`. Maintained with` *Bipin Kumar Madhur* `and` *Mahin Chauhan*`.` Names link to GitHub. This replaces C's four person cards, so no face appears twice. Then `Everyone, by name →` to `/contributors`.
+- **Layout:** at 1440 with 16 columns, 24 faces plus the open seat plus 7 quiet seats fill exactly 2 rows.
+- **The premium detail:** the open seat draws its own outline in ink, and you can put your own face in it.
 
-### §4 Start: "the bench" (signature 2)
+### §4 Start: the bench (signature 2)
 
-- **Band:** `--night`, full bleed. All text uses the night tokens.
+- `tone="inverse"` (the inkwell), full bleed.
 - **Rail:** `Start` / `3 commands`.
 - **H2:** **Three commands from here to the wall.**
 - **Content:** `Steps` in cols 1–5:
-  1. **Pick a repo.** Chips (`SegmentedControl` on night, wrapping) for repos with open issues, showing the count: `OpenStock 8`, `ports 5`, `kitbash 3`, `booktrace 1`.
+  1. **Pick a repo.** Chips (`SegmentedControl`, wrapping) for repos with open issues, with counts: `OpenStock 8`, `ports 5`, `kitbash 3`, `booktrace 1`.
   2. **Fork it and branch.**
   3. **Open a draft PR.** A maintainer reviews it in the open.
   4. **Get merged. Your face lands on the wall.** (Links up to `#people`.)
 
-  The `Bench` sits in cols 6–12, sticky at `top: 96px` while the steps scroll past. Under it: `Not a coder? Writers, designers and teachers start here →` linking to `/contribute`.
-- **Mobile:** the bench renders **inside step 1**, right under the chips, so changing the repo visibly changes the commands. Steps 2–4 follow as text.
-- **The premium detail:** only the changed token re-lights in kiln. The terminal feels like an instrument, not a slideshow.
+  The `Bench` sits in cols 6–12, `position: sticky; top: 96px`. Under it: `Not a coder? Writers, designers and teachers start here →` to `/contribute`.
+- **Mobile:** the bench renders **inside step 1**, right under the chips, so changing the repo visibly changes the commands.
+- **The premium detail:** your handle shows on a highlighter chip in the branch name. It's the same mark as your seat.
 
 ### §5 Word of mouth
 
 - **Rail:** `Word of mouth` / `17 mentions`.
 - **H2:** **What people wrote when they found it.**
 - **Content:**
-  - One feature `Quote` (cols 1–8): **"…great tools shouldn't hide behind logins or price tiers."** (Tattva Tarang · Medium · 2025).
+  - A feature `Quote` (cols 1–8): *"…great tools shouldn't hide behind logins or price tiers."* (Tattva Tarang · Medium · 2025).
   - Two compact quotes stacked in cols 9–12:
-    - **"…the democratization of financial information and tools previously available only to institutional investors."** (Mohamed Idbrahim · brightcoding.dev)
-    - **"It's more than just an app; it's a movement towards transparency in the financial sector."** (Built At Lightspeed)
+    - *"…the democratization of financial information and tools previously available only to institutional investors."* (Mohamed Idbrahim · brightcoding.dev)
+    - *"It's more than just an app; it's a movement towards transparency in the financial sector."* (Built At Lightspeed)
   - Exclude the founder's own posts and every "Got mentioned" row. Then the `SourceLine`.
-  - 64px later, the subsection **Who backs the work** (`title`): three `PartnerCard`s (cols 4/4/4) with our lines: Siray.ai: `AI infrastructure behind one API.` StellAILoom: `A hub for publishing and finding AI tools.` Atlas Cloud: `One API for hundreds of models.`
-  - Then one sentence in `small`: `Community partner at Apretre 3.0 (Resourcio Community) and JWOC 2026 (JGEC).` Then `Partner with us →` (to `/word-of-mouth#partner-cta`).
-- **The premium detail:** honest trimming. Real quotes, ellipses where we cut, never a doubled quote mark.
+  - 64px later, **Who backs the work** (`title`): three `PartnerCard`s (cols 4/4/4):
+    - Siray.ai: `AI infrastructure behind one API.`
+    - StellAILoom: `A hub for publishing and finding AI tools.`
+    - Atlas Cloud: `One API for hundreds of models.`
+  - Then one sentence in `small`: `Community partner at Apretre 3.0 (Resourcio Community) and JWOC 2026 (JGEC).` Then `Partner with us →`.
+- **The premium detail:** real quotes set like a printed review, with honest ellipses and never a doubled quote mark.
 
-### §6 Closing (`SiteFooter`, every page)
+### §6 Closing (`Footer`, every non-tool page)
 
-- **Band:** `--night`, padding-block `--section`.
-- **Statement:** `display-1` in night-ink, `max-width: 14ch`: **Technology should belong to <span night-kiln>everyone.</span>** Under it in `lede`, night-ink-2: **So we give ours away. We will never lock knowledge, charge for access, or trade trust for money.** Then `Read the manifesto →`.
-- **Actions:** **Make your first PR →** (primary), **Join the Discord** (on-night), and a `CommandChip` on night.
-- **Columns** (meta headings in night-ink-3, links in Inter 15, night-ink-2 → night-ink):
+- `tone="inverse"`, padding `--section-y`.
+- **Statement** (`display-1` at 0.85×, `max-width: 14ch`): **Technology should belong to** *everyone.* The last word is in `sign` style, `--inv-accent`.
+- Then in `lede` `--inv-fg-muted`: **So we give ours away. We will never lock knowledge, charge for access, or trade trust for money.** Then `Read the manifesto →`.
+- **Actions:** **Make your first PR →** (primary, which reads as light cobalt on ink), **Join the Discord** (secondary), and a `CopyCommand`.
+- **Columns** (`meta` headings in `--inv-fg-subtle`, links in Mona 15 `--inv-fg-muted` → `--inv-fg`):
   - Society: Work, People, Manifesto, Word of mouth, Contribute
-  - Credentials: Verify a certificate (`/verify`, with an ID field that redirects), Code of conduct
+  - Credentials: Verify a certificate (an ID `Field` that routes to `/verify/[id]`), Code of conduct
   - Elsewhere: GitHub, Discord, LinkedIn, X, Email
-- **Bottom line** (meta, night-ink-3): `© 2026 Open Dev Society · Founded July 2024 · This site is open source too ↗` (links to the `opendevsociety` repo).
-- **The premium detail:** the site ends on the manifesto line, and the last link is the site's own source.
+- **Bottom line** (`meta`): `© 2026 Open Dev Society · Founded July 2024 · This site is open source too ↗` (links to the `opendevsociety` repo).
 
 ## 11. Page templates
 
-All inner pages follow the same structure: `SiteNav`, then `PageHero`, then 1–3 `Section`s, then `SiteFooter`. H1 is `display-2`.
+Inner pages all follow: `Nav`, then the page header, then 1–3 `Section`s, then `Footer`. The page header is `SectionHeader as="h1"` (rail plus `display-2` H1 plus dek), with `padding-top: 96px` (64 on mobile).
 
-**`/projects` (Work).** Rail `Work` / `15 tools`. H1 **15 tools. 0 paywalls.** Dek as on Home. Then the OpenStock `Print` (as in the hero), the three featured `RepoTile`s, and the full `RepoIndex` with the filter and `First issues (n)` links. Last section, **Bring your project** (from the manifesto: `Your project. Your vision. Our community.`), with 3 lines on what ODS gives (contributors, visibility, review) and a `Button` linking to the Discord.
+**`/projects` (Work)**
+- H1 **15 tools. 0 paywalls.**
+- The OpenStock `Print`, the three featured `RepoTile`s, and the full `RepoIndex` with filter and `First issues (n)` links.
+- Last section, **Bring your project**: `Your project. Your vision. Our community.` with three lines on what ODS gives (contributors, visibility, review) and a Discord `Button`.
 
-**`/contributors` (People).** H1 **24 people, credited by name.** Then the masthead line, the `Wall` (page size, with the claim), and a `Ledger`: avatar 32 · name/@login · contributions (tabular) · repos (up to 3 names, then `+n`) · `↗`, sorted by contributions. The last section points to the bench: `Seat 25 is open →` to `/contribute`.
+**`/contributors` (People)**
+- H1 **24 people, credited by name.**
+- The masthead line, then the `Wall` (page size, with the claim).
+- A `Ledger`: avatar 32 · *name* (`sign`) / @login (mono) · contributions (tabular) · repos (up to 3, then `+n`) · `↗`, sorted by contributions.
+- It ends with `Seat 25 is open →` to `/contribute`.
 
-**`/manifesto`.** Long form, editorial. The text column is cols 3–10 (about 680px) with body at 17/1.7.
-- Dateline `Manifesto · July 2024`, then H1 **Technology should belong to everyone.**
+**`/manifesto`**
+- Long form. Text column at cols 3–10 (about 680px), body 17/1.7.
+- Dateline `Manifesto · July 2024`, then H1 **Technology should belong to** *everyone.*
 - Opening lede (22px): `Knowledge is hidden behind paywalls. Tools are locked in subscriptions. Newcomers are told they're not good enough. We think there's a better way, and we're building it.`
-- **Four rules**: numbered `Steps`, one sentence each:
+- **Four rules** as `Steps`, one sentence each:
   - Default to open: `Every line of code and every decision is public.`
   - No permission needed: `No interviews. Fork it and send the PR.`
   - Ship, then improve: `Release early and fix it in the open.`
   - Lift each other: `Everyone teaches, everyone learns.`
-- **What we build**: the old "Simple utilities / gateway to free books…" list, mapped to real repos as links.
-- **The promise**: a `--night` card at full column width with the three "We will never…" lines in `title`, then `Running on transparency, donations and community.`
-- **Platform, not gatekeeper**: bring your project, linking to the Discord.
+- **What we build**: the old list (simple utilities, a gateway to free books, roadmaps, courses…) mapped to real repos as links where they exist; aspirations are labelled `planned`.
+- **The promise**: an inverse card at column width. The three "We will never…" lines in `title`, then `Running on transparency, donations and community.`, then a signature line: *Ravi Pratap Singh*, founder (`sign`).
+- **Platform, not gatekeeper**: bring your project, with a Discord link.
 - Pull quotes are `Quote feature` and break out to cols 2–11.
 
-**`/contribute` (Start).** H1 **Your first contribution, from fork to merged.**
-1. The `Bench` section (night band, the same component as Home).
-2. **Not a coder?** Five cards (cols 4 each at lg, ending 4/4/4 + 6/6) for Code, Writing, Design, Teaching and Media. Each has who it's for (meta), three concrete tasks (`small` list) and one link. Rename the old "Ops" labels and drop the `ACCESS_REPOS ->` strings.
-3. **How review works**: `Steps`: open a draft, a maintainer reviews it in public, you iterate, it merges and you're on the wall. No promised turnaround times.
-4. **Code of conduct** (`id="conduct"`, wrapper `id="values"`): the five values as short lines, then a link to the full text on GitHub.
-5. **Questions**: native `<details>` accordions (summary in `title`, chevron rotates over `--d-3`, content height via `interpolate-size: allow-keywords` where supported).
+**`/contribute` (Start)**
+- H1 **Your first contribution, from fork to merged.**
+- **The bench**: an inverse section, the same component as Home.
+- **Not a coder?**: five `Card`s (3 + 2 at lg; cols 4/4/4 then 6/6) for Code, Writing, Design, Teaching and Media. Each has who it's for (`meta`), three concrete tasks (`small` list) and one real link. Fix the dead `href="#"` links and the `[LINK_PENDING]` Discord placeholder noted in the content README.
+- **How review works**: `Steps`: open a draft, a maintainer reviews it in public, you iterate, it merges and you're on the wall. No promised turnaround times.
+- **Code of conduct** (`id="conduct"`, wrapper `id="values"`): the values as short lines, then a link to the full text on GitHub.
+- **Questions**: native `<details>` (summary in `title`, chevron rotates over `--d-3`, `interpolate-size: allow-keywords` where supported).
 
-**`/word-of-mouth`.** H1 **What people wrote when they found it.** The feature `Quote`, then a `SegmentedControl` (All · Articles · Social · Community), then a `Ledger` of all mentions: source (meta) · author · title (one line, ellipsis) · year (mono) · `↗`. Then **Who backs the work** (`id="partners"`): `PartnerCard`s with fuller two-line descriptions we write, then an events `Ledger` (event · organizer · role · year), then the **partner CTA** (`id="partner-cta"`): `Back free software. Partner with us.` and a mailto `Button`.
+**`/word-of-mouth`**
+- H1 **What people wrote when they found it.**
+- The feature `Quote`, then a `SegmentedControl` (All · Articles · Social · Community), then a `Ledger` of every mention: source (`meta`) · *author* · title (one line) · year (mono) · `↗`.
+- **Who backs the work** (`id="partners"`): `PartnerCard`s with fuller two-line descriptions (ours), then an events `Ledger`, then the **partner CTA** (`id="partner-cta"`): `Back free software. Partner with us.` and a mailto `Button`.
 
-**Tool template (`/certificate`, `/certificate/login`, `/certificate/manage`).** No marketing chrome: a 56px top bar with the logo, `Certificates` (Inter 600) and on the right `Manage` / `New` / `Sign out`. Paper ground, no grain, no footer statement (a single meta footer line). `robots: { index: false }`. Copy is plain sentence case: `AUTHENTICATING...` becomes `Checking…`, `NO_CERTIFICATES_ISSUED_YET` becomes `No certificates yet.`, and the filter placeholder becomes `Filter by ID, name, role or status`.
-- `/certificate/login`: a centered `--card` panel, 400px wide, `--e-1`, `--r-md`. Title `Sign in to issue certificates` (`title`), one `Field`, a primary `Button` at full width, and the error under the field.
-- `/certificate`: two panes at ≥ 1024. On the left (cols 1–4), the form: `Field`s for recipient, role (`SegmentedControl`: member, contributor, maintainer, mentor), description, date and issuer, then `Publish` (primary) and `Download PDF` (secondary). On the right (cols 5–12), the live `CertificateDocument` preview with `--e-2`. Below 1024 the preview comes first, then the form.
-- `/certificate/manage`: a `Ledger` with ID (mono) · name · role · issued (mono) · `Status` · actions (`View`, `Revoke`, the latter confirmed inline, not with `window.confirm`), plus a filter `Field` above.
+**Tool template** (`/certificate`, `/certificate/login`, `/certificate/manage`)
+- No marketing chrome: a 56px bar with the logo, `Certificates` (Mona 600) and on the right `Manage · New · Sign out`. `--bg` ground, a single `meta` footer line, `robots: { index: false }`.
+- Copy is plain sentence case: `AUTHENTICATING...` becomes `Checking…`, `NO_CERTIFICATES_ISSUED_YET` becomes `No certificates yet.`, and the filter placeholder becomes `Filter by ID, name, role or status`. Replace `window.confirm/prompt/alert` with inline confirmations.
+- **`/certificate/login`**: a centered `Card` 400px wide. `Sign in to issue certificates` (`title`), one `Field`, a full-width primary `Button`, and the error under the field.
+- **`/certificate`**: two panes at ≥ 1024. On the left (cols 1–4), the form: `Field`s for recipient, role (`SegmentedControl`: member · contributor · maintainer · mentor), description, date and issuer, then `Publish` (primary) and `Download PDF` (secondary). On the right (cols 5–12), the live `CertificateDocument` with `--shadow-lg`. Below 1024 the preview comes first.
+- **`/certificate/manage`**: a `Ledger` with ID (mono) · *name* · role · issued (mono) · status `Badge` (`live` "Active" / accent-soft "Revoked") · `View` and `Revoke` (inline confirm). A filter `Field` sits above it.
 
-**Document template (`/verify/[id]`).** Public, indexable.
-- At the top, a status line in `title` with an icon:
-  - `Verified. Issued by Open Dev Society on 12 Mar 2026.` (moss)
-  - `Revoked on 2 Apr 2026. Reason: …` (kiln-deep on kiln-wash)
-  - Not found: H1 `We couldn't find certificate ODS-…` with a `Field` to try another ID.
-- Then the `CertificateDocument` (read-only, `--e-2`).
-- Then a details `Ledger`: certificate ID, recipient, role, issued, issuer and @handle, status.
-- Actions: `Download PDF` (secondary, runs the existing print-clone flow) and `Copy link` (CommandChip style).
-- `generateMetadata` keeps returning the name and role for link previews.
+**Document template** (`/verify/[id]`, public)
+- A status line in `title` with an icon:
+  - `Verified. Issued by Open Dev Society on 12 Mar 2026.` (`--live`)
+  - `Revoked on 2 Apr 2026. Reason: …` (`--fg` on `--surface-2` with a 3px `--fg-muted` left rule; never red)
+  - Not found: H1 `We couldn't find certificate ODS-…` and a `Field` to try another ID.
+- Then the `CertificateDocument` (read-only, `--shadow-lg`).
+- Then a details `Ledger`: ID, recipient, role, issued, issuer and @handle, status.
+- Actions: `Download PDF` (secondary, runs the existing print-clone flow) and `Copy link`.
+- `generateMetadata` keeps the name and role for link previews.
 
-## 12. The certificate document (must print as one A4 landscape page)
+## 12. The certificate document (one A4 landscape page)
 
-- Keep the existing print mechanism exactly: the download button clones `.cert-document` into `#cert-print-clone` on `<body>`, adds `body.printing-cert`, and `globals.css` `@media print` sets `@page { size: A4 landscape; margin: 0 }` and fixes the clone at 297×210mm. Do not change those selectors or that flow. Extract it into the shared `CertificateDocument` (it is duplicated across `/certificate` and `/verify` today).
-- Box: `aspect-ratio: 297 / 210`, `container-type: inline-size`, all inner sizes in `cqw` (as now), so the screen preview and the print are the same layout. Background `--card` with `print-color-adjust: exact`. No shadows, blur blobs, grain or backdrop filters inside the document. The tokens resolve because they live on `:root` (see section 4).
-- **Frame:** one hairline inset at 3.2% in `--line`, plus four kiln corner ticks (L-shapes, 1.6cqw long, 0.18cqw thick, `--kiln`). This replaces the teal corners, the double border and the dashed border.
-- **Top row:** logo (3.4cqw) with `Open Dev Society` (Inter 600, 1.4cqw) on the left. On the right, `Certificate` (meta-style, 0.95cqw, ink-3) above the ID (JetBrains 1.1cqw, ink).
-- **Body:** `This certifies that` (Inter 400, 1.7cqw, ink-2). Then the **name** (Bricolage 650, opsz 96, wdth 80, `clamp(34px, 6.4cqw, 80px)`, tracking -0.035em, ink, balanced, at most 2 lines). Then the role as a `Status`-shaped tag (`--kiln-wash` with kiln-deep text, Inter 600, 1.1cqw). Then the description (Inter 400, 1.4cqw/1.55, ink-2, max 60ch).
-- **Bottom row:** a 3-column grid over a top hairline.
-  - Left: `Issued` (ink-3) over the date (JetBrains, 1.2cqw).
-  - Center: `Verify at` over `opendevsociety…/verify/{id}` (JetBrains 1.0cqw, kiln-deep).
-  - Right: the issuer name (Inter 600, 1.4cqw) over `@handle` (JetBrains 1.0cqw, ink-3), with a hairline signature rule above.
-  - No fake script signatures.
-- **Check:** in Chrome's print preview, `Download PDF` on `/verify/[id]` gives exactly 1 page, A4 landscape, with no clipping, for a 2-line name and a 4-line description.
+- **Keep the print mechanism exactly.** The download button clones `.cert-document` into `#cert-print-clone` on `<body>` and adds `body.printing-cert`. `@media print` in `globals.css` sets `@page { size: A4 landscape; margin: 0 }` and fixes the clone at 297×210mm. Don't change those selectors or that flow. Extract the duplicated markup (in `/certificate` and `/verify`) into `CertificateDocument`.
+- **Box:** `aspect-ratio: 297 / 210`, `container-type: inline-size`, every inner size in `cqw` (as now), so the screen and print layouts match. Background `--surface` with `print-color-adjust: exact`. No shadows, blur blobs, grain or filters inside. The tokens resolve because they are on `:root`. Fonts are loaded by `next/font` on `<body>`, which the clone sits inside.
+- **Frame:** one hairline inset at 3.2% in `--line`, plus four corner ticks: L-shapes 1.6cqw long and 0.18cqw thick, in `--accent`. This replaces the teal corners, the double border and the dashed border.
+- **Top row:** logo (3.4cqw) with `Open Dev Society` (Mona 600, wdth 108, 1.4cqw) on the left. On the right, `Certificate` (Mona 500, 0.95cqw, `--fg-subtle`) above the ID (Geist Mono 1.1cqw).
+- **Body:**
+  - `This certifies that` (Mona 400, 1.7cqw, `--fg-muted`).
+  - The **recipient's name** in Newsreader Italic (opsz 72, 400, `clamp(34px, 6.6cqw, 84px)`, `--fg`, at most 2 lines): the name is signed, not typeset.
+  - The role as a Badge (`--accent-soft` with `--accent-hover` text, Mona 600, 1.1cqw).
+  - The description (Mona 400, 1.4cqw/1.55, `--fg-muted`, max 60ch).
+- **Bottom row:** 3 columns over a top hairline.
+  - Left: `Issued` over the date (Geist Mono 1.2cqw).
+  - Center: `Verify at` over the URL path `/verify/{id}` on the site's domain (Geist Mono 1.0cqw, `--accent`).
+  - Right: the issuer's **signature**, their name in Newsreader Italic 2.2cqw in `--accent` (blue ink) above a hairline, then the name and `@handle` (Mona 500 1.0cqw plus Geist Mono).
+- **Check:** Chrome print preview of `Download PDF` on `/verify/[id]` gives exactly 1 page, A4 landscape, with no clipping, for a 2-line name and a 4-line description.
 
 ## 13. Copy direction
 
 - **Voice:** a workshop lead who is glad you came. Direct, warm, specific, a little dry.
-- **Every claim gets a number or a name.** Numbers come from live data. If a number would embarrass us (★ 2), show a different true thing (`3 builders`, `pushed 2d ago`).
+- **Every claim gets a number or a name.** Numbers are live. If a number would embarrass us (★ 2), show a different true thing (`3 builders`, `pushed 2d ago`).
 - **Verbs of making:** build, ship, fork, fix, merge, sign. Never: empower, revolutionize, journey, leverage, unlock, "the future", "next generation".
-- **Headlines:** 8 words or fewer, sentence case, ending with a period. One clause in kiln at most per page (the H1 or the closing line), never both in one viewport.
-- **No repetition:** "No paywalls. No gatekeeping." appears once on Home (the hero lede).
+- **Headlines:** 8 words or fewer, sentence case, ending with a period. One italic `sign` clause per page at most in a headline (the H1 or the closing line).
+- **No repetition:** "No paywalls…" appears once on Home (the hero lede).
 - **Microcopy:** buttons are verbs (`Make your first PR`, `Claim it`, `Copy`, `Download PDF`). Links end in `→` (internal) or `↗` (external).
 
-Rewritten lines, final:
-
-| Where | Copy |
+| Where | Copy (final) |
 |---|---|
-| Hero H1 | Software for everyone, built by **anyone who shows up.** |
+| Hero H1 | Software for everyone, built by *anyone who shows up.* |
 | Hero lede | A public workshop of developers, designers and writers making free, open-source tools. No paywalls. No interviews. Send a pull request and you're one of us. |
 | Work H2 | 15 tools. 0 paywalls. |
 | People H2 | 24 people built all of this. Seat 25 is yours. |
 | Start H2 | Three commands from here to the wall. |
 | Word of mouth H2 | What people wrote when they found it. |
 | Partners | Who backs the work |
-| Closing | Technology should belong to **everyone.** So we give ours away. |
-| Metadata title | Open Dev Society: free, open-source software, built in public |
-| Metadata description | A public workshop of developers, designers and writers building free, open-source tools. 21.4k stars, 24 builders, no paywalls. (Built from live totals.) |
+| Closing | Technology should belong to *everyone.* So we give ours away. |
+| Meta title | Open Dev Society: free, open-source software, built in public |
+| Meta description | A public workshop of developers, designers and writers building free, open-source tools. 21.4k stars, 24 builders, no paywalls. (Built from live totals.) |
 
 ## 14. What to cut from C
 
-- The **build sheet** hero card (a repo list repeated three times). It is replaced by the OpenStock `Print`.
+- **The look:** the beige paper, kiln orange, Bricolage and the paper grain, replaced by this theme. The `FOREVER FREE` stamp and the rotated paper backing go too.
+- The **build sheet** hero card (one repo list shown three times). The OpenStock `Print` replaces it.
 - The **stats strip** and `1,000+ members`.
-- The `ODS·0x` tile labels, the `0n — KICKER` pills with the punched-hole dot, and all uppercase mono kickers.
-- The **four person cards**. Faces appear once, on the wall, and names go in the masthead line.
-- The **40-seat wall** with 36 empties.
-- `Got mentioned by…` rows, the founder's own posts in Signal, line-clamped partner blurbs, and the two full-width event rows.
+- `ODS·0x` tile labels, the `0n — KICKER` pills with the punched-hole dot, and all uppercase mono kickers.
+- The **four person cards**. Faces appear once, on the wall, and names go in the masthead.
+- The **40-seat wall** with 36 empty seats.
+- `Got mentioned by…` rows, the founder's own posts in Signal, line-clamped partner blurbs, and the full-width event rows.
 - The **Principles** section on Home. It moves to `/manifesto` and the closing line.
-- The `Snapshot data. In production…` footnote, the `concept c · builder's workshop` footer line, and `Let's build the future together, openly.`
-- The `FOREVER FREE` stamp and the rotated paper backing (decoration that competes with the real screenshot).
-- The pinging green dot (it becomes a static moss dot, shown only when data is live).
-- Uniform `-translate-y-0.5` hover-lift on every card.
-- `First issues` links on repos with 0 such issues.
-- The wrong `git clone` / `git checkout -b` flow.
-- The fake arithmetic star counts (already fixed in `src/data/fallback.ts`). The page must read live data.
+- The `Snapshot data…` footnote, the `concept c` footer line, and `Let's build the future together, openly.`
+- The pinging dot (it becomes a static `--live` dot, shown only when live), and the uniform hover-lift on every card.
+- `First issues` links where there are none, and the wrong `git clone` / `checkout -b` flow.
 
-**Keep from C:** the paper and kiln palette (evolved above), Bricolage, the H1, the nav's spring pill, the copy→check morph, partner logos going grayscale→color, the inset-hairline shadows, `text-wrap` and focus handling, the ink "promise" card (moved to `/manifesto`), and the idea of one section per old route with an escape-hatch link.
+**Keep from C:** the idea and its order (shelf, wall, path), the H1, the interactive first-PR path, the nav's spring pill, the copy→check morph, partner logos going grayscale→color, inset-hairline shadows, `text-wrap` and focus handling, the inverse "promise" card (moved to `/manifesto`), and one section per old route with an escape-hatch link.
 
 ## 15. Mobile rules (375–767px)
 
-1. Page padding 20px. No horizontal page scroll at 375px, ever. Only the featured-tile snap scroller scrolls sideways, inside its own container.
-2. H1 is `display-1` at 44px, 3–4 lines. The hero lede is 17px. All buttons are full width and the same width, stacked, with the `CommandChip` below them at full width.
+1. Page padding is `--gutter` (20px at 375). No horizontal page scroll, ever. Only the featured-tile snap scroller scrolls sideways, inside its own container. Grids must declare `grid-cols-1` (or `minmax(0,1fr)`); an implicit column grows to fit a nowrap command chip.
+2. The H1 is 44px over 3–4 lines, and the italic clause may take its own line. The lede is 17px. Buttons are full width and the same width, stacked, with the `CopyCommand` below them at full width.
 3. The hero print uses the mobile OpenStock capture at 4:5. Its caption stacks: name and tagline, then the signature row.
-4. Section rails collapse to one line above the H2: `Work · 15 tools`.
-5. Featured tiles become a snap scroller (78vw). Index rows take 2 lines. There are no tables wider than the screen; a `Ledger` with more than 3 columns becomes stacked rows.
-6. The wall has 8 columns. The claim field sits full width under it, and seats link straight to profiles (no tooltips on touch).
-7. The bench sits inside step 1. Commands wrap with a hanging indent. The Terminal | Agent control is full width.
-8. Tap targets are at least 44×44px. Chips are 36px tall with 4px vertical hit-slop padding.
-9. Target total home height at 390px: **under 7,000px** (C was 10,549).
-10. The nav sheet is full height, with `display-3` links, the Contribute button at the bottom (full width), and it closes on route change and on Escape.
+4. Section rails become one line: `Work · 15 tools`. The dateline wraps with `flex-wrap`, so no orphaned dots.
+5. Featured tiles are a 78vw snap scroller. Index rows take 2 lines. `Ledger`s become stacked rows.
+6. The wall has 8 columns. The claim field is full width, and seats link straight to profiles (no tooltips on touch).
+7. The bench sits inside step 1. Commands wrap with a hanging indent. Terminal | Agent spans full width.
+8. Tap targets are at least 44×44px. Chips are 36px tall with 4px vertical hit-slop.
+9. Target home height at 390px: **under 7,000px** (C was 10,549).
+10. The nav sheet is full height with `display-3` links and a full-width Contribute button at the bottom. It closes on route change and Escape.
 
-## 16. Imagery: how to get the real screenshots
+## 16. Imagery: real screenshots
 
-Capture once into the repo, under `public/shots/`, with a script `scripts/capture-shots.mjs` (playwright-core; install the browser with `PLAYWRIGHT_BROWSERS_PATH=<dir> npx playwright-core install chromium-headless-shell`, because the cached chromium-1148 is broken):
+Capture once into `public/shots/` with `scripts/capture-shots.mjs` (playwright-core). Install the browser with `PLAYWRIGHT_BROWSERS_PATH=<dir> npx playwright-core install chromium-headless-shell`; the cached chromium-1148 is broken.
 
 | File | URL | Viewport |
 |---|---|---|
-| `openstock-desktop.jpg` | https://openstock-ods.vercel.app | 1440×900 @2x, wait for network idle and a further 1.5s |
+| `openstock-desktop.jpg` | https://openstock-ods.vercel.app | 1440×900 @2x, network idle plus 1.5s |
 | `openstock-mobile.jpg` | same | 390×844 @3x |
 | `kine-ui.jpg` | https://kine-ui.vercel.app | 1440×900 @2x |
 | `openreadme.jpg` | https://openreadme.vercel.app | 1440×900 @2x |
 
-Save as JPEG at quality 86; `next/image` serves AVIF/WebP. Dismiss cookie banners before capture. If a site shows an error or an empty state, don't use it; fall back to a typographic night tile like kitbash's. `openmind` and `openhaven` homepages return 404, so never link or capture them. Avatars: `<img>` with `width`/`height`, `loading="lazy"`, `decoding="async"` and `?s=96` (or `&s=96`) to get the right size.
+- Save as JPEG at quality 86; `next/image` serves AVIF/WebP.
+- Dismiss cookie banners first. If a capture shows an error or an empty state, use an inverse typographic tile instead (like kitbash).
+- `openmind` and `openhaven` homepages return 404: never link or capture them.
+- Avatars: `<img>` with `width`/`height`, `loading="lazy"`, `decoding="async"` and a size parameter at 2× display.
 
 ## 17. Done means
 
 - `npx tsc --noEmit` and `npm run lint` pass.
-- At 1440 and 390: no console errors, no horizontal scroll, the hero is complete in the first viewport at 1440×900 with the print's top visible, and home height at 390 is under 7,000px.
-- All text meets AA with the tokens above (no new color pairs without a check).
+- At 1440 and 390: no console errors and no element wider than the viewport. At 1440×900 the hero is complete and the print's top is visible. Home at 390 is under 7,000px.
+- Text contrast meets AA using only the token pairs above. Any new pair gets measured.
 - Reduced motion: both signatures render in their final state, and nothing translates or blurs.
-- Every number on the page traces to `src/lib/github.ts` or a `src/data/*` file.
+- Every number traces to `src/lib/github.ts` or a `src/data/*` file.
 - `/partners` redirects to `/word-of-mouth#partners`, and `/contribute#values` still lands.
 - `/verify/[id]` prints exactly one A4 landscape page.
