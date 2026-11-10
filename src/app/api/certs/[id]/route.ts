@@ -33,7 +33,7 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  if (!isAuthed(req)) {
+  if (!(await isAuthed(req))) {
     return NextResponse.json(
       { ok: false, error: "Unauthorized" },
       { status: 401 }
