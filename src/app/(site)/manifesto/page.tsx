@@ -6,35 +6,23 @@ import { contactEmail, social } from "@/content";
 import { manualContributors } from "@/data/contributors";
 import { mentions } from "@/data/mentions";
 import { ago } from "@/lib/format";
-import { expHref, expId } from "@/lib/lab";
+import { projectHref } from "@/lib/lab";
 import { getWorkshop } from "@/lib/workshop";
-import { CopyButton } from "./CopyButton";
 import { figureFrames, N, SEED, STEPS } from "./figure";
 
 export const revalidate = 3600;
 
-const ID = "ODS-WP-001";
-const VERSION = "3";
 const DATE = "10 Nov 2026";
 const TITLE = "Technology Should Belong to Everyone";
-const PAPER_URL = "https://opendevsociety.vercel.app/manifesto";
 
 const founders = manualContributors.filter((c) => c.role && /Founder/i.test(c.role)); // Founder first, then Co-Founder
 const maintainers = manualContributors.filter((c) => c.role && /Maintainer/i.test(c.role));
 const role = (r?: string) => (r && /Co-Founder/i.test(r) ? "Co-founder" : "Founder");
 
 export const metadata: Metadata = {
-  title: `${ID}: ${TITLE} · Open Dev Society`,
+  title: `Manifesto: ${TITLE} · Open Dev Society`,
   description:
-    "Working paper ODS-WP-001: why Open Dev Society builds free, open-source tools in public. Four rules, what we build, the promise, and who owns what.",
-  // Highwire tags, the ones Google Scholar reads from a paper's landing page.
-  other: {
-    citation_title: TITLE,
-    citation_author: founders.map((f) => f.name!),
-    citation_publication_date: "2026/11/10",
-    citation_technical_report_institution: "Open Dev Society Lab",
-    citation_technical_report_number: ID,
-  },
+    "The Open Dev Society manifesto: why we build free, open-source tools in public. Four principles, what we build, three promises, and who owns your work.",
 };
 
 const repoUrl = (name: string) => `https://github.com/Open-Dev-Society/${name}`;
@@ -55,45 +43,29 @@ const ownership = [
 
 const tarang = mentions.find((m) => m.author.startsWith("Tattva Tarang"))!;
 
-// The reference list, in order of first citation. `cite("turing")` prints [5] linked to it.
-const refs = {
-  org: { by: "Open Dev Society", title: "Experiments: source code and history", where: "GitHub, 2024–2026", href: "https://github.com/Open-Dev-Society" },
-  openstock: { by: "Open Dev Society", title: "OpenStock: market prices, alerts and company data. Free", where: "GitHub, 2025–2026", href: repoUrl("OpenStock") },
-  agpl: { by: "Free Software Foundation", title: "GNU Affero General Public License, version 3", where: "19 Nov 2007", href: "https://www.gnu.org/licenses/agpl-3.0.html" },
-  tarang: { by: "T. Tarang", title: "OpenStock: the free, open-source stock market app built for everyone", where: "Coding Nexus (Medium), 2025", href: tarang.url },
-  protocol: { by: "Open Dev Society", title: "Protocol 01: First contribution", where: "Lab protocol", href: "/contribute" },
-  turing: { by: "A. M. Turing", title: "The chemical basis of morphogenesis", where: "Phil. Trans. R. Soc. Lond. B 237 (641): 37–72, 1952", href: "https://doi.org/10.1098/rstb.1952.0012" },
-  pearson: { by: "J. E. Pearson", title: "Complex patterns in a simple system", where: "Science 261 (5118): 189–192, 1993", href: "https://doi.org/10.1126/science.261.5118.189" },
-  bayer: { by: "B. E. Bayer", title: "An optimum method for two-level rendition of continuous-tone pictures", where: "IEEE International Conference on Communications, 1973", href: "https://en.wikipedia.org/wiki/Ordered_dithering" },
-  citations: { by: "Open Dev Society", title: `Citations: every mention so far (${mentions.length})`, where: "Bibliography", href: "/word-of-mouth" },
-} as const;
-type RefKey = keyof typeof refs;
-const order = Object.keys(refs) as RefKey[];
+// Further reading, at the foot of the page.
+const reading = [
+  { by: "Open Dev Society", title: "Every project: source code and history", where: "GitHub, 2024–2026", href: "https://github.com/Open-Dev-Society" },
+  { by: "T. Tarang", title: "OpenStock: the free, open-source stock market app built for everyone", where: "Coding Nexus (Medium), 2025", href: tarang.url },
+  { by: "Free Software Foundation", title: "GNU Affero General Public License, version 3", where: "19 Nov 2007", href: "https://www.gnu.org/licenses/agpl-3.0.html" },
+  { by: "A. M. Turing", title: "The chemical basis of morphogenesis", where: "Phil. Trans. R. Soc. Lond. B 237 (641): 37–72, 1952", href: "https://doi.org/10.1098/rstb.1952.0012" },
+  { by: "J. E. Pearson", title: "Complex patterns in a simple system", where: "Science 261 (5118): 189–192, 1993", href: "https://doi.org/10.1126/science.261.5118.189" },
+  { by: "B. E. Bayer", title: "An optimum method for two-level rendition of continuous-tone pictures", where: "IEEE International Conference on Communications, 1973", href: "https://en.wikipedia.org/wiki/Ordered_dithering" },
+];
 
-function Cite({ k }: { k: RefKey[] }) {
-  return (
-    <span className="whitespace-nowrap">
-      [
-      {k.map((key, i) => (
-        <Fragment key={key}>
-          {i > 0 && ", "}
-          <a href={`#ref-${key}`} className="text-(--accent) hover:underline">
-            {order.indexOf(key) + 1}
-          </a>
-        </Fragment>
-      ))}
-      ]
-    </span>
-  );
-}
+const A = ({ href, children }: { href: string; children: React.ReactNode }) => (
+  <a href={href} className="ink-link" {...(href.startsWith("http") ? ext : {})}>
+    {children}
+  </a>
+);
 
 // The footnotes, numbered in reading order.
 const NOTES: Record<number, React.ReactNode> = {
-  1: <>Founded July 2024. Everything it makes lives at github.com/Open-Dev-Society <Cite k={["org"]} />.</>,
-  2: <>Free to use and free to fork. OpenStock, for one, is under the GNU AGPL v3.0 <Cite k={["agpl"]} />, so a copy served to others must stay open too.</>,
-  3: <>There is no application form. The first pull request is the application.</>,
-  4: <>The same reaction runs live at the top of the home page, seeded by the letters of its headline.</>,
-  5: <>Partners and what they back are listed in full under Funding &amp; acknowledgements, on the Citations page <Cite k={["citations"]} />.</>,
+  1: <>Founded July 2024. Everything we make lives at <A href="https://github.com/Open-Dev-Society">github.com/Open-Dev-Society</A>.</>,
+  2: <>Free to use and free to fork. OpenStock, for one, is under the <A href="https://www.gnu.org/licenses/agpl-3.0.html">GNU AGPL v3.0</A>, so a copy served to others must stay open too.</>,
+  3: <>There is no application form. Your first pull request is the application.</>,
+  4: <>The same pattern runs live at the top of the home page, seeded by the letters of its headline.</>,
+  5: <>Our partners and what they support are listed on <A href="/word-of-mouth#partners">What people say</A>.</>,
   6: <>Every licence we use grants the right to fork. Leaving costs one <span className="whitespace-nowrap">git remote set-url</span>.</>,
 };
 
@@ -144,7 +116,7 @@ export default async function Manifesto() {
   const num = (x: number) => x.toFixed(4).replace(/0+$/, "");
 
   type Status = { label: string; href: string }[] | null;
-  const tool = (n: string) => (tools.some((r) => r.name === n) ? [{ label: `${expId(n, tools)} ${n}`, href: expHref(n) }] : []);
+  const tool = (n: string) => (tools.some((r) => r.name === n) ? [{ label: n, href: projectHref(n) }] : []);
   const table: { area: string; aim: string; status: Status }[] = [
     { area: "Tools", aim: "Simple utilities, free to use.", status: [...tool("OpenStock"), ...tool("openreadme"), { label: `all ${tools.length} →`, href: "/projects" }] },
     { area: "Library", aim: "A gateway to free books.", status: tool("booktrace").length ? tool("booktrace") : null },
@@ -153,44 +125,24 @@ export default async function Manifesto() {
     { area: "Media", aim: "Podcasts and tutorials.", status: null },
     { area: "Events", aim: "Hackathons and conferences.", status: [{ label: "Apretre 3.0, JWOC 2026 →", href: "/word-of-mouth#partners" }] },
     { area: "News", aim: "Information without an agenda.", status: null },
-    { area: "Community", aim: "A home for contributors.", status: [{ label: `${people.length} researchers →`, href: "/contributors" }] },
+    { area: "Community", aim: "A home for contributors.", status: [{ label: `${people.length} contributors →`, href: "/contributors" }] },
   ];
 
-  const bibtex = `@techreport{${ID.toLowerCase()},
-  title       = {${TITLE}},
-  author      = {${founders.map((f) => f.name!.replace(/^(.*) (\S+)$/, "$2, $1")).join(" and ")}},
-  institution = {Open Dev Society Lab},
-  type        = {Working Paper},
-  number      = {${ID}},
-  note        = {Version ${VERSION}},
-  year        = {2026},
-  month       = nov,
-  url         = {${PAPER_URL}}
-}`;
-  const plain = `${founders.map((f) => f.name).join(" and ")} (2026). ${TITLE}. Working Paper ${ID}, v${VERSION}. Open Dev Society Lab. ${PAPER_URL}`;
-
-  const stamp = `${ID}v${VERSION} [cs.SE] ${DATE}`;
   const body = "text-[17px] leading-[1.7] text-(--fg) hyphens-auto sm:text-justify [&>p+p]:indent-6";
 
   return (
     <article className="mx-auto w-full max-w-(--container) px-(--gutter) pt-10 pb-24 lg:pt-14 lg:pb-32">
-      {/* The header strip: what kind of document this is, before anything else. */}
+      {/* The header strip: what this is, before anything else. */}
       <header className="border-y-[3px] border-double border-(--fg) py-2.5">
         <p className="t-mono flex flex-wrap justify-between gap-x-6 gap-y-1 text-[12px] text-(--fg-muted)">
           <span>
-            <span className="text-(--fg)">{ID}</span> · v{VERSION} · {DATE} · cs.SE · Open Dev Society Lab
+            <span className="text-(--fg)">MANIFESTO</span> · Open Dev Society · updated {DATE}
           </span>
-          <span className="max-sm:hidden">Working paper · preprint · not peer reviewed</span>
+          <span className="max-sm:hidden">5 min read</span>
         </p>
       </header>
 
-      <div className="mt-14 lg:grid lg:grid-cols-[minmax(0,68ch)_13rem] lg:justify-center lg:gap-x-10 xl:grid-cols-[5rem_minmax(0,68ch)_13rem]">
-        {/* arXiv's grey margin stamp, turned up the left edge. */}
-        <aside aria-hidden className="hidden xl:block">
-          <p className="sticky top-24 font-mono text-[15px] tracking-[0.04em] whitespace-nowrap text-(--fg-subtle) [writing-mode:vertical-rl] rotate-180">
-            {stamp}
-          </p>
-        </aside>
+      <div className="mt-14 lg:grid lg:grid-cols-[minmax(0,68ch)_13rem] lg:justify-center lg:gap-x-10">
 
         <div className="min-w-0">
           {/* Title page */}
@@ -199,59 +151,53 @@ export default async function Manifesto() {
               {TITLE}
             </h1>
             <p className="mt-9 flex flex-wrap justify-center gap-x-8 gap-y-2 text-[22px]">
-              {founders.map((f, i) => (
+              {founders.map((f) => (
                 <span key={f.login}>
                   <a href={f.html_url} {...ext} className="sign text-(--fg) transition-colors duration-(--d-2) hover:text-(--accent)">
                     {f.name}
                   </a>
-                  <sup className={`${S} ml-0.5 text-(--fg-muted)`}>1{i === 0 && ",*"}</sup>
                 </span>
               ))}
             </p>
             <p className="t-mono mt-3 text-[12px] text-(--fg-muted)">
-              <sup className={S}>1</sup>Open Dev Society Lab,{" "}
+              Open Dev Society ·{" "}
               <a href={social.github.href} {...ext} className="hover:text-(--accent)">
                 github.com/Open-Dev-Society
-              </a>
-              <br />
-              <sup className={S}>*</sup>Correspondence:{" "}
+              </a>{" "}
+              ·{" "}
               <a href={`mailto:${contactEmail}`} className="hover:text-(--accent)">
                 {contactEmail}
               </a>
             </p>
-            <p className="t-mono mt-5 text-[12px] text-(--fg-subtle)">First circulated July 2024 · this version {DATE}</p>
+            <p className="t-mono mt-5 text-[12px] text-(--fg-subtle)">Written July 2024 · updated {DATE}</p>
           </div>
 
-          {/* Abstract, in a ruled box with its label set into the top rule. */}
-          <section aria-labelledby="abstract" className="relative mt-12 border border-(--fg) px-5 pt-7 pb-6 sm:px-8">
-            <h2 id="abstract" className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-(--bg) px-3 font-mono text-[12px] tracking-[0.2em] text-(--fg) uppercase">
-              Abstract
+          {/* The short version, in a ruled box with its label set into the top rule. */}
+          <section aria-labelledby="short" className="relative mt-12 border border-(--fg) px-5 pt-7 pb-6 sm:px-8">
+            <h2 id="short" className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-(--bg) px-3 font-mono text-[12px] tracking-[0.2em] whitespace-nowrap text-(--fg) uppercase">
+              The short version
             </h2>
             <p className="text-[16px] leading-[1.65] text-(--fg) hyphens-auto sm:text-justify">
               Knowledge is hidden behind paywalls. Tools are locked in subscriptions. Newcomers are told they&apos;re not good enough. We think
-              there&apos;s a better way, and we&apos;re building it. This paper states the four rules the lab works by (§2), what it builds with
-              them, {tools.length} free, open-source experiments so far by {people.length} researchers (§3), the promise that binds it (§4), and
-              who owns the work (§5).
-            </p>
-            <p className="t-mono mt-4 text-[12px] text-(--fg-muted)">
-              <span className="text-(--fg)">Keywords</span> · open source · free software · building in public · mentorship
+              there&apos;s a better way, and we&apos;re building it: {tools.length} free, open-source projects so far, by {people.length}{" "}
+              contributors. Below are the four principles we work by, what we build, the three promises we keep, and who owns the work.
             </p>
           </section>
 
           <div className={body}>
             <H2 n={1} id="introduction">
-              Introduction
+              Why we exist
             </H2>
             <p>
               Open Dev Society
               <Note n={1} />{" "}
-              is a lab that builds free software in public. Its premise is short: technology should belong to everyone. Not licensed to them,
+              is a community that builds free software in public. What we believe is short: technology should belong to everyone. Not licensed to them,
               rented to them, or shown to them after a sign-up form, but theirs, to use, read, change and pass on.
             </p>
             <p>
               The obstacles are familiar. Knowledge sits behind paywalls; tools sit behind subscriptions; the newcomer is asked for experience
-              they could only have gained by being let in. As one reader of our first experiment put it, great tools &ldquo;shouldn&apos;t hide
-              behind logins or price tiers&rdquo; <Cite k={["tarang"]} />. The fix we propose is not a policy but a practice: build the tools in
+              they could only have gained by being let in. As <A href={tarang.url}>one reviewer of OpenStock</A> put it, great tools &ldquo;shouldn&apos;t
+              hide behind logins or price tiers&rdquo;. Our answer is not a policy but a practice: build the tools in
               the open, free
               <Note n={2} />
               , and let anyone who shows up help.
@@ -265,36 +211,33 @@ export default async function Manifesto() {
             <Notes ns={[1, 2]} />
 
             <H2 n={2} id="principles">
-              Principles
+              What we believe
             </H2>
-            <p>The lab has four rules. Each is one sentence, stated here as a proposition with the evidence that it holds.</p>
+            <p>We work by four principles. Each is one sentence, followed by how it shows up in practice.</p>
             <div className="mt-6 space-y-6 indent-0">
               {rules.map((r, i) => (
                 <div key={r.title} className="border-l border-(--line) pl-5 text-left">
                   <p>
-                    <span className="font-[650]">Proposition 2.{i + 1}</span> <span className="text-(--fg-muted)">({r.title}).</span> {r.body}
+                    <span className="font-[650]">{r.title}.</span> {r.body}
                   </p>
                   <p className="mt-1.5 text-[15px] leading-[1.6] text-(--fg-muted)">
-                    <span className="font-mono text-[13px] text-(--fg)">Proof.</span>{" "}
+                    <span className="font-mono text-[13px] text-(--fg)">In practice:</span>{" "}
                     {
                       [
                         <>
-                          All {tools.length} experiments are public repositories <Cite k={["org"]} />; the decisions are their issues and pull
-                          requests.
+                          All {tools.length} projects are <A href="https://github.com/Open-Dev-Society">public repositories</A>; the
+                          decisions happen in their issues and pull requests.
                         </>,
                         <>
-                          Protocol 01 <Cite k={["protocol"]} /> is the whole of the onboarding: fork, branch, pull request.
+                          The whole onboarding is <A href="/contribute">one page</A>: fork, branch, pull request.
                           <Note n={3} />
                         </>,
                         <>
                           The last commit landed {ago(lastPush, now)}{latest && <>, to {latest}</>}.
                         </>,
-                        <>Left as an exercise for the reader, preferably in the Discord.</>,
+                        <>Ask anything in the <A href={social.discord.href}>Discord</A>; someone who learned it last month will answer.</>,
                       ][i]
                     }
-                    <span aria-hidden className="float-right ml-3 text-(--fg)">
-                      ∎
-                    </span>
                   </p>
                 </div>
               ))}
@@ -302,12 +245,12 @@ export default async function Manifesto() {
             <Notes ns={[3]} />
 
             <H2 n={3} id="method">
-              Method
+              What we build
             </H2>
             <p>
-              We work the way a reaction–diffusion system does: a few local rules (§2), followed by everyone, produce structure nobody drew
-              (Fig. 1). In practice that structure is software. Table 1 lists what we build; where a piece already ships it carries its
-              experiment number and links to its record. The rest is next.
+              We work the way the pattern below grows: a few simple rules, followed by everyone, produce something nobody drew alone. For us
+              that something is software. The table lists what we build; where a piece already ships, it links to the project. The rest is
+              next.
             </p>
 
             <figure className="my-10 indent-0">
@@ -336,17 +279,17 @@ export default async function Manifesto() {
                 ))}
               </div>
               <figcaption className="mt-4 text-left text-[14px] leading-[1.6] text-(--fg-muted) hyphens-auto">
-                <span className="font-[650] text-(--fg)">Fig. 1.</span> EXP-000 grown from a single seed (<span className="text-(--mark-ink)">+</span>
-                , a first contribution) after Turing <Cite k={["turing"]} />: the Gray–Scott model as in Pearson <Cite k={["pearson"]} />, f ={" "}
-                {num(REGIMES.coral[0])}, k = {num(REGIMES.coral[1])}, shown 1-bit through a Bayer 8×8 ordered dither <Cite k={["bayer"]} />.
-                One local rule, followed everywhere, fills the plate.
+                <span className="font-[650] text-(--fg)">One seed, one rule.</span> The pattern grows from a single point (
+                <span className="text-(--mark-ink)">+</span>, a first contribution). It&apos;s a reaction–diffusion pattern, first described by
+                Alan Turing in 1952 (Gray–Scott model, f = {num(REGIMES.coral[0])}, k = {num(REGIMES.coral[1])}), drawn 1-bit with an 8×8
+                dither. One simple rule, followed everywhere, fills the frame.
                 <Note n={4} />
               </figcaption>
             </figure>
 
             <div className="my-10 indent-0">
               <p className="t-mono text-left text-[12px] text-(--fg-muted)">
-                <span className="font-sans text-[14px] font-[650] text-(--fg)">Table 1.</span> What the lab builds, and its status on {DATE}.
+                <span className="font-sans text-[14px] font-[650] text-(--fg)">What we build</span>, and where each part stands on {DATE}.
               </p>
               <table className="mt-3 w-full border-y-2 border-(--fg) text-left text-[15px] leading-[1.45]">
                 <thead className="border-b border-(--fg)">
@@ -394,7 +337,7 @@ export default async function Manifesto() {
             <H2 n={4} id="promise">
               The promise
             </H2>
-            <p>The rules can change as the lab learns. These three lines cannot.</p>
+            <p>Our principles can change as we learn. These three promises cannot.</p>
             <ol className="my-8 space-y-3 border-y border-(--fg) py-6 text-left indent-0">
               {promise.map((l, i) => (
                 <li key={l} className="grid grid-cols-[2.5rem_minmax(0,1fr)] items-baseline text-[clamp(1.25rem,1rem+1vw,1.625rem)] leading-tight font-[650] tracking-[-0.015em]">
@@ -404,7 +347,7 @@ export default async function Manifesto() {
               ))}
             </ol>
             <p>
-              The lab runs on transparency, donations and community.
+              We run on transparency, donations and community.
               <Note n={5} />
             </p>
             <div className="mt-10 grid grid-cols-1 gap-8 indent-0 sm:grid-cols-2">
@@ -425,15 +368,13 @@ export default async function Manifesto() {
               Ownership
             </H2>
             <p>
-              A lab that asks for contributions owes an answer to the obvious question: whose is the work? Bring your project and it stays
+              If we ask for your contributions, we owe you an answer to the obvious question: whose is the work? Bring your project and it stays
               yours: the credit, the decisions and the right to leave. We bring contributors, visibility and public review, and we never take
               the credit. Your project. Your vision. Our community. Three questions come up every time.
             </p>
             {ownership.map((f, i) => (
               <p key={f.q} className="mt-2 indent-0!">
-                <span className="font-[650]">
-                  5.{i + 1}&ensp;{f.q}
-                </span>{" "}
+                <span className="font-[650]">{f.q}</span>{" "}
                 {f.a}
                 {i === 2 && (
                   <Note n={6} />
@@ -460,48 +401,26 @@ export default async function Manifesto() {
               ))}
               , and written in public with{" "}
               <a href="/contributors" className="ink-link">
-                {people.length} researchers
-              </a>{" "}
-              <Cite k={["org"]} />.
+                {people.length} contributors
+              </a>
+              .
             </p>
           </div>
 
-          <section aria-labelledby="references" className="mt-16">
-            <h2 id="references" className="mb-4 text-[1.0625rem] font-[650] text-(--fg)">
-              References
+          <section aria-labelledby="reading" className="mt-16 border-t-[3px] border-double border-(--fg) pt-6">
+            <h2 id="reading" className="mb-4 text-[1.0625rem] font-[650] text-(--fg)">
+              Further reading
             </h2>
-            <ol className="space-y-2.5 text-[14px] leading-[1.55] text-(--fg-muted)">
-              {order.map((k, i) => {
-                const r = refs[k];
-                const out = r.href.startsWith("http");
-                return (
-                  <li key={k} id={`ref-${k}`} className="grid scroll-mt-24 grid-cols-[2.25rem_minmax(0,1fr)] target:bg-(--accent-soft)">
-                    <span className="font-mono text-[12px] leading-[1.9] text-(--fg)">[{i + 1}]</span>
-                    <span>
-                      {r.by}. <span className="text-(--fg)">{r.title}.</span> {r.where}.{" "}
-                      <a href={r.href} className="t-mono text-[12px] break-all text-(--accent) hover:underline" {...(out ? ext : {})}>
-                        {r.href.replace(/^https:\/\/(www\.)?/, "")}
-                        {out ? " ↗" : " →"}
-                      </a>
-                    </span>
-                  </li>
-                );
-              })}
-            </ol>
-          </section>
-
-          {/* Cite this paper */}
-          <section aria-labelledby="cite" className="mt-16 border-t-[3px] border-double border-(--fg) pt-6">
-            <div className="flex flex-wrap items-baseline justify-between gap-3">
-              <h2 id="cite" className="text-[1.0625rem] font-[650] text-(--fg)">
-                Cite this paper
-              </h2>
-              <CopyButton text={bibtex} label="Copy BibTeX" />
-            </div>
-            <p className="mt-4 text-[14px] leading-[1.6] text-(--fg-muted)">{plain}</p>
-            <pre className="mt-4 overflow-x-auto bg-(--surface) p-4 font-mono text-[12px] leading-[1.6] text-(--fg) shadow-[0_0_0_1px_var(--line)]">
-              <code>{bibtex}</code>
-            </pre>
+            <ul className="space-y-2.5 text-[14px] leading-[1.55] text-(--fg-muted)">
+              {reading.map((r) => (
+                <li key={r.href}>
+                  {r.by}. <span className="text-(--fg)">{r.title}.</span> {r.where}.{" "}
+                  <a href={r.href} {...ext} className="t-mono text-[12px] break-all text-(--accent) hover:underline">
+                    {r.href.replace(/^https:\/\/(www\.)?/, "")} ↗
+                  </a>
+                </li>
+              ))}
+            </ul>
           </section>
         </div>
       </div>
