@@ -11,7 +11,7 @@ export function About({ stars, contributors, projects, commits }: { stars: numbe
     { n: commits, what: "commits this week" },
   ];
   return (
-    <section aria-labelledby="about-h" data-grid="About" className={`tone-emerald ${band} pt-10 md:pt-16`}>
+    <section aria-labelledby="about-h" data-grid="About" className={`${band} pt-10 md:pt-16`}>
       <Container>
         <h2 id="about-h" className={label}>
           What Open Dev Society is

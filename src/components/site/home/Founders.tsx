@@ -33,7 +33,7 @@ const quotes = mentions
 /** 06 · paper: the pitch to founders, a rotating press quote and the partners. */
 export function Founders() {
   return (
-    <section id="signal" aria-labelledby="founders-h" data-grid="For founders" className={`scroll-mt-16 ${band}`}>
+    <section id="signal" aria-labelledby="founders-h" data-grid="For founders" className={`scroll-mt-16 border-t border-(--line) ${band}`}>
       <Container>
         <p className={label}>For founders</p>
         <h2 id="founders-h" className={`${display} mt-3 text-[clamp(2.75rem,1.4rem+5.4vw,7rem)]`}>

@@ -31,7 +31,7 @@ const roles = [
 export function Start({ issues, tools }: { issues: Issue[]; tools: OrgRepo[] }) {
   const busy = tools.filter((t) => t.open_issues > 0 && !issues.some((i) => i.repo === t.name)).slice(0, Math.max(0, 5 - issues.length));
   return (
-    <section id="start" aria-labelledby="start-h" data-grid="Start contributing" className={`tone-emerald scroll-mt-16 ${band}`}>
+    <section id="start" aria-labelledby="start-h" data-grid="Start contributing" className={`scroll-mt-16 border-t border-(--line) ${band}`}>
       <Container className="grid gap-12 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
         <div className="lg:col-span-6">
           <h2 id="start-h" className={`${display} text-[clamp(2.75rem,1.6rem+4.4vw,5.5rem)]`}>

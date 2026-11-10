@@ -20,7 +20,7 @@ export function Projects({ tools, now, lastPush }: { tools: OrgRepo[]; now: numb
   const shot = catalog[lead.name].shot;
 
   return (
-    <section id="work" aria-labelledby="work-h" data-grid="Projects" className={`scroll-mt-16 ${band}`}>
+    <section id="work" aria-labelledby="work-h" data-grid="Projects" className={`scroll-mt-16 border-t border-(--line) ${band}`}>
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
           <div>
