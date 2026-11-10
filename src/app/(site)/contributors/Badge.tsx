@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { sizedAvatar } from "@/components/site/Avatar";
+import { Dither } from "@/components/site/lab/Dither";
+import { Plate } from "@/components/site/lab/Plate";
 
 export type Researcher = {
   rid: string;
@@ -17,21 +20,15 @@ const month = (iso?: string) => (iso ? new Date(iso).toLocaleDateString("en-US",
 
 // A head and shoulders, dithered rose on the vacant badge.
 const SILHOUETTE = `data:image/svg+xml,${encodeURIComponent(
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><defs><radialGradient id="g" cx=".5" cy=".38" r=".7"><stop offset="0" stop-color="#777"/><stop offset="1" stop-color="#fff"/></radialGradient></defs><rect width="120" height="120" fill="url(#g)"/><circle cx="60" cy="46" r="22" fill="#222"/><path d="M14 120c4-30 22-44 46-44s42 14 46 44z" fill="#222"/></svg>',
+  '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 120 120"><defs><linearGradient id="g" x2="0" y2="1"><stop offset="0" stop-color="#555"/><stop offset="1" stop-color="#d8d8d8"/></linearGradient></defs><rect width="120" height="120" fill="#fff"/><g fill="url(#g)"><circle cx="60" cy="46" r="22"/><path d="M14 120c4-30 22-44 46-44s42 14 46 44z"/></g></svg>',
 )}`;
 
-// ponytail: placeholder until lab/Dither lands; swap for <Dither>.
-function Photo({ src, alt, tone = "teal" }: { src: string; alt: string; tone?: "teal" | "rose" }) {
-  return (
-    // eslint-disable-next-line @next/next/no-img-element -- external GitHub avatars
-    <img
-      src={src}
-      alt={alt}
-      width={112}
-      height={112}
-      loading="lazy"
-      className={`aspect-square w-full bg-(--bg) object-cover grayscale ${tone === "rose" ? "opacity-60" : ""}`}
-    />
+function Photo({ src, alt, mark }: { src: string; alt: string; mark?: boolean }) {
+  return mark ? (
+    // The one motion on the page: the vacant photo rests coarse and develops while you hover the badge.
+    <Dither src={src} alt={alt} width={1} height={1} variant="mark" tone="duotone" develop className="w-full" />
+  ) : (
+    <Dither src={sizedAvatar(src, 64)} alt={alt} width={1} height={1} tone="duotone" className="w-full" />
   );
 }
 
@@ -59,9 +56,9 @@ export function Badge({ r }: { r: Researcher }) {
       <div>
         <Photo src={r.avatar} alt={`${r.name ?? r.login}, GitHub avatar`} />
         {r.role && (
-          <span className="t-mono mt-2 block bg-(--bg) px-1.5 py-0.5 text-center text-[10px] tracking-[0.08em] text-(--fg) uppercase shadow-[0_0_0_1px_var(--fg)]">
+          <Plate tone="accent" className="mt-2 flex justify-center text-[10px] tracking-[0.08em] uppercase">
             {r.role}
-          </span>
+          </Plate>
         )}
       </div>
       <div className="min-w-0">
@@ -100,10 +97,10 @@ export function Vacancy({ rid }: { rid: string }) {
     <Link href="/contribute" className="group block bg-(--mark-soft)/40 transition-colors duration-(--d-2) hover:bg-(--mark-soft) focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--focus)">
       <Frame>
         <div>
-          <Photo src={SILHOUETTE} alt="Empty photo: this badge has not been issued" tone="rose" />
-          <span className="t-mono mt-2 block px-1.5 py-0.5 text-center text-[10px] tracking-[0.08em] text-(--mark-ink) uppercase shadow-[0_0_0_1px_var(--mark)]">
+          <Photo src={SILHOUETTE} alt="Empty photo: this badge has not been issued" mark />
+          <Plate tone="mark" className="mt-2 flex justify-center text-[10px] tracking-[0.08em] uppercase">
             Vacant
-          </span>
+          </Plate>
         </div>
         <div className="min-w-0 text-(--mark-ink)">
           <p className="text-[2.25rem] leading-[0.85] font-[800] tracking-[-0.01em] tabular-nums [font-stretch:75%]">{rid}</p>

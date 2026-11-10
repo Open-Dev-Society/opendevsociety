@@ -1,34 +1,37 @@
 import type { Metadata } from "next";
 import { manualContributors } from "@/data/contributors";
+import { expHref, expIds, nextResearcherId, researcherIds } from "@/lib/lab";
 import { getWorkshop } from "@/lib/workshop";
+import { Record } from "@/components/site/lab/Record";
 import { Badge, Vacancy, type Researcher } from "./Badge";
 
 // Matches the GitHub lib's cache.
 export const revalidate = 3600;
 
-// ponytail: placeholders until src/lib/lab.ts lands (researcherIds, expId, expHref).
-const pad = (n: number, w: number) => String(n).padStart(w, "0");
-
 async function getRoster() {
-  const { builders, index } = await getWorkshop();
+  const { builders, people, tools } = await getWorkshop();
+  const rids = researcherIds(people);
+  const exps = expIds(tools);
+  const joined = new Map(people.map((p) => [p.login, p.joined]));
   const roles = new Map(manualContributors.map((c) => [c.login.toLowerCase(), c.role ?? ""]));
   const role = (login: string) => {
     const r = roles.get(login.toLowerCase()) ?? "";
     return /Co-Founder/i.test(r) ? "Co-founder" : /Founder/i.test(r) ? "Founder" : /Maintainer/i.test(r) ? "Maintainer" : undefined;
   };
-  const exp = new Map(index.map((t, i) => [t.name, { id: `EXP-${pad(i + 1, 3)}`, href: `/projects#${t.name}` }]));
-  const researchers: Researcher[] = builders.map((b, i) => ({
-    rid: `R-${pad(i + 1, 2)}`,
-    login: b.login,
-    name: b.name,
-    avatar: b.avatar,
-    url: b.url,
-    role: role(b.login),
-    joined: undefined,
-    exps: b.repos.flatMap((r) => exp.get(r) ?? []).sort((a, z) => a.id.localeCompare(z.id)),
-    contributions: b.contributions,
-  }));
-  return { researchers, vacancy: `R-${pad(researchers.length + 1, 2)}` };
+  const researchers: Researcher[] = builders
+    .map((b) => ({
+      rid: rids.get(b.login)!,
+      login: b.login,
+      name: b.name,
+      avatar: b.avatar,
+      url: b.url,
+      role: role(b.login),
+      joined: joined.get(b.login),
+      exps: b.repos.flatMap((r) => (exps.has(r) ? [{ id: exps.get(r)!, href: expHref(r) }] : [])).sort((a, z) => a.id.localeCompare(z.id)),
+      contributions: b.contributions,
+    }))
+    .sort((a, z) => a.rid.localeCompare(z.rid));
+  return { researchers, vacancy: nextResearcherId(people) };
 }
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -58,17 +61,25 @@ export default async function ResearchersPage() {
 
   return (
     <div className="mx-auto w-full max-w-(--container) px-(--gutter) pt-14 pb-24 lg:pt-20">
-      <header>
-        <p className="t-mono text-[12px] text-(--fg-muted)">
-          § · RESEARCHERS · <span className="text-(--fg)">{researchers.length}</span> on file · <span className="text-(--mark-ink)">1 vacancy</span>
-        </p>
-        <h1 className="mt-5 max-w-[14ch] text-[clamp(2.75rem,1rem+5vw,6rem)] leading-[0.9] font-[800] tracking-[-0.018em] text-balance text-(--fg) [font-stretch:75%]">
-          {researchers.length} researchers on file. <span className="text-(--mark-ink)">One badge unissued.</span>
-        </h1>
+      <Record
+        n=""
+        name="Researchers"
+        as="h1"
+        size="page"
+        meta={[
+          <span key="n"><span className="text-(--fg)">{researchers.length}</span> on file</span>,
+          <span key="v" className="text-(--mark-ink)">1 vacancy</span>,
+        ]}
+        title={
+          <span className="block max-w-[14ch]">
+            {researchers.length} researchers on file. <span className="text-(--mark-ink)">One badge unissued.</span>
+          </span>
+        }
+      >
         <p className="mt-6 max-w-[60ch] text-[17px] leading-relaxed text-(--fg-muted)">
           Everyone with a commit in an Open Dev Society experiment, numbered in the order they joined. Founders and maintainers carry a role plate.
         </p>
-      </header>
+      </Record>
 
       <p className="t-mono mt-12 flex flex-wrap gap-x-4 gap-y-1 border-y border-(--line) py-2.5 text-[11px] text-(--fg-subtle)">
         <span className="text-(--fg)">How to read a badge:</span>
