@@ -87,7 +87,7 @@ export default async function Home() {
       <LabHero now={now} tools={tools} people={people} lastPush={lastPush} stars={totals.stars} />
 
       {/* ── §01 Experiments: the lead figure, and the head of the log ── */}
-      <section id="work" aria-labelledby="work-h" className="scroll-mt-16 pt-(--section-y)">
+      <section id="work" data-grid="Projects" aria-labelledby="work-h" className="tone-emerald scroll-mt-16 pt-[calc(var(--section-y)*0.75)] pb-(--section-y)">
         <Container>
           <Record
             n="01"
@@ -175,7 +175,7 @@ export default async function Home() {
       </section>
 
       {/* ── §02 Researchers: one contact sheet, the last frame unexposed ── */}
-      <section id="people" aria-labelledby="people-h" className="scroll-mt-16 pt-(--section-y)">
+      <section id="people" data-grid="Contributors" aria-labelledby="people-h" className="scroll-mt-16 pt-(--section-y)">
         <Container>
           <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
             <Record
@@ -234,7 +234,7 @@ export default async function Home() {
       </section>
 
       {/* ── §03 Working paper: the first page, abstract and promise ── */}
-      <section aria-labelledby="paper-h" className="pt-(--section-y)">
+      <section aria-labelledby="paper-h" data-grid="Manifesto" className="pt-(--section-y)">
         <Container>
           <Record n="03" name="Working paper" id="paper-h" meta={[PAPER.id, `v${PAPER.version}`, PAPER.date]} title="Why the lab exists, on one page." />
 
@@ -289,7 +289,7 @@ export default async function Home() {
       </section>
 
       {/* ── §04 Protocol 01: the procedure, on the bench ── */}
-      <section aria-labelledby="protocol-h" className="tone-inverse mt-(--section-y) py-(--section-y)">
+      <section aria-labelledby="protocol-h" data-grid="Contribute" className="tone-inverse mt-(--section-y) py-(--section-y)">
         <Container>
           <Record
             n="04"
@@ -325,7 +325,7 @@ export default async function Home() {
       </section>
 
       {/* ── §05 Citations: an epigraph, three references, the acknowledgements ── */}
-      <section id="signal" aria-labelledby="signal-h" className="scroll-mt-16 py-(--section-y)">
+      <section id="signal" data-grid="What people say" aria-labelledby="signal-h" className="scroll-mt-16 py-(--section-y)">
         <Container>
           <Record
             n="05"

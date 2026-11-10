@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Card, Field } from "@/components/site";
+import { Field } from "@/components/site";
 import { toolButton } from "@/components/site/certificate/actions";
 
 function LoginForm() {
@@ -37,7 +37,8 @@ function LoginForm() {
 
   return (
     <div className="grid min-h-[calc(100dvh-8rem)] place-items-center px-(--gutter) py-16">
-      <Card className="w-full max-w-[400px]">
+      <div className="w-full max-w-[400px] bg-(--bg) p-6 shadow-[inset_0_0_0_1px_var(--line)] sm:p-8">
+        <p className="t-mono mb-5 border-b border-(--fg) pb-2 text-[12px] text-(--fg-subtle)">Certificates · sign in</p>
         <h1 className="t-title">Sign in to issue certificates</h1>
         <p className="mt-2 text-sm text-(--fg-muted)">The certificate tool is private. Enter the access key to continue.</p>
         <form onSubmit={onSubmit} className="mt-6">
@@ -56,7 +57,7 @@ function LoginForm() {
           </button>
         </form>
         <p className="t-meta mt-4 text-(--fg-subtle)">You stay signed in for 30 days on this device.</p>
-      </Card>
+      </div>
     </div>
   );
 }

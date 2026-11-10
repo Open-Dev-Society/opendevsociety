@@ -61,24 +61,30 @@ export function Materials({ items }: { items: { label: string; note: React.React
 }
 
 function CopyText({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
+  const [state, setState] = useState<"idle" | "copied" | "failed">("idle");
   return (
-    <button
-      type="button"
-      onClick={async () => {
-        try {
-          await navigator.clipboard.writeText(text);
-          setCopied(true);
-          setTimeout(() => setCopied(false), 1600);
-        } catch {
-          // clipboard blocked: the text stays selectable
-        }
-      }}
-      className="t-mono min-h-9 shrink-0 px-2.5 text-[12px] text-(--fg-muted) shadow-[inset_0_0_0_1px_var(--line)] transition-colors duration-(--d-2) hover:bg-(--fg) hover:text-(--bg)"
-    >
-      <span aria-live="polite">{copied ? "copied" : "copy"}</span>
-      <span className="sr-only"> command</span>
-    </button>
+    <>
+      <button
+        type="button"
+        onClick={async () => {
+          try {
+            await navigator.clipboard.writeText(text);
+            setState("copied");
+          } catch {
+            // clipboard blocked: the text stays selectable
+            setState("failed");
+          }
+          setTimeout(() => setState("idle"), 1500);
+        }}
+        className="t-mono min-h-9 min-w-[8ch] shrink-0 px-2.5 text-[12px] text-(--fg-muted) shadow-[inset_0_0_0_1px_var(--line)] transition-colors duration-(--d-2) hover:bg-(--fg) hover:text-(--bg) motion-reduce:transition-none"
+      >
+        {state === "copied" ? "copied ✓" : state === "failed" ? "select it" : "copy"}
+        <span className="sr-only"> command</span>
+      </button>
+      <span role="status" aria-live="polite" className="sr-only">
+        {state === "copied" ? "Command copied" : state === "failed" ? "Couldn't copy. Select the command instead." : ""}
+      </span>
+    </>
   );
 }
 

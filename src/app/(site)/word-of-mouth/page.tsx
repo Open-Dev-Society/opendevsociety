@@ -72,7 +72,7 @@ export default async function WordOfMouth() {
   const epigraph = refs.find((r) => r.author === "Tattva Tarang")!;
 
   return (
-    <article className="mx-auto w-full max-w-(--container) px-(--gutter) pt-12 pb-24 lg:pt-16 lg:pb-32">
+    <article data-grid="What people say" className="mx-auto w-full max-w-(--container) px-(--gutter) pt-12 pb-24 lg:pt-16 lg:pb-32">
       {/* Title block: the record, then the count as the headline; the epigraph beside it. */}
       <div className="grid gap-y-10 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
         <Record
@@ -112,12 +112,12 @@ export default async function WordOfMouth() {
         </figure>
       </div>
 
-      <section aria-label="Mentions" className="mt-16 lg:mt-24">
+      <section aria-label="Mentions" data-grid="Mentions" className="pt-16 lg:pt-24">
         <Bibliography refs={refs} />
       </section>
 
       {/* Partners, thanked in prose, then the logos and events. */}
-      <section id="partners" aria-labelledby="partners-h" className="mt-24 scroll-mt-20 lg:mt-32">
+      <section id="partners" aria-labelledby="partners-h" data-grid="Partners" className="pt-24 scroll-mt-20 lg:pt-32">
         <div className="grid gap-y-6 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
           <Record
             n="06.1"

@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Fragment } from "react";
 import { ago, compact } from "@/lib/format";
 import type { getWorkshop } from "@/lib/workshop";
+import { DitherEdge } from "../lab/DitherEdge";
 import { REGIMES } from "./field";
 import { LabButton } from "./LabButton";
 import { LabClock, TuringField } from "./TuringField";
@@ -37,6 +38,8 @@ export function LabHero({ now, tools, people, lastPush, stars }: Pick<Workshop, 
       className="group relative isolate h-svh min-h-[560px] overflow-hidden"
     >
       <TuringField />
+      {/* The field dissolves into the emerald band below (§01); the bottom plates stand on it like tabs. */}
+      <DitherEdge from="transparent" to="var(--accent)" height={48} className="absolute inset-x-0 bottom-0" />
 
       {/* The nav is hidden over the hero, so the brand hangs from the top edge like a tab. */}
       <div

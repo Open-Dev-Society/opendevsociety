@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import type { Metadata } from "next";
 import { AlertCircle, CircleCheck } from "lucide-react";
 import { getCert, type Cert } from "@/lib/certs";
-import { Container, Ledger, VerifyForm } from "@/components/site";
+import { Container, Footer, Ledger, VerifyForm } from "@/components/site";
 import { CertificateDocument, formatDate } from "@/components/site/certificate/CertificateDocument";
 import { CopyLinkButton, DownloadButton } from "@/components/site/certificate/actions";
 import { certificateRoles } from "@/content";
@@ -43,7 +43,7 @@ export default async function VerifyPage({ params }: Props) {
 
   return (
     <>
-      <ToolHeader title="Open Dev Society" href="/" />
+      <ToolHeader title="Certificate check" />
       <main className="flex-1">
         <Container className="py-10 lg:py-16">
           {error ? (
@@ -72,6 +72,7 @@ export default async function VerifyPage({ params }: Props) {
           )}
         </Container>
       </main>
+      <Footer />
     </>
   );
 }

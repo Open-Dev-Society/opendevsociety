@@ -1,5 +1,6 @@
 import { contactEmail, social } from "@/content";
 import { VerifyForm } from "./Field";
+import { DitherEdge } from "./lab/DitherEdge";
 import { Container } from "./Section";
 
 export const FORK_COMMAND = "gh repo fork Open-Dev-Society/OpenStock --clone";
@@ -17,14 +18,6 @@ const address = [social.github, social.discord, social.linkedin, { ...social.twi
   shown: l.href.startsWith("mailto:") ? contactEmail : l.href.replace(/^https:\/\/(www\.)?/, "").replace(/\/$/, ""),
 }));
 
-// Paper dissolving into ink: an 8-wide Bayer tile whose threshold rises row by row, repeated across. 16 rows of 2px cells.
-const BAYER = [0, 32, 8, 40, 2, 34, 10, 42, 48, 16, 56, 24, 50, 18, 58, 26, 12, 44, 4, 36, 14, 46, 6, 38, 60, 28, 52, 20, 62, 30, 54, 22, 3, 35, 11, 43, 1, 33, 9, 41, 51, 19, 59, 27, 49, 17, 57, 25, 15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55, 23, 61, 29, 53, 21];
-const ROWS = 16;
-const RAMP = Array.from({ length: 8 * ROWS }, (_, i) => [i % 8, Math.floor(i / 8)])
-  .filter(([x, y]) => BAYER[(y % 8) * 8 + x] < (64 * (y + 0.5)) / ROWS)
-  .map(([x, y]) => `M${x} ${y}h1v1h-1z`)
-  .join("");
-
 const link = "transition-colors duration-(--d-2) hover:text-(--fg)";
 const cell = "bg-(--bg) p-5 md:p-6";
 const label = "t-mono mb-4 block text-[11px] tracking-[0.08em] text-(--fg-subtle) uppercase";
@@ -33,14 +26,8 @@ const label = "t-mono mb-4 block text-[11px] tracking-[0.08em] text-(--fg-subtle
 export function Footer() {
   return (
     <footer>
-      <svg aria-hidden className="block h-8 w-full" shapeRendering="crispEdges">
-        <defs>
-          <pattern id="colophon-ramp" width="8" height={ROWS} patternUnits="userSpaceOnUse" patternTransform="scale(2)">
-            <path d={RAMP} fill="var(--inv-bg)" />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#colophon-ramp)" />
-      </svg>
+      {/* Paper dissolving into ink. */}
+      <DitherEdge from="var(--bg)" to="var(--inv-bg)" />
 
       <div className="tone-inverse pt-10 pb-8 md:pt-14">
         <Container>

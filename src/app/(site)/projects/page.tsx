@@ -67,7 +67,7 @@ export default async function ProjectsPage() {
 
   return (
     <>
-      <Container className="pt-14 lg:pt-20">
+      <Container data-grid="Projects" className="pt-14 lg:pt-20">
         <Record
           as="h1"
           size="page"
@@ -90,7 +90,7 @@ export default async function ProjectsPage() {
       </Container>
 
       {/* The most starred project: its screenshot and its facts. */}
-      <Container className="mt-14 lg:mt-20">
+      <Container data-grid="Most starred" className="pt-14 lg:pt-20">
         <article id={lead.name} aria-labelledby="lead-name" className="scroll-mt-24 border-t-[3px] border-double border-(--fg) pt-3">
           <div className="t-mono flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 text-[12px] text-(--fg-muted)">
             <span>
@@ -163,7 +163,7 @@ export default async function ProjectsPage() {
         </article>
       </Container>
 
-      <Container className="mt-24 lg:mt-32">
+      <Container data-grid="All projects" className="pt-24 lg:pt-32">
         <Record
           name="All projects"
           meta={[`${counts("running")} active`, `${counts("paused")} quiet`, `${counts("archived")} archived`]}
@@ -174,7 +174,7 @@ export default async function ProjectsPage() {
       </Container>
 
       {/* For founders: the next row, still empty. Rose, because it's theirs. */}
-      <Container className="mt-24 mb-(--section-y) lg:mt-32">
+      <Container data-grid="Your project" className="pt-24 mb-(--section-y) lg:pt-32">
         <section aria-labelledby="bring" className="p-5 shadow-[inset_0_0_0_1px_var(--mark)] md:p-8">
           <div className="t-mono flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 text-[12px] text-(--mark-ink)">
             <span>#{String(tools.length + 1).padStart(2, "0")} · your project here</span>
