@@ -1,5 +1,7 @@
 # References for the home uplift
 
+> **Reverted 2026-11-10.** The user chose "very basic", so the uplift below was rolled back. Only the Bench hydration fix and the smooth-scroll rule stayed. This file is kept as a research record.
+
 Studied 2026-11-10 with the Inspo archive (`recommend`, `search_screens`, `get_screen`, full-page captures, `get_reference_jsx`). We take **composition, rhythm and treatment** from these sites, never their look. Our materials stay the same: bone paper, cobalt ink, one highlighter, Mona Sans, Newsreader Italic and Geist Mono.
 
 The problem these references answer: the home was clean but flat. Every section used the same eyebrow rail and big heading, the shelf was mostly a table, and only the dark bands had any atmosphere.

@@ -68,13 +68,6 @@
   --inv-accent: oklch(0.76 0.12 262);
   --inv-line: oklch(1 0 0 / 0.1);
 
-  /* The ink plate (docs/references.md, after Cursor): the ground our dark captures are mounted on. Text on it uses --inv-*. */
-  --plate-1: oklch(0.34 0.13 266); /* cobalt, lit from the top edge */
-  --plate-2: oklch(0.19 0.035 268); /* settles into the inkwell */
-  --plate-light: oklch(0.55 0.17 264 / 0.75);
-  /* Fibre texture: plate and dark bands only, never on paper. */
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-
   --radius-sm: 8px; /* chips, inputs, seats, inner frames */
   --radius-md: 14px; /* cards, tiles */
   --radius-lg: 20px; /* print frame, terminal */
@@ -275,68 +268,6 @@ body {
   html:focus-within {
     scroll-behavior: smooth;
   }
-}
-
-/* The ink plate: cobalt light from the top, a faint blueprint grid that fades out, and fibre. Children sit above both. */
-.plate {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  color: var(--inv-fg);
-  background:
-    radial-gradient(110% 70% at 50% -12%, var(--plate-light), transparent 62%),
-    linear-gradient(180deg, var(--plate-1), var(--plate-2) 78%);
-  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.12), 0 0 0 1px oklch(0.2 0.025 265 / 0.08);
-}
-.plate::before,
-.plate::after,
-.ink-wash::before,
-.ink-wash::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-}
-.plate::before {
-  background-image:
-    linear-gradient(oklch(1 0 0 / 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, oklch(1 0 0 / 0.06) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-position: center top;
-  mask-image: radial-gradient(90% 70% at 50% 0%, black, transparent 80%);
-}
-.plate::after,
-.ink-wash::after {
-  background-image: var(--grain);
-  opacity: 0.09;
-  mix-blend-mode: soft-light;
-}
-/* Atmosphere for the dark bands (after Resend): one cobalt light from the top edge, plus fibre. */
-.ink-wash {
-  position: relative;
-  isolation: isolate;
-}
-.ink-wash::before {
-  background: radial-gradient(70% 55% at 50% 0%, oklch(0.48 0.2 265 / 0.32), transparent 72%);
-}
-
-/* Signature: the highlighter sweeps once across the clause that means "you". Backgrounds only, ink stays readable. */
-.mark-sweep {
-  background-image: linear-gradient(var(--mark), var(--mark));
-  background-repeat: no-repeat;
-  background-position: 0 88%;
-  background-size: 100% 0.3em;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-}
-@keyframes mark-sweep {
-  from {
-    background-size: 0% 0.3em;
-  }
-}
-.site .mark-sweep {
-  animation: mark-sweep 900ms var(--ease-in-out) 700ms both;
 }
 
 .font-display {

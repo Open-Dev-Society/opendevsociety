@@ -20,7 +20,7 @@ const link = "text-[15px] text-(--fg-muted) transition-colors duration-(--d-2) h
 /** The closing statement on every non-tool page (brief §10 §6): the manifesto line, the actions, the columns. */
 export function Footer() {
   return (
-    <footer className="tone-inverse ink-wash py-(--section-y)">
+    <footer className="tone-inverse py-(--section-y)">
       <Container>
         <p className="display-1 max-w-[14ch] text-[calc(0.85*clamp(2.75rem,1.5rem+4.4vw,5.25rem))] text-(--fg)">
           Technology should belong to <span className="sign text-(--accent)">everyone.</span>
