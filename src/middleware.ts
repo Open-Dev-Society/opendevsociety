@@ -1,10 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { hasCertSession } from "@/lib/cert-token";
 
-export function middleware(req: NextRequest) {
-  const expected = process.env.CERT_PASSWORD;
-  const provided = req.cookies.get("cert_auth")?.value;
-
-  if (expected && provided && provided === expected) {
+export async function middleware(req: NextRequest) {
+  if (await hasCertSession(req.cookies.get("cert_auth")?.value)) {
     return NextResponse.next();
   }
 

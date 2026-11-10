@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 const VALID_ROLES: CertRole[] = ["member", "contributor", "maintainer", "mentor"];
 
 export async function GET(req: NextRequest) {
-  if (!isAuthed(req)) {
+  if (!(await isAuthed(req))) {
     return NextResponse.json(
       { ok: false, error: "Unauthorized" },
       { status: 401 }
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!isAuthed(req)) {
+  if (!(await isAuthed(req))) {
     return NextResponse.json(
       { ok: false, error: "Unauthorized" },
       { status: 401 }

@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { certToken } from "@/lib/cert-token";
 
 export async function POST(req: NextRequest) {
   const expected = process.env.CERT_PASSWORD;
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest) {
   }
 
   const res = NextResponse.json({ ok: true });
-  res.cookies.set("cert_auth", expected, {
+  res.cookies.set("cert_auth", await certToken(expected), {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
