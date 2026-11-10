@@ -177,6 +177,7 @@ export function Procedure({ experiments }: { experiments: Experiment[] }) {
   const [ticks, set] = useTicks();
   const x = experiments.find((e) => e.name === pick) ?? experiments[0];
   const you = handle ?? "you";
+  const bad = !!draft && !isValidHandle(draft);
   const list = x ? steps(mode, x, you) : [];
   const done = list.filter((_, i) => ticks[`${mode}-${i}`]).length;
 
@@ -192,23 +193,23 @@ export function Procedure({ experiments }: { experiments: Experiment[] }) {
             onChange={(e) => {
               const v = e.target.value.trim();
               setDraft(v);
-              if (!v) setHandle(null);
-              else if (isValidHandle(v)) setHandle(v);
+              setHandle(v && isValidHandle(v) ? v : null);
             }}
             placeholder="your GitHub handle"
             autoComplete="username"
             spellCheck={false}
             aria-label="Your GitHub handle, used in the branch name"
+            aria-invalid={bad || undefined}
             className="t-mono -ml-2 min-w-0 flex-1 bg-transparent py-3 text-(--mark-ink) outline-none placeholder:text-(--fg-subtle)"
           />
+          {bad && <span className="t-mono shrink-0 text-[11px] text-(--fg-subtle)">not a handle</span>}
         </label>
-        <div role="radiogroup" aria-label="Instrument" className="flex bg-(--bg)">
+        <div role="group" aria-label="Instrument" className="flex bg-(--bg)">
           {(["terminal", "agent"] as const).map((m) => (
             <button
               key={m}
               type="button"
-              role="radio"
-              aria-checked={mode === m}
+              aria-pressed={mode === m}
               onClick={() => setMode(m)}
               className={`t-mono min-h-13 flex-1 px-5 text-[13px] capitalize transition-colors duration-(--d-2) sm:flex-none ${
                 mode === m ? "bg-(--fg) text-(--bg)" : "text-(--fg-muted) hover:text-(--fg)"
