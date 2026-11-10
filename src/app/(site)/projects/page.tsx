@@ -6,9 +6,9 @@ import { Plate } from "@/components/site/lab/Plate";
 import { Record } from "@/components/site/lab/Record";
 import { catalog, languageColors } from "@/data/catalog";
 import { ago, compact } from "@/lib/format";
-import { expIds, labDate, status } from "@/lib/lab";
+import { expIds, labDate, status, STATUS_MARK } from "@/lib/lab";
 import { getWorkshop } from "@/lib/workshop";
-import { Log, STATUS_MARK, type LogRow } from "./Log";
+import { Log, type LogRow } from "./Log";
 
 // Matches the GitHub lib's cache.
 export const revalidate = 3600;
@@ -101,7 +101,7 @@ export default async function ExperimentsPage() {
               <span className="text-(--fg)">{leadId}</span> · lead record · most subjects
             </span>
             <span>
-              fig. 1 · {live.replace(/^https?:\/\//, "")} · Bayer 8×8, 1-bit
+              fig. 1 · {live.replace(/^https?:\/\//, "")} · Bayer 8×8, 1-bit negative
             </span>
           </div>
 
@@ -112,6 +112,7 @@ export default async function ExperimentsPage() {
               width={2880}
               height={1800}
               align="top"
+              negative
               develop
               eager
               className="w-full shadow-[0_0_0_1px_var(--line)]"

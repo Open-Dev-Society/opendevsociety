@@ -19,9 +19,11 @@ export type DitherProps = {
   matrix?: Matrix;
   /** CSS px per dither cell at full resolution. */
   cell?: number;
+  /** Print as a negative: light strokes take the ink. For dark UIs (most screenshots), which otherwise flood with colour. */
+  negative?: boolean;
   /** Which part of the image survives the crop: screenshots want "top". */
   align?: "top" | "center";
-  /** Rests coarse, and resolves to `cell` in hard steps on hover/focus of the closest link or [data-develop] (on touch: once, when in view). */
+  /** Rests coarse (5× cell), and resolves to `cell` in hard steps on hover/focus of the closest link or [data-develop] (on touch: once, when in view). */
   develop?: boolean;
   /** Above the fold: load now instead of when near the viewport. */
   eager?: boolean;
@@ -31,7 +33,7 @@ export type DitherProps = {
 const BAYER8 = [0, 32, 8, 40, 2, 34, 10, 42, 48, 16, 56, 24, 50, 18, 58, 26, 12, 44, 4, 36, 14, 46, 6, 38, 60, 28, 52, 20, 62, 30, 54, 22, 3, 35, 11, 43, 1, 33, 9, 41, 51, 19, 59, 27, 49, 17, 57, 25, 15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55, 23, 61, 29, 53, 21];
 const BAYER4 = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
 // The darkroom: coarse to fine, one hard step each.
-const STEPS = [8, 4, 2, 1];
+const STEPS = [5, 3, 2, 1];
 const STEP_MS = 110;
 
 type RGB = [number, number, number];
@@ -51,7 +53,7 @@ function token(el: Element, name: string, fallback: string): RGB {
 }
 
 /** Luminance 0..1 of `img` cover-cropped to gw×gh, contrast-stretched (2nd–98th percentile) so flat screenshots still read. */
-function sample(img: HTMLImageElement, gw: number, gh: number, align: "top" | "center") {
+function sample(img: HTMLImageElement, gw: number, gh: number, align: "top" | "center", negative: boolean) {
   const c = document.createElement("canvas");
   c.width = gw;
   c.height = gh;
@@ -66,7 +68,10 @@ function sample(img: HTMLImageElement, gw: number, gh: number, align: "top" | "c
   const sorted = L.slice().sort();
   const lo = sorted[Math.floor(L.length * 0.02)], hi = sorted[Math.floor(L.length * 0.98)];
   const span = Math.max(hi - lo, 0.1);
-  for (let i = 0; i < L.length; i++) L[i] = Math.min(1, Math.max(0, (L[i] - lo) / span));
+  for (let i = 0; i < L.length; i++) {
+    const v = Math.min(1, Math.max(0, (L[i] - lo) / span));
+    L[i] = negative ? 1 - v : v;
+  }
   return L;
 }
 
@@ -113,6 +118,7 @@ export function Dither({
   tone = "1bit",
   matrix = 8,
   cell = 2,
+  negative = false,
   align = "center",
   develop = false,
   eager = false,
@@ -137,7 +143,7 @@ export function Dither({
       const ink = variant === "mark" ? token(el, "--mark", "#d03c5c") : token(el, "--accent-brand", "#288488");
       const paper = token(el, "--bg", "#f8f9fa");
       const palette: RGB[] = tone === "duotone" ? [token(el, "--fg", "#051c20"), ink, paper] : [ink, paper];
-      const q = dither(sample(img, gw, gh, align), gw, gh, palette.length, matrix);
+      const q = dither(sample(img, gw, gh, align, negative), gw, gh, palette.length, matrix);
       const small = document.createElement("canvas");
       small.width = gw;
       small.height = gh;
@@ -227,7 +233,7 @@ export function Dither({
     ro.observe(el);
     cleanups.push(() => ro.disconnect(), watchTheme(draw), () => clearInterval(timer));
     return () => cleanups.forEach((f) => f());
-  }, [src, variant, tone, matrix, cell, align, develop, eager]);
+  }, [src, variant, tone, matrix, cell, negative, align, develop, eager]);
 
   return (
     <div

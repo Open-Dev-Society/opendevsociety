@@ -3,7 +3,7 @@
 import { useId, useState } from "react";
 import { Dither } from "@/components/site/lab/Dither";
 import { Plate } from "@/components/site/lab/Plate";
-import type { Status } from "@/lib/lab";
+import { STATUS_MARK, type Status } from "@/lib/lab";
 import type { Audience } from "@/data/catalog";
 
 export type LogRow = {
@@ -24,7 +24,6 @@ export type LogRow = {
   shot?: string;
 };
 
-export const STATUS_MARK: Record<Status, string> = { running: "●", paused: "◐", archived: "○" };
 // The activity track spans the paused window; running is its last 30 days.
 const SPAN = 180;
 
@@ -143,7 +142,7 @@ export function Log({ rows }: { rows: LogRow[] }) {
             </span>
             <span className="col-start-2 row-span-2 row-start-1 self-start lg:col-auto lg:row-auto lg:self-center">
               {r.shot ? (
-                <Dither src={r.shot} alt={`${r.name}, screenshot`} width={16} height={10} align="top" cell={1.5} develop className="w-full shadow-[0_0_0_1px_var(--line)]" />
+                <Dither src={r.shot} negative alt={`${r.name}, screenshot`} width={16} height={10} align="top" cell={1.5} develop className="w-full shadow-[0_0_0_1px_var(--line)]" />
               ) : (
                 <span className="t-mono flex aspect-[16/10] w-full items-center justify-center text-[11px] text-(--fg-subtle) shadow-[inset_0_0_0_1px_var(--line)]">
                   {r.language ? (
