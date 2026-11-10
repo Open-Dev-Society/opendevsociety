@@ -16,6 +16,7 @@ export type OrgRepo = {
     open_issues: number;
     good_first_issues: number;
     pushed_at: string;
+    created_at: string;
 };
 
 export type OrgTotals = { stars: number; forks: number; repos: number };
@@ -26,16 +27,19 @@ export type OrgContributor = {
     html_url: string;
     contributions: number; // summed across the org's repos
     repos: string[];
+    /** ISO date of the first week with a commit in any org repo (GitHub's contributor stats); undefined while GitHub is still computing them. */
+    joined?: string;
 };
 
 // The fields we read from the REST responses.
-type ApiRepo = Pick<OrgRepo, "name" | "description" | "html_url" | "homepage" | "language" | "pushed_at"> & {
+type ApiRepo = Pick<OrgRepo, "name" | "description" | "html_url" | "homepage" | "language" | "pushed_at" | "created_at"> & {
     topics?: string[];
     stargazers_count: number;
     forks_count: number;
     open_issues_count: number;
 };
 type ApiContributor = Pick<OrgContributor, "login" | "avatar_url" | "html_url" | "contributions"> & { type: string };
+type ApiStats = { author: { login: string } | null; weeks: { w: number; c: number }[] }[];
 
 // Agent accounts GitHub reports as type "User".
 const NON_HUMAN = new Set(["cursoragent"]);
@@ -79,6 +83,7 @@ export async function getOrgRepos(): Promise<OrgRepo[]> {
                 open_issues: r.open_issues_count,
                 good_first_issues: gfiCount(r.name),
                 pushed_at: r.pushed_at,
+                created_at: r.created_at,
             }))
             .sort((a, b) => b.stars - a.stars);
     } catch (e) {
@@ -97,17 +102,26 @@ export async function getOrgTotals(): Promise<OrgTotals> {
     };
 }
 
-/** Unique human contributors across every org repo, most contributions first. 1 call per repo. */
+/** Unique human contributors across every org repo, most contributions first. 2 calls per repo. */
 export async function getOrgContributors(): Promise<OrgContributor[]> {
     try {
         const repos = await getOrgRepos();
-        const lists = await Promise.all(
-            repos.map((r) =>
-                gh<ApiContributor[]>(`repos/${GITHUB_ORG}/${r.name}/contributors?per_page=100`).then((cs) =>
-                    cs.map((c) => ({ ...c, repo: r.name })),
+        const [lists, stats] = await Promise.all([
+            Promise.all(
+                repos.map((r) =>
+                    gh<ApiContributor[]>(`repos/${GITHUB_ORG}/${r.name}/contributors?per_page=100`).then((cs) =>
+                        cs.map((c) => ({ ...c, repo: r.name })),
+                    ),
                 ),
             ),
-        );
+            // First week with a commit, per author. GitHub answers 202 (no body) while it computes stats: those repos just don't count.
+            Promise.all(repos.map((r) => gh<ApiStats>(`repos/${GITHUB_ORG}/${r.name}/stats/contributors`).catch(() => []))),
+        ]);
+        const joined = new Map<string, number>();
+        for (const s of stats.flat()) {
+            const w = Array.isArray(s.weeks) && s.author ? s.weeks.find((x) => x.c > 0)?.w : undefined;
+            if (w && w < (joined.get(s.author!.login) ?? Infinity)) joined.set(s.author!.login, w);
+        }
         const byLogin = new Map<string, OrgContributor>();
         for (const c of lists.flat()) {
             if (c.type === "Bot" || c.login.endsWith("[bot]") || NON_HUMAN.has(c.login)) continue;
@@ -122,6 +136,7 @@ export async function getOrgContributors(): Promise<OrgContributor[]> {
                     html_url: c.html_url,
                     contributions: c.contributions,
                     repos: [c.repo],
+                    joined: joined.has(c.login) ? new Date(joined.get(c.login)! * 1000).toISOString() : undefined,
                 });
             }
         }
