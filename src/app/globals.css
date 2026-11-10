@@ -98,25 +98,17 @@ body {
 
 /* The emerald band: content on solid --accent (#10777b), as the hero's corner plates. Ratios are on --bg, then on --surface-2. */
 .tone-emerald {
-  --bg: oklch(0.52 0.085 199); /* #10777b */
-  --surface: oklch(0.46 0.08 200); /* #00656a raised */
-  --surface-2: oklch(0.46 0.08 200); /* hovered rows */
-  --fg: oklch(1 0 0); /* 5.3:1, 6.8:1 */
-  --fg-muted: oklch(0.97 0.008 195); /* #eff7f7 4.9:1, 6.3:1 */
-  --fg-subtle: oklch(0.955 0.012 195); /* #e7f3f2 4.7:1, 6.0:1. Small text tops out near white on emerald, so hierarchy rides on size and weight */
-  --line: oklch(1 0 0 / 0.25);
-  --accent: oklch(1 0 0); /* white: accent text 5.3:1; buttons are a white fill with --accent-fg text 5.3:1 */
-  --accent-hover: oklch(0.95 0.01 195); /* the button's hover checker, a near-white grey under emerald text 4.6:1 */
-  --accent-fg: oklch(0.52 0.085 199);
-  --accent-soft: oklch(1 0 0 / 0.16);
-  --accent-brand: oklch(1 0 0); /* Dither ink: white cells on emerald 5.3:1 */
-  --mark: oklch(0.965 0.025 12); /* #ffedef pale rose, 4.7:1 */
-  --mark-fg: oklch(0.52 0.085 199); /* on --mark 4.7:1 */
-  --mark-ink: oklch(0.965 0.025 12); /* 4.7:1, 6.1:1 */
-  --focus: oklch(1 0 0); /* 5.3:1 (non-text, 3:1 needed) */
-  --img-outline: oklch(1 0 0 / 0.25);
+  /* User decision: section backgrounds are WHITE; emerald (#10777b) is for accents only (buttons, corner plates,
+     field and dither ink, links). The class stays so existing markup keeps working, but it no longer re-colours
+     anything: bands marked tone-emerald now sit on paper with the default tokens. */
   background: var(--bg);
   color: var(--fg);
+}
+
+/* The hero's bottom DitherEdge dissolves the field into emerald; with white sections below it must not show.
+   Remove this rule once LabHero.tsx drops that edge. */
+section[data-under-nav] > svg.absolute.bottom-0 {
+  display: none;
 }
 
 /* Type tokens (brief §3). Width rides on font-variation-settings, weight on font-weight. */
