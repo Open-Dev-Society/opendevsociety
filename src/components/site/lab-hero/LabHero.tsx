@@ -12,12 +12,12 @@ type Workshop = Awaited<ReturnType<typeof getWorkshop>>;
 const H1 = ["Open source", "is a living", "system."];
 const num = (x: number) => x.toFixed(3).replace(/^0/, "");
 
-// Specimen plates: one size, one hairline, pinned to the same 16/20px inset. data-plate also hushes the field around them (field.ts).
+// Specimen plates: solid emerald, flush in the corners. data-plate also hushes the field around them (field.ts).
 function Label({ className, children }: { className: string; children: React.ReactNode }) {
   return (
     <div
       data-plate
-      className={`t-mono absolute flex flex-col bg-(--bg) px-2.5 py-1.5 text-[11px] leading-[1.5] text-(--fg-muted) shadow-[0_0_0_1px_var(--line)] ${className}`}
+      className={`t-mono absolute flex flex-col bg-(--accent) px-3 py-2 text-[11px] leading-[1.5] text-(--accent-fg)/90 ${className}`}
     >
       {children}
     </div>
@@ -47,25 +47,25 @@ export function LabHero({ now, tools, people, lastPush, stars }: Pick<Workshop, 
         <span className="text-[19px] leading-none font-[800] tracking-[-0.01em] text-(--fg) [font-stretch:75%] md:text-[23px]">Open Dev Society</span>
       </div>
 
-      <Label className="top-[76px] left-4 lg:top-5 lg:left-5">
-        <span className="text-(--fg)">ODS·LAB / EXP-000</span>
+      <Label className="top-[65px] left-0 lg:top-0">
+        <span className="text-(--accent-fg)">ODS·LAB / EXP-000</span>
         <span>Morphogenesis · after Turing, 1952</span>
       </Label>
-      <Label className="top-5 right-5 hidden text-right lg:flex">
-        <span className="text-(--fg)">
+      <Label className="top-0 right-0 hidden text-right lg:flex">
+        <span className="text-(--accent-fg)">
           Gray–Scott · f {num(spots[0])}→{num(coral[0])} · k {num(spots[1])}→{num(coral[1])}
         </span>
         <span>dither Bayer 8×8 · 1-bit</span>
       </Label>
-      <Label className="bottom-4 left-4 md:bottom-5 md:left-5">
+      <Label className="bottom-0 left-0">
         <span>
-          <span className="text-(--fg)">{people.length}</span> researchers · <span className="text-(--fg)">{tools.length}</span> experiments ·{" "}
-          <span className="text-(--fg)">{compact(stars)}</span> ★
+          <span className="text-(--accent-fg)">{people.length}</span> researchers · <span className="text-(--accent-fg)">{tools.length}</span> experiments ·{" "}
+          <span className="text-(--accent-fg)">{compact(stars)}</span> ★
         </span>
         <span>est. July 2024 · free, open source</span>
       </Label>
-      <Label className="right-5 bottom-5 hidden text-right md:flex">
-        <span className="text-(--fg)">
+      <Label className="right-0 bottom-0 hidden text-right md:flex">
+        <span className="text-(--accent-fg)">
           <LabClock />
         </span>
         <span>
