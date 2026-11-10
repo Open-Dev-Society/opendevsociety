@@ -105,8 +105,8 @@ body {
   --fg-muted: oklch(0.97 0.008 195); /* #eff7f7 4.9:1, 6.3:1 */
   --fg-subtle: oklch(0.955 0.012 195); /* #e7f3f2 4.7:1, 6.0:1. Small text tops out near white on emerald, so hierarchy rides on size and weight */
   --line: oklch(1 0 0 / 0.25);
-  --accent: oklch(0.95 0.035 185); /* #d6f7f1 pale mint text 4.6:1, 6.0:1. Buttons: this fill, --accent-fg text 4.6:1 */
-  --accent-hover: oklch(1 0 0); /* the button's hover checker: emerald text on it 5.3:1 */
+  --accent: oklch(1 0 0); /* white: accent text 5.3:1; buttons are a white fill with --accent-fg text 5.3:1 */
+  --accent-hover: oklch(0.95 0.01 195); /* the button's hover checker, a near-white grey under emerald text 4.6:1 */
   --accent-fg: oklch(0.52 0.085 199);
   --accent-soft: oklch(1 0 0 / 0.16);
   --accent-brand: oklch(1 0 0); /* Dither ink: white cells on emerald 5.3:1 */
