@@ -7,6 +7,7 @@ import { Plate } from "../lab/Plate";
 import { Container } from "../Section";
 
 import { band, display, ext, focus, label } from "./ui";
+import { ArrowRight, External } from "../Icon";
 
 // The /contribute role anchors (ids on its "Not a coder?" rows).
 const roles = [
@@ -61,7 +62,7 @@ export function Start({ issues, tools }: { issues: Issue[]; tools: OrgRepo[] }) 
                     <span className="font-[650] text-(--fg)">{r.who}:</span> {r.what}
                   </span>
                   <span aria-hidden className="t-mono text-(--fg)">
-                    →
+                    <ArrowRight size="1em" />
                   </span>
                 </Link>
               </li>
@@ -75,7 +76,9 @@ export function Start({ issues, tools }: { issues: Issue[]; tools: OrgRepo[] }) 
             {issues.map((i) => (
               <li key={i.url}>
                 <a href={i.url} {...ext} className={`block border-b border-(--line) py-4 hover:bg-(--surface-2) ${focus}`}>
-                  <span className="block text-[17px] leading-snug font-[650] text-(--fg)">{i.title} ↗</span>
+                  <span className="block text-[17px] leading-snug font-[650] text-(--fg)">
+                    {i.title} <External size="1em" />
+                  </span>
                   <span className="mt-2 flex flex-wrap gap-1.5">
                     <Plate tone="ink">
                       {i.repo} #{i.number}
@@ -94,7 +97,9 @@ export function Start({ issues, tools }: { issues: Issue[]; tools: OrgRepo[] }) 
                   {...ext}
                   className={`flex items-baseline justify-between gap-4 border-b border-(--line) py-4 hover:bg-(--surface-2) ${focus}`}
                 >
-                  <span className="text-[17px] font-[650] text-(--fg)">{t.name} ↗</span>
+                  <span className="text-[17px] font-[650] text-(--fg)">
+                    {t.name} <External size="1em" />
+                  </span>
                   <span className="t-mono text-[12px] text-(--fg-muted)">
                     {t.open_issues} open issue{t.open_issues === 1 ? "" : "s"}
                   </span>
@@ -103,7 +108,7 @@ export function Start({ issues, tools }: { issues: Issue[]; tools: OrgRepo[] }) 
             ))}
           </ol>
           <LabButton href="/contribute" className="mt-8">
-            The step-by-step guide →
+            The step-by-step guide <ArrowRight size="1em" />
           </LabButton>
         </div>
       </Container>

@@ -5,6 +5,7 @@ import { sizedAvatar } from "../Avatar";
 import { Dither } from "../lab/Dither";
 import { Container } from "../Section";
 import { band, display, ext, focus, label } from "./ui";
+import { ArrowRight } from "../Icon";
 
 const face = "size-11 sm:size-14";
 
@@ -40,7 +41,9 @@ export function People({ builders }: { builders: Builder[] }) {
                 develop
                 className={`${face} shadow-[0_0_0_1px_var(--mark)]`}
               />
-              <span className="t-mono text-[13px] text-(--mark-ink) group-hover:underline">This could be you →</span>
+              <span className="t-mono text-[13px] text-(--mark-ink) group-hover:underline">
+                This could be you <ArrowRight size="1em" />
+              </span>
             </Link>
           </li>
         </ul>

@@ -6,6 +6,7 @@ import { LabButton } from "../lab-hero/LabButton";
 import { Container } from "../Section";
 import { ProjectIndex, type IndexRow } from "./ProjectIndex";
 import { band, label } from "./ui";
+import { ArrowRight } from "../Icon";
 
 const PLAIN = { running: "active", paused: "quiet", archived: "archived" } as const;
 
@@ -41,7 +42,7 @@ export function Projects({ tools, builders, now }: { tools: OrgRepo[]; builders:
           <ProjectIndex rows={rows} />
         </div>
         <LabButton href="/projects" variant="secondary" size="md" className="mt-8 max-sm:w-full">
-          All {tools.length} projects →
+          All {tools.length} projects <ArrowRight size="1em" />
         </LabButton>
       </Container>
     </section>
