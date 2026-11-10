@@ -60,7 +60,7 @@ export function Projects({ tools, now, lastPush }: { tools: OrgRepo[]; now: numb
               </Plate>
             </span>
             <span className="mt-4 flex items-baseline justify-between gap-4">
-              <span className={`${display} text-[clamp(2rem,1.5rem+2vw,3rem)] group-hover:text-(--accent)`}>{lead.name}</span>
+              <span className={`${display} text-[clamp(2rem,1.5rem+2vw,3rem)] underline-offset-[6px] group-hover:underline`}>{lead.name}</span>
               <span className="t-mono shrink-0 text-[12px] text-(--fg-muted)">{lead.language}</span>
             </span>
             <span className="mt-1 block text-[17px] text-(--fg-muted)">{catalog[lead.name].tagline}</span>
