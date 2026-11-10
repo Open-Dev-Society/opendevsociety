@@ -5,7 +5,7 @@
   --card: #fffcf7;
   --ink: #1f1a15;
   --ink-2: #5a5047;
-  --ink-3: #8a7f73;
+  --ink-3: #6f6458;
   --line: rgb(31 26 21 / 0.1);
   --line-2: rgb(31 26 21 / 0.06);
   --accent: #cf5320;
@@ -36,9 +36,27 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .12 0 0 0 0 .1 0 0 0 0 .08 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-.ods-c .display {
+/* Bricolage at its full range: tight, condensed and heavy at the top, opening up as it gets small. */
+.ods-c .display,
+.ods-c .display-sm {
   font-family: var(--font-display), var(--font-sans), sans-serif;
-  letter-spacing: -0.035em;
+}
+.ods-c .display {
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  font-variation-settings: "opsz" 96, "wdth" 88;
+}
+.ods-c .display-md {
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  font-variation-settings: "opsz" 48, "wdth" 92;
+}
+.ods-c .display-sm {
+  letter-spacing: -0.015em;
+  font-variation-settings: "opsz" 14;
+}
+.ods-c .pad-section {
+  padding-block: clamp(64px, 8vw, 112px);
 }
 .ods-c h1,
 .ods-c h2,
@@ -53,7 +71,7 @@
   color: #fff;
 }
 .ods-c section[id] {
-  scroll-margin-top: 72px;
+  scroll-margin-top: 56px;
 }
 .ods-c :focus-visible {
   outline: 2px solid var(--accent);
@@ -85,5 +103,34 @@
   .ods-c *,
   .ods-c *::before {
     transition-duration: 0s !important;
+  }
+}
+
+/* Wall fill (Wall.tsx arms it only when JS runs, motion is allowed, and the wall starts off-screen). */
+.ods-c .c-wall[data-wall="armed"] .c-seat {
+  opacity: 0;
+  transform: scale(0.9);
+}
+.ods-c .c-wall[data-wall="in"] .c-seat {
+  animation: c-seat 250ms cubic-bezier(0.2, 0, 0, 1) both;
+  animation-delay: calc(var(--i, 0) * 20ms);
+}
+.ods-c .c-wall[data-wall="in"] .c-yours {
+  animation: c-pulse 1.4s ease-in-out both;
+  animation-delay: calc(var(--i, 0) * 20ms + 300ms);
+}
+@keyframes c-seat {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+@keyframes c-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(207 83 32 / 0);
+  }
+  40% {
+    box-shadow: 0 0 0 6px rgb(207 83 32 / 0.18);
   }
 }
