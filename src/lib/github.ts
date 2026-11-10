@@ -105,18 +105,32 @@ const repoOf = (apiUrl: string) => apiUrl.slice(apiUrl.lastIndexOf("/") + 1);
 const search = (q: string, n = 100) => `search/issues?q=${encodeURIComponent(`org:${GITHUB_ORG} ${q}`)}&per_page=${n}`;
 const DAY = 24 * 3600 * 1000;
 
+// Fail fast when GitHub is unreachable or rate-limited: each call gets 4s, and after any failure every call skips
+// straight to the snapshot for 5 minutes instead of waiting on GitHub again (throttled renders took ~20s).
+// ponytail: one process-wide cool-down; per-endpoint breakers if one endpoint failing should not mute the rest.
+const TIMEOUT_MS = 4000;
+const COOL_DOWN_MS = 5 * 60 * 1000;
+let coolUntil = 0;
+
 async function gh<T>(path: string): Promise<T> {
+    if (Date.now() < coolUntil) throw new Error("GitHub cooling down after a failure");
     const token = process.env.GITHUB_TOKEN;
-    const res = await fetch(`https://api.github.com/${path}`, {
-        headers: {
-            Accept: "application/vnd.github+json",
-            "User-Agent": "Open-Dev-Society-Site",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        next: { revalidate: 3600 },
-    });
-    if (!res.ok) throw new Error(`GitHub ${res.status} for ${path}`);
-    return res.status === 204 ? ([] as T) : res.json();
+    try {
+        const res = await fetch(`https://api.github.com/${path}`, {
+            headers: {
+                Accept: "application/vnd.github+json",
+                "User-Agent": "Open-Dev-Society-Site",
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            next: { revalidate: 3600 },
+            signal: AbortSignal.timeout(TIMEOUT_MS),
+        });
+        if (!res.ok) throw new Error(`GitHub ${res.status} for ${path}`);
+        return res.status === 204 ? ([] as T) : res.json();
+    } catch (e) {
+        coolUntil = Date.now() + COOL_DOWN_MS;
+        throw e;
+    }
 }
 
 /** Open "good first issue" / "help wanted" issues across the org, newest first. 1 search call, shared by everything below. */
