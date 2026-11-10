@@ -19,8 +19,8 @@ const isActive = (path: string, href: string) => path === href || path.startsWit
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus)";
 
 /**
- * Sticky site nav in the lab's instrument language: logo + ODS·LAB, mono labels with a sliding teal marker,
- * a plain stars label and the lab's primary button. On Home it is fixed (takes no space) and hidden while the [data-under-nav] hero
+ * Sticky site nav: logo + wordmark, mono labels with a sliding teal marker,
+ * a plain stars label and the primary button. On Home it is fixed (takes no space) and hidden while the [data-under-nav] hero
  * is in view, so the field owns the whole screen; it slides in past the hero, or as soon as keyboard focus enters it.
  * Elsewhere it is sticky and always shown. Below 768 the links move into a modal sheet (Escape closes it).
  */
@@ -109,7 +109,7 @@ export function Nav({
           <Link href="/" aria-label={`${brand.name}, home`} className={cn(focus, "mr-auto flex items-center gap-2.5 md:mr-6")}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={brand.logo} alt="" width={24} height={24} className="size-6 rounded-md" />
-            <span className="font-medium tracking-[0.02em] text-(--fg)">ODS·LAB</span>
+            <span className="font-medium tracking-[0.02em] whitespace-nowrap text-(--fg)">{brand.name}</span>
           </Link>
 
           <ul className="hidden items-center md:flex">

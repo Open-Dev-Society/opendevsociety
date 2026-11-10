@@ -1,11 +1,10 @@
 import { Fragment } from "react";
 
 /**
- * A lab record head: the mono record line ("§02 · EXPERIMENTS · 15 records · updated 20h ago"), then the display title.
+ * A section head: a small mono label line ("PROJECTS · 15 · updated 20h ago"), then the display title.
  * `meta` items are joined with " · "; pass nodes to emphasise a value. Compose the rest of the section yourself.
  */
 export function Record({
-  n,
   name,
   meta = [],
   title,
@@ -15,9 +14,9 @@ export function Record({
   className = "",
   children,
 }: {
-  /** Section number: "02" → "§02". */
-  n: string;
-  /** Record name, set in caps: "Experiments". */
+  /** @deprecated Ignored; section numbers are gone. Remove from callers. */
+  n?: string;
+  /** Label, set in caps: "Projects". */
   name: string;
   meta?: React.ReactNode[];
   title: React.ReactNode;
@@ -32,10 +31,9 @@ export function Record({
   return (
     <header className={className}>
       <p className="t-mono flex flex-wrap items-baseline gap-x-2 border-t border-(--fg) pt-2 text-[12px] leading-[1.5] text-(--fg-muted)">
-        <span className="text-(--fg)">§{n}</span>
         {[name, ...meta].map((m, i) => (
           <Fragment key={i}>
-            <span aria-hidden>·</span>
+            {i > 0 && <span aria-hidden>·</span>}
             <span className={i === 0 ? "text-(--fg) uppercase" : undefined}>{m}</span>
           </Fragment>
         ))}
