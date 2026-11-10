@@ -1,44 +1,48 @@
 import type { Metadata } from "next";
 import { manualContributors } from "@/data/contributors";
-import { expHref, expIds, nextResearcherId, researcherIds } from "@/lib/lab";
+import { memberNos, nextMemberNo, projectHref } from "@/lib/lab";
 import { getWorkshop } from "@/lib/workshop";
 import { Record } from "@/components/site/lab/Record";
-import { Badge, Vacancy, type Researcher } from "./Badge";
+import { Badge, OpenSpot, type Contributor } from "./Badge";
 
 // Matches the GitHub lib's cache.
 export const revalidate = 3600;
 
 async function getRoster() {
   const { builders, people, tools } = await getWorkshop();
-  const rids = researcherIds(people);
-  const exps = expIds(tools);
+  const nos = memberNos(people);
+  // A person's projects, most stars first.
+  const rank = new Map([...tools].sort((a, b) => b.stars - a.stars || a.name.localeCompare(b.name)).map((r, i) => [r.name, i]));
   const joined = new Map(people.map((p) => [p.login, p.joined]));
   const roles = new Map(manualContributors.map((c) => [c.login.toLowerCase(), c.role ?? ""]));
   const role = (login: string) => {
     const r = roles.get(login.toLowerCase()) ?? "";
     return /Co-Founder/i.test(r) ? "Co-founder" : /Founder/i.test(r) ? "Founder" : /Maintainer/i.test(r) ? "Maintainer" : undefined;
   };
-  const researchers: Researcher[] = builders
+  const contributors: Contributor[] = builders
     .map((b) => ({
-      rid: rids.get(b.login)!,
+      no: nos.get(b.login)!,
       login: b.login,
       name: b.name,
       avatar: b.avatar,
       url: b.url,
       role: role(b.login),
       joined: joined.get(b.login),
-      exps: b.repos.flatMap((r) => (exps.has(r) ? [{ id: exps.get(r)!, href: expHref(r) }] : [])).sort((a, z) => a.id.localeCompare(z.id)),
+      projects: b.repos
+        .filter((r) => rank.has(r))
+        .sort((a, z) => rank.get(a)! - rank.get(z)!)
+        .map((r) => ({ name: r, href: projectHref(r) })),
       contributions: b.contributions,
     }))
-    .sort((a, z) => a.rid.localeCompare(z.rid));
-  return { researchers, vacancy: nextResearcherId(people) };
+    .sort((a, z) => a.no.localeCompare(z.no));
+  return { contributors, open: nextMemberNo(people) };
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { researchers, vacancy } = await getRoster();
+  const { contributors } = await getRoster();
   return {
-    title: `Researchers: ${researchers.length} on file · Open Dev Society`,
-    description: `The ODS·LAB roster: every researcher who has shipped to an Open Dev Society experiment, by R-number, join date and experiments. ${vacancy} is vacant.`,
+    title: `Contributors: ${contributors.length} people · Open Dev Society`,
+    description: `Everyone who has shipped to an Open Dev Society project: ${contributors.length} people, when they joined, what they worked on and how many commits. One spot is open for you.`,
   };
 }
 
@@ -48,83 +52,67 @@ function blanks(n: number) {
   return Array.from({ length: 2 }, (_, j) => [j < fill(2) ? "sm:block" : "sm:hidden", j < fill(3) ? "lg:block" : "lg:hidden"].join(" "));
 }
 
-const KEY = [
-  ["R-07", "join order"],
-  ["JOINED", "first commit"],
-  ["EXP", "experiments worked on"],
-  ["CONTRIB", "commits"],
-];
-
-export default async function ResearchersPage() {
-  const { researchers, vacancy } = await getRoster();
-  const total = researchers.reduce((n, r) => n + r.contributions, 0);
+export default async function ContributorsPage() {
+  const { contributors, open } = await getRoster();
+  const total = contributors.reduce((n, r) => n + r.contributions, 0);
 
   return (
-    <div className="mx-auto w-full max-w-(--container) px-(--gutter) pt-14 pb-24 lg:pt-20">
+    <div data-grid="Contributors" className="mx-auto w-full max-w-(--container) px-(--gutter) pt-14 pb-24 lg:pt-20">
       <Record
-        n=""
-        name="Researchers"
+        name="Contributors"
         as="h1"
         size="page"
         meta={[
-          <span key="n"><span className="text-(--fg)">{researchers.length}</span> on file</span>,
-          <span key="v" className="text-(--mark-ink)">1 vacancy</span>,
+          <span key="n"><span className="text-(--fg)">{contributors.length}</span> people</span>,
+          <span key="v" className="text-(--mark-ink)">1 open spot</span>,
         ]}
         title={
-          <span className="block max-w-[14ch]">
-            {researchers.length} researchers on file. <span className="text-(--mark-ink)">One badge unissued.</span>
+          <span className="block max-w-[16ch]">
+            {contributors.length} people have shipped here. <span className="text-(--mark-ink)">One spot is open.</span>
           </span>
         }
       >
         <p className="mt-6 max-w-[60ch] text-[17px] leading-relaxed text-(--fg-muted)">
-          Everyone with a commit in an Open Dev Society experiment, numbered in the order they joined. Founders and maintainers carry a role plate.
+          Everyone with a commit in an Open Dev Society project, in the order they joined, with what they worked on. Founders and maintainers are
+          marked.
         </p>
       </Record>
 
-      <p className="t-mono mt-12 flex flex-wrap gap-x-4 gap-y-1 border-y border-(--line) py-2.5 text-[11px] text-(--fg-subtle)">
-        <span className="text-(--fg)">How to read a badge:</span>
-        {KEY.map(([k, v]) => (
-          <span key={k}>
-            <span className="text-(--fg)">{k}</span> {v}
-          </span>
-        ))}
-      </p>
-
-      <ol aria-label="Researcher badges" className="mt-6 grid border-t border-l border-(--line) sm:grid-cols-2 lg:grid-cols-3">
-        {researchers.map((r) => (
-          <li key={r.login} className="border-r border-b border-(--line)">
-            <Badge r={r} />
+      <ol aria-label="Contributors" className="mt-12 grid border-t border-l border-(--line) sm:grid-cols-2 lg:grid-cols-3">
+        {contributors.map((c) => (
+          <li key={c.login} className="border-r border-b border-(--line)">
+            <Badge c={c} />
           </li>
         ))}
         <li className="border-r border-b border-(--line)">
-          <Vacancy rid={vacancy} />
+          <OpenSpot no={open} />
         </li>
-        {blanks(researchers.length + 1).map((c, i) => (
+        {blanks(contributors.length + 1).map((c, i) => (
           <li key={i} aria-hidden className={`hidden border-r border-b border-(--line) ${c}`} />
         ))}
       </ol>
 
-      <section aria-labelledby="ledger" className="mt-24">
+      <section data-grid="All contributors" aria-labelledby="ledger" className="pt-24">
         <div className="border-t-[3px] border-double border-(--fg)" />
         <h2 id="ledger" className="t-mono mt-3 text-[12px] text-(--fg-muted)">
-          § · ROSTER LEDGER · <span className="text-(--fg)">{researchers.length}</span> rows · <span className="text-(--fg)">{total.toLocaleString("en-US")}</span> contributions
+          ALL CONTRIBUTORS · <span className="text-(--fg)">{contributors.length}</span> people · <span className="text-(--fg)">{total.toLocaleString("en-US")}</span> commits
         </h2>
         <div className="mt-4 overflow-x-auto">
           <table className="t-mono w-full min-w-[34rem] text-left text-[12px] tabular-nums">
             <thead className="text-(--fg-subtle)">
               <tr className="border-b border-(--fg)">
-                <th className="py-2 pr-4 font-normal">R</th>
-                <th className="py-2 pr-4 font-normal">Researcher</th>
+                <th className="py-2 pr-4 font-normal">#</th>
+                <th className="py-2 pr-4 font-normal">Contributor</th>
                 <th className="py-2 pr-4 font-normal">Role</th>
                 <th className="py-2 pr-4 font-normal">Joined</th>
-                <th className="py-2 pr-4 text-right font-normal">Exp</th>
-                <th className="py-2 text-right font-normal">Contrib</th>
+                <th className="py-2 pr-4 text-right font-normal">Projects</th>
+                <th className="py-2 text-right font-normal">Commits</th>
               </tr>
             </thead>
             <tbody>
-              {researchers.map((r) => (
+              {contributors.map((r) => (
                 <tr key={r.login} className="border-b border-(--line)">
-                  <td className="py-1.5 pr-4 text-(--fg)">{r.rid}</td>
+                  <td className="py-1.5 pr-4 text-(--fg)">{r.no}</td>
                   <td className="py-1.5 pr-4">
                     <a href={r.url} target="_blank" rel="noopener noreferrer" className="text-(--fg) hover:text-(--accent)">
                       @{r.login}
@@ -132,14 +120,16 @@ export default async function ResearchersPage() {
                   </td>
                   <td className="py-1.5 pr-4 text-(--fg-muted)">{r.role ?? "—"}</td>
                   <td className="py-1.5 pr-4 text-(--fg-muted)">{r.joined?.slice(0, 10) ?? "—"}</td>
-                  <td className="py-1.5 pr-4 text-right text-(--fg-muted)">{r.exps.length}</td>
+                  <td className="py-1.5 pr-4 text-right text-(--fg-muted)">{r.projects.length}</td>
                   <td className="py-1.5 text-right text-(--fg)">{r.contributions.toLocaleString("en-US")}</td>
                 </tr>
               ))}
               <tr className="text-(--mark-ink)">
-                <td className="py-1.5 pr-4">{vacancy}</td>
+                <td className="py-1.5 pr-4">{open}</td>
                 <td className="py-1.5 pr-4" colSpan={4}>
-                  vacant · issued on your first merged PR
+                  <a href="/contribute" className="hover:underline">
+                    you · open spot · make your first contribution →
+                  </a>
                 </td>
                 <td className="py-1.5 text-right">0</td>
               </tr>
@@ -147,7 +137,7 @@ export default async function ResearchersPage() {
             <tfoot>
               <tr className="border-t border-(--fg) text-(--fg)">
                 <td className="py-2" colSpan={5}>
-                  Σ
+                  Total
                 </td>
                 <td className="py-2 text-right">{total.toLocaleString("en-US")}</td>
               </tr>

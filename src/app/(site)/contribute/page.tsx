@@ -2,16 +2,16 @@ import type { Metadata } from "next";
 import { LabButton } from "@/components/site/lab-hero/LabButton";
 import { contactEmail, social } from "@/content";
 import { manualContributors } from "@/data/contributors";
-import { expIds, nextResearcherId } from "@/lib/lab";
+import { nextMemberNo } from "@/lib/lab";
 import { getWorkshop } from "@/lib/workshop";
-import { type Experiment, Materials, Procedure } from "./protocol";
+import { Materials, Procedure, type Project } from "./protocol";
 
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Protocol 01: First contribution · Open Dev Society",
+  title: "Make your first contribution · Open Dev Society",
   description:
-    "Your first contribution, from fork to draft pull request, as a lab protocol: materials, procedure with copyable commands, expected result, and ways in for writers, designers, teachers and creators.",
+    "Your first open-source contribution, from fork to draft pull request: what you need, copyable steps for the terminal or a coding agent, what happens next, and ways in for writers, designers, teachers and creators.",
 };
 
 const ORG = "https://github.com/Open-Dev-Society";
@@ -63,7 +63,7 @@ const review = [
   ["Draft opened.", "Push your branch and open a draft PR early. Say what you changed and why."],
   ["Reviewed in public.", "A maintainer comments on the PR, where anyone can read it."],
   ["You iterate.", "Push fixes to the same branch and the PR updates itself."],
-  ["Merged.", "Your name is on the commit, and your badge is on the roster."],
+  ["Merged.", "Your name is on the commit, and your card is on the Contributors page."],
 ];
 
 const values = [
@@ -93,14 +93,14 @@ const questions: { q: string; a: React.ReactNode }[] = [
     ),
   },
   { q: "I found a bug. What now?", a: "Open an issue labelled bug on that tool's repository." },
-  { q: "Do I keep the credit?", a: "Yes. Every merged PR carries your GitHub name, and your badge goes on the roster." },
+  { q: "Do I keep the credit?", a: "Yes. Every merged PR carries your GitHub name, and your card goes on the Contributors page." },
   {
     q: "Can I bring my own project?",
     a: (
       <>
         Yes, and it stays yours.{" "}
         <a href="/manifesto" className="ink-link">
-          Read the working paper →
+          Read the manifesto →
         </a>
       </>
     ),
@@ -130,16 +130,16 @@ const materials = [
       </>
     ),
   },
-  { label: "An AI coding agent (optional)", note: "Any agent works. §3 has a prompt for it; you stay the author." },
-  { label: "One open issue", note: "Chosen in step 3.2. Small is good: a typo fix is a real contribution." },
+  { label: "An AI coding agent (optional)", note: "Any agent works. The steps below have a prompt for it; you stay the author." },
+  { label: "One open issue", note: "You'll pick one in step 2. Small is good: a typo fix is a real contribution." },
 ];
 
 
-/** The protocol's section head: a numeral, a condensed title, and the mono record line. */
+/** A section head: a numeral, a condensed title, and a small mono label. */
 function Head({ n, title, meta, id }: { n: number; title: React.ReactNode; meta: string; id?: string }) {
   return (
     <div className="mb-8 flex flex-wrap items-baseline gap-x-4 gap-y-1 border-t border-(--fg) pt-3 md:mb-10">
-      <span className="t-mono text-[13px] text-(--fg-subtle)">§{n}</span>
+      <span className="t-mono text-[13px] text-(--fg-subtle)">{String(n).padStart(2, "0")}</span>
       <h2 id={id} className="scroll-mt-24 text-[clamp(2rem,1.4rem+2.2vw,3.25rem)] leading-[0.95] font-[800] tracking-[-0.015em] text-(--fg) [font-stretch:75%]">
         {title}
       </h2>
@@ -148,7 +148,7 @@ function Head({ n, title, meta, id }: { n: number; title: React.ReactNode; meta:
   );
 }
 
-/** Fig. 1, the whole procedure as a branch diagram. Upstream in ink, everything that's yours in rose. */
+/** The whole flow as a branch diagram. Upstream in ink, everything that's yours in rose. */
 function Figure({ repo }: { repo: string }) {
   return (
     <figure className="mt-12 max-w-[560px]">
@@ -175,7 +175,7 @@ function Figure({ repo }: { repo: string }) {
         <path d="M325 44 L330 36 L335 44" fill="none" stroke="var(--accent)" strokeWidth="1.5" />
       </svg>
       <figcaption className="t-mono mt-3 text-[12px] text-(--fg-subtle)">
-        Fig. 1 · Fork → branch → commit → draft PR → merge into main.
+        Fork → branch → commit → draft PR → merge into main.
       </figcaption>
     </figure>
   );
@@ -183,46 +183,46 @@ function Figure({ repo }: { repo: string }) {
 
 export default async function Contribute() {
   const { tools, people } = await getWorkshop();
-  const ids = expIds(tools);
-  const experiments: Experiment[] = tools
+  // Most stars first, so the best-known project is the default pick.
+  const projects: Project[] = tools
     .filter((r) => r.open_issues > 0)
-    .map((r) => ({ id: ids.get(r.name) ?? "EXP-???", name: r.name, language: r.language, open: r.open_issues, goodFirst: r.good_first_issues }))
-    .sort((a, b) => a.id.localeCompare(b.id));
-  const open = experiments.reduce((a, e) => a + e.open, 0);
-  const seat = nextResearcherId(people);
+    .sort((a, b) => b.stars - a.stars || a.name.localeCompare(b.name))
+    .map((r) => ({ name: r.name, language: r.language, open: r.open_issues, goodFirst: r.good_first_issues }));
+  const open = projects.reduce((a, e) => a + e.open, 0);
+  const seat = nextMemberNo(people);
   const signers = [
     ["founder", manualContributors.find((c) => c.role && /^(?!.*Co-Founder).*Founder/i.test(c.role))],
     ["co-founder", manualContributors.find((c) => c.role && /Co-Founder/i.test(c.role))],
   ] as const;
 
   const sheet = [
-    ["Estimated time", "30–60 min"],
-    ["Difficulty", "beginner ■□□"],
-    ["Subjects", `${open} open issues · ${experiments.length} experiments`],
-    ["Yield", "1 draft pull request"],
+    ["Time", "30–60 min"],
+    ["Level", "beginner ■□□"],
+    ["Open issues", `${open} across ${projects.length} projects`],
+    ["You end with", "1 draft pull request"],
   ];
 
   return (
-    <article className="mx-auto w-full max-w-(--container) px-(--gutter) pt-10 pb-(--section-y) md:pt-16">
-      {/* The protocol header: a ruled form, like the top of a printed lab procedure. */}
+    <article data-grid="Contribute" className="mx-auto w-full max-w-(--container) px-(--gutter) pt-10 pb-(--section-y) md:pt-16">
+      {/* The header: a ruled form with the facts at a glance. */}
       <header className="border-y-[3px] border-double border-(--fg)">
         <div className="t-mono flex flex-wrap justify-between gap-x-6 gap-y-1 border-b border-(--line) py-2.5 text-[12px] text-(--fg-subtle)">
           <span>
-            <span className="text-(--fg)">ODS·LAB / PROTOCOL 01</span> · version 1.0
+            <span className="text-(--fg)">CONTRIBUTE</span> · Open Dev Society
           </span>
-          <span>Open Dev Society · open protocol, reuse freely</span>
+          <span>free to copy and reuse</span>
         </div>
         <div className="grid gap-8 py-10 md:py-14 lg:grid-cols-12 lg:gap-(--grid-gap)">
           <div className="lg:col-span-8">
             <h1 className="text-[clamp(3rem,1rem+6vw,7rem)] leading-[0.88] font-[800] tracking-[-0.018em] text-balance text-(--fg) [font-stretch:75%]">
-              First contribution.
+              Make your first contribution.
             </h1>
             <p className="t-lede mt-6 max-w-[52ch] text-(--fg-muted)">
-              From fork to a draft pull request on one of our experiments. {people.length} researchers have run this protocol; every one of them is on the
-              roster.
+              From fork to a draft pull request on one of our projects. {people.length} people have done it before you; every one of them is on the
+              Contributors page.
             </p>
             <p className="mt-8 flex flex-wrap gap-3">
-              <LabButton href="#procedure">Begin procedure ↓</LabButton>
+              <LabButton href="#procedure">Start now ↓</LabButton>
               <LabButton href="#alternatives" variant="secondary">
                 Not a coder?
               </LabButton>
@@ -238,7 +238,7 @@ export default async function Contribute() {
           </dl>
         </div>
         <div className="flex flex-wrap items-end gap-x-12 gap-y-6 border-t border-(--line) py-5">
-          <span className="t-mono text-[11px] tracking-[0.08em] text-(--fg-subtle) uppercase">Approved by</span>
+          <span className="t-mono text-[11px] tracking-[0.08em] text-(--fg-subtle) uppercase">From the founders</span>
           {signers.map(
             ([role, p]) =>
               p && (
@@ -254,9 +254,9 @@ export default async function Contribute() {
       </header>
 
       <div className="mt-16 grid gap-y-20 md:mt-24 md:gap-y-28">
-        {/* §1 is one sentence, set large. */}
+        {/* The why is one sentence, set large. */}
         <section aria-labelledby="purpose">
-          <Head n={1} id="purpose" title="Purpose" meta="why run this" />
+          <Head n={1} id="purpose" title="Why do it" meta="the goal" />
           <p className="max-w-[34ch] text-[clamp(1.375rem,1.1rem+1vw,2rem)] leading-[1.25] font-[500] tracking-[-0.01em] text-balance text-(--fg)">
             To change one real thing in a tool people use, have it reviewed in the open, and leave with your name on it.
           </p>
@@ -264,60 +264,60 @@ export default async function Contribute() {
 
         <section aria-labelledby="materials" className="grid gap-y-8 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
           <div className="lg:col-span-12">
-            <Head n={2} id="materials" title="Materials" meta={`${materials.length} items · tick as you go`} />
+            <Head n={2} id="materials" title="What you need" meta={`${materials.length} things · tick as you go`} />
           </div>
           <div className="lg:col-span-7">
             <Materials items={materials} />
           </div>
           <p className="t-mono text-[12px] leading-[1.6] text-(--fg-subtle) lg:col-span-4 lg:col-start-9">
-            Note. No local setup beyond what the experiment&apos;s README asks for. No experience required: review is part of the protocol, not a gate.
+            No local setup beyond what the project&apos;s README asks for. No experience required: review is part of the process, not a gate.
           </p>
         </section>
 
         <section aria-labelledby="procedure" className="grid gap-y-8 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
           <div className="lg:col-span-12">
-            <Head n={3} id="procedure" title="Procedure" meta="choose an experiment, then work down" />
+            <Head n={3} id="procedure" title="Step by step" meta="pick a project, then work down" />
           </div>
           <div className="min-w-0 lg:col-span-8">
-            <Procedure experiments={experiments} />
+            <Procedure projects={projects} />
           </div>
           <aside className="t-mono text-[12px] leading-[1.6] text-(--fg-subtle) lg:col-span-4">
             <div className="lg:sticky lg:top-24">
               <p>
-                <span className="text-(--fg)">Instrument.</span> Terminal gives you the commands. Agent gives you one prompt for a coding agent; you
+                <span className="text-(--fg)">Terminal or agent.</span> Terminal gives you the commands. Agent gives you one prompt for a coding agent; you
                 review its work before it&apos;s pushed.
               </p>
               <p className="mt-4">
-                <span className="text-(--fg)">Operator.</span> Your handle names the branch. It stays in this browser.
+                <span className="text-(--fg)">Your handle.</span> It names the branch. It stays in this browser.
               </p>
-              <Figure repo={experiments[0]?.name ?? "OpenStock"} />
+              <Figure repo={projects[0]?.name ?? "OpenStock"} />
             </div>
           </aside>
         </section>
 
-        {/* §4: the yield, as the specimen it produces: a vacant rose badge, and the review it passes through. */}
+        {/* What you get: your open spot in rose, and the review on the way. */}
         <section aria-labelledby="result" className="grid gap-y-10 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
           <div className="lg:col-span-12">
-            <Head n={4} id="result" title="Expected result" meta="on merge" />
+            <Head n={4} id="result" title="What happens next" meta="after you open the PR" />
           </div>
           <a
             href="/contributors"
             className="group grid content-between self-start bg-(--bg) p-5 shadow-[inset_0_0_0_1px_var(--mark)] outline-offset-4 lg:col-span-4 lg:aspect-[3/4]"
           >
             <span className="t-mono flex justify-between text-[12px] text-(--mark-ink)">
-              <span>ODS·LAB / RESEARCHER</span>
-              <span>vacant</span>
+              <span>CONTRIBUTOR</span>
+              <span>open spot</span>
             </span>
             <span className="my-10 block text-[clamp(4rem,2rem+6vw,7.5rem)] leading-[0.85] font-[800] text-(--mark-ink) [font-stretch:75%]">{seat}</span>
             <span className="t-mono flex justify-between border-t border-(--mark) pt-3 text-[12px] text-(--mark-ink)">
               <span>you</span>
-              <span className="group-hover:underline">on /contributors →</span>
+              <span className="group-hover:underline">on Contributors →</span>
             </span>
           </a>
           <ol className="self-end lg:col-span-7 lg:col-start-6">
             {review.map(([t, b], i) => (
               <li key={t} className="grid grid-cols-[4ch_minmax(0,1fr)] gap-x-3 border-t border-(--line) py-4 last:border-b">
-                <span className="t-mono text-(--fg-subtle)">4.{i + 1}</span>
+                <span className="t-mono text-(--fg-subtle)">{i + 1}</span>
                 <p>
                   <span className="font-semibold text-(--fg)">{t}</span> <span className="text-(--fg-muted)">{b}</span>
                 </p>
@@ -327,7 +327,7 @@ export default async function Contribute() {
         </section>
 
         <section aria-labelledby="alternatives">
-          <Head n={5} id="alternatives" title="Alternative procedures" meta={`${roles.length} ways in · no code required for B–E`} />
+          <Head n={5} id="alternatives" title="Not a coder? Start here" meta={`${roles.length} ways in · no code needed for B–E`} />
           <div className="border-t border-(--fg)">
             {roles.map((r, i) => (
               <div
@@ -335,7 +335,7 @@ export default async function Contribute() {
                 id={r.id}
                 className="grid scroll-mt-24 grid-cols-[3ch_minmax(0,1fr)] gap-x-4 gap-y-3 border-b border-(--line) py-6 md:grid-cols-[4ch_minmax(0,3fr)_minmax(0,5fr)_minmax(0,3fr)] md:items-baseline"
               >
-                <span className="t-mono text-(--fg-subtle)">5{"ABCDE"[i]}</span>
+                <span className="t-mono text-(--fg-subtle)">{"ABCDE"[i]}</span>
                 <div>
                   <h3 className="text-[1.75rem] leading-none font-[800] text-(--fg) [font-stretch:75%]">{r.title}</h3>
                   <p className="t-mono mt-1.5 text-[12px] text-(--fg-subtle)">{r.who}</p>
@@ -353,14 +353,14 @@ export default async function Contribute() {
           </div>
         </section>
 
-        {/* §6 sits in a double-ruled box, as safety notes do in a printed protocol. */}
+        {/* The code of conduct sits in a double-ruled box, so it can't be missed. */}
         <section id="values" aria-labelledby="conduct" className="scroll-mt-24 border-[3px] border-double border-(--fg) p-5 md:p-10">
           <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-            <span className="t-mono text-[13px] text-(--fg-subtle)">§6</span>
+            <span className="t-mono text-[13px] text-(--fg-subtle)">06</span>
             <h2 id="conduct" className="scroll-mt-24 text-[clamp(2rem,1.4rem+2.2vw,3.25rem)] leading-[0.95] font-[800] tracking-[-0.015em] text-(--fg) [font-stretch:75%]">
-              Safety notes
+              Code of conduct
             </h2>
-            <span className="t-mono ml-auto text-[12px] text-(--fg-subtle)">code of conduct · {values.length} values</span>
+            <span className="t-mono ml-auto text-[12px] text-(--fg-subtle)">{values.length} values</span>
           </div>
           <p className="t-lede mt-6 max-w-[56ch] text-(--fg)">
             Be respectful and welcoming. Harassment and discrimination are not tolerated, anywhere we work.
@@ -368,7 +368,7 @@ export default async function Contribute() {
           <dl className="mt-8 grid border-t border-(--line) md:grid-cols-2 md:gap-x-(--grid-gap)">
             {values.map(([v, line], i) => (
               <div key={v} className="grid grid-cols-[4ch_minmax(0,1fr)] gap-x-3 border-b border-(--line) py-4">
-                <span className="t-mono text-(--fg-subtle)">S{i + 1}</span>
+                <span className="t-mono text-(--fg-subtle)">{i + 1}</span>
                 <div>
                   <dt className="font-semibold text-(--fg)">{v}</dt>
                   <dd className="mt-0.5 text-(--fg-muted)">{line}</dd>
@@ -389,7 +389,7 @@ export default async function Contribute() {
         </section>
 
         <section aria-labelledby="troubleshooting">
-          <Head n={7} id="troubleshooting" title="Troubleshooting" meta={`${questions.length} known problems`} />
+          <Head n={7} id="troubleshooting" title="Questions" meta={`${questions.length} common ones`} />
           <div className="border-t border-(--fg)">
             {questions.map((f, i) => (
               <details
@@ -397,7 +397,7 @@ export default async function Contribute() {
                 className="group border-b border-(--line) [interpolate-size:allow-keywords] [&::details-content]:h-0 [&::details-content]:overflow-hidden [&::details-content]:transition-[height,content-visibility] [&::details-content]:duration-(--d-3) [&::details-content]:ease-(--ease-in-out) [&::details-content]:[transition-behavior:allow-discrete] open:[&::details-content]:h-auto"
               >
                 <summary className="grid min-h-11 cursor-pointer list-none grid-cols-[4ch_minmax(0,1fr)_auto] items-baseline gap-x-3 py-5 [&::-webkit-details-marker]:hidden">
-                  <span className="t-mono text-(--fg-subtle)">T{i + 1}</span>
+                  <span className="t-mono text-(--fg-subtle)">{i + 1}</span>
                   <span className="text-[1.125rem] font-semibold text-(--fg)">{f.q}</span>
                   <span aria-hidden className="t-mono text-(--fg-subtle) group-open:hidden">
                     [+]
@@ -407,7 +407,7 @@ export default async function Contribute() {
                   </span>
                 </summary>
                 <p className="grid grid-cols-[4ch_minmax(0,1fr)] gap-x-3 pb-6">
-                  <span className="t-mono text-[12px] text-(--fg-subtle)">fix</span>
+                  <span aria-hidden />
                   <span className="max-w-[64ch] text-(--fg-muted)">{f.a}</span>
                 </p>
               </details>
@@ -416,9 +416,9 @@ export default async function Contribute() {
         </section>
 
         <footer className="flex flex-col items-start gap-6 border-t-[3px] border-double border-(--fg) pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="t-mono text-[12px] text-(--fg-subtle)">End of PROTOCOL 01. Stuck at any step? Ask in the Discord.</p>
+          <p className="t-mono text-[12px] text-(--fg-subtle)">That&apos;s it. Stuck at any step? Ask in the Discord.</p>
           <p className="flex flex-wrap gap-3">
-            <LabButton href="#procedure">Begin procedure ↑</LabButton>
+            <LabButton href="#procedure">Back to the steps ↑</LabButton>
             <LabButton href={social.discord.href} variant="secondary" {...ext}>
               Discord ↗
             </LabButton>

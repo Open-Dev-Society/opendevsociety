@@ -25,7 +25,7 @@ function Label({ className, children }: { className: string; children: React.Rea
   );
 }
 
-/** "ODS presents itself as a lab": Turing's 1952 morphogenesis, live, with the H1 grown out of it. */
+/** Turing's 1952 reaction–diffusion pattern, live, with the H1 grown out of it. The look is a lab; the words stay plain (docs/lab.md). */
 export function LabHero({ now, tools, people, lastPush, stars }: Pick<Workshop, "now" | "tools" | "people" | "lastPush"> & { stars: number }) {
   const latest = tools.find((t) => t.pushed_at === lastPush);
   const { spots, coral } = REGIMES;
@@ -51,8 +51,8 @@ export function LabHero({ now, tools, people, lastPush, stars }: Pick<Workshop, 
       </div>
 
       <Label className="top-[65px] left-0 lg:top-0">
-        <span className="text-(--accent-fg)">ODS·LAB / EXP-000</span>
-        <span>Morphogenesis · after Turing, 1952</span>
+        <span className="text-(--accent-fg)">Reaction–diffusion</span>
+        <span>Alan Turing, 1952</span>
       </Label>
       <Label className="top-0 right-0 hidden text-right lg:flex">
         <span className="text-(--accent-fg)">
@@ -62,7 +62,7 @@ export function LabHero({ now, tools, people, lastPush, stars }: Pick<Workshop, 
       </Label>
       <Label className="bottom-0 left-0">
         <span>
-          <span className="text-(--accent-fg)">{people.length}</span> researchers · <span className="text-(--accent-fg)">{tools.length}</span> experiments ·{" "}
+          <span className="text-(--accent-fg)">{people.length}</span> contributors · <span className="text-(--accent-fg)">{tools.length}</span> projects ·{" "}
           <span className="text-(--accent-fg)">{compact(stars)}</span> ★
         </span>
         <span>est. July 2024 · free, open source</span>
@@ -95,10 +95,10 @@ export function LabHero({ now, tools, people, lastPush, stars }: Pick<Workshop, 
         </h1>
         <p className="mt-8 flex flex-wrap items-center justify-center gap-3 md:mt-10">
           <LabButton href="/contribute" data-plate>
-            Join the lab →
+            Start contributing →
           </LabButton>
           <LabButton href="/projects" variant="secondary" data-plate>
-            Experiments
+            See projects
           </LabButton>
         </p>
       </div>

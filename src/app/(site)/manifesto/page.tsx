@@ -25,7 +25,6 @@ export const metadata: Metadata = {
     "The Open Dev Society manifesto: why we build free, open-source tools in public. Four principles, what we build, three promises, and who owns your work.",
 };
 
-const repoUrl = (name: string) => `https://github.com/Open-Dev-Society/${name}`;
 const ext = { target: "_blank", rel: "noopener noreferrer" } as const;
 
 const rules = [
@@ -131,7 +130,7 @@ export default async function Manifesto() {
   const body = "text-[17px] leading-[1.7] text-(--fg) hyphens-auto sm:text-justify [&>p+p]:indent-6";
 
   return (
-    <article className="mx-auto w-full max-w-(--container) px-(--gutter) pt-10 pb-24 lg:pt-14 lg:pb-32">
+    <article data-grid="Manifesto" className="mx-auto w-full max-w-(--container) px-(--gutter) pt-10 pb-24 lg:pt-14 lg:pb-32">
       {/* The header strip: what this is, before anything else. */}
       <header className="border-y-[3px] border-double border-(--fg) py-2.5">
         <p className="t-mono flex flex-wrap justify-between gap-x-6 gap-y-1 text-[12px] text-(--fg-muted)">
@@ -388,7 +387,7 @@ export default async function Manifesto() {
             </p>
             <Notes ns={[6]} />
 
-            <h2 className="mt-16 mb-4 text-[1.0625rem] font-[650] text-(--fg)">Acknowledgements</h2>
+            <h2 className="mt-16 mb-4 text-[1.0625rem] font-[650] text-(--fg)">Thanks</h2>
             <p>
               Maintained with{" "}
               {maintainers.map((m, i) => (

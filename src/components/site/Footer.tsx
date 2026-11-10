@@ -1,17 +1,18 @@
 import { contactEmail, social } from "@/content";
 import { VerifyForm } from "./Field";
+import { ScaleBar } from "./lab/Rails";
 import { DitherEdge } from "./lab/DitherEdge";
 import { Container } from "./Section";
 
 export const FORK_COMMAND = "gh repo fork Open-Dev-Society/OpenStock --clone";
 
-// Each section by the artefact it is and the numbering it uses (docs/lab.md).
-const artefacts = [
-  { code: "EXP-001…", label: "Experiments", href: "/projects" },
-  { code: "R-01…", label: "Researchers", href: "/contributors" },
-  { code: "ODS-WP-001", label: "Working paper", href: "/manifesto" },
-  { code: "PROTOCOL 01", label: "Protocol", href: "/contribute" },
-  { code: "[1]…", label: "Citations", href: "/word-of-mouth" },
+// Every page, with a one-line hint of what's there.
+const pages = [
+  { hint: "the work", label: "Projects", href: "/projects" },
+  { hint: "the people", label: "Contributors", href: "/contributors" },
+  { hint: "what we believe", label: "Manifesto", href: "/manifesto" },
+  { hint: "start here", label: "Contribute", href: "/contribute" },
+  { hint: "press, partners", label: "What people say", href: "/word-of-mouth" },
 ];
 const address = [social.github, social.discord, social.linkedin, { ...social.twitter, label: "X" }, social.email].map((l) => ({
   ...l,
@@ -22,7 +23,7 @@ const link = "transition-colors duration-(--d-2) hover:text-(--fg)";
 const cell = "bg-(--bg) p-5 md:p-6";
 const label = "t-mono mb-4 block text-[11px] tracking-[0.08em] text-(--fg-subtle) uppercase";
 
-/** The colophon on every (site) page: what it's set in, where the lab is, what it publishes, and a certificate check. */
+/** The footer on every (site) page: what it's set in, where to find us, every page, and a certificate check. */
 export function Footer() {
   return (
     <footer>
@@ -33,9 +34,9 @@ export function Footer() {
         <Container>
           <p className="t-mono flex flex-wrap justify-between gap-x-6 gap-y-1 border-b border-(--line) pb-3 text-[12px] text-(--fg-subtle)">
             <span>
-              <span className="text-(--fg)">Colophon</span> · ODS·LAB
+              <span className="text-(--fg)">Open Dev Society</span>
             </span>
-            <span>Open Dev Society · est. July 2024</span>
+            <span>since July 2024</span>
           </p>
 
           {/* Each typeface named in itself, as a specimen sheet would. */}
@@ -46,7 +47,7 @@ export function Footer() {
 
           <div className="mt-10 grid gap-px bg-(--line) shadow-[0_0_0_1px_var(--line)] md:mt-14 md:grid-cols-12">
             <div className={`${cell} md:col-span-4`}>
-              <span className={label}>Lab address</span>
+              <span className={label}>Find us</span>
               <ul className="t-mono space-y-1 text-[13px]">
                 {address.map((l) => (
                   <li key={l.href} className="grid grid-cols-[9ch_minmax(0,1fr)] gap-x-3">
@@ -59,14 +60,14 @@ export function Footer() {
               </ul>
             </div>
 
-            <nav aria-label="Artefacts" className={`${cell} md:col-span-4`}>
-              <span className={label}>Artefacts</span>
+            <nav aria-label="Pages" className={`${cell} md:col-span-4`}>
+              <span className={label}>Pages</span>
               <ul className="space-y-1">
-                {artefacts.map((a) => (
+                {pages.map((a) => (
                   <li key={a.href}>
                     <a href={a.href} className={`group grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-3 text-(--fg-muted) ${link}`}>
                       <span className="text-[15px]">{a.label}</span>
-                      <span className="t-mono text-[12px] text-(--fg-subtle) group-hover:text-(--accent)">{a.code}</span>
+                      <span className="t-mono text-[12px] text-(--fg-subtle) group-hover:text-(--accent)">{a.hint}</span>
                     </a>
                   </li>
                 ))}
@@ -74,16 +75,17 @@ export function Footer() {
             </nav>
 
             <div className={`${cell} md:col-span-4`}>
-              <span className={label}>Credentials</span>
+              <span className={label}>Verify a certificate</span>
               <VerifyForm />
               <a href="/contribute#values" className={`t-mono mt-4 inline-block text-[12px] text-(--fg-muted) ${link}`}>
-                Safety notes: code of conduct →
+                Code of conduct →
               </a>
             </div>
           </div>
 
           <p className="t-mono mt-6 flex flex-wrap justify-between gap-x-6 gap-y-1 text-[12px] text-(--fg-subtle)">
             <span>© {new Date().getFullYear()} Open Dev Society · free, open source</span>
+            <ScaleBar className="hidden md:flex" />
             <a href={`${social.github.href}/opendevsociety`} target="_blank" rel="noopener noreferrer" className={link}>
               This site is open source ↗
             </a>

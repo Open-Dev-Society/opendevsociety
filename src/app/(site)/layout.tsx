@@ -1,4 +1,5 @@
 import { Footer, Nav } from "@/components/site";
+import { Rails } from "@/components/site/lab/Rails";
 import { compact } from "@/lib/format";
 import { getOrgTotals } from "@/lib/github";
 import { logo, siteName, social } from "@/content";
@@ -20,6 +21,7 @@ export default async function SiteLayout({
   const totals = await getOrgTotals();
   return (
     <div className="site">
+      <Rails />
       <Nav
         brand={{ name: siteName, logo: logo.src }}
         links={links}

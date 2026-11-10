@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { isValidHandle, useHandle } from "@/lib/handle";
 
-export type Experiment = { id: string; name: string; language: string | null; open: number; goodFirst: number };
+export type Project = { name: string; language: string | null; open: number; goodFirst: number };
 type Mode = "terminal" | "agent";
 
 const ORG = "Open-Dev-Society";
@@ -38,7 +38,7 @@ function useTicks() {
   return [ticks, set] as const;
 }
 
-/** §2. Local state only: nothing leaves the page. */
+/** "What you need". Local state only: nothing leaves the page. */
 export function Materials({ items }: { items: { label: string; note: React.ReactNode }[] }) {
   const [ticks, set] = useTicks();
   const n = Object.keys(ticks).length;
@@ -54,7 +54,7 @@ export function Materials({ items }: { items: { label: string; note: React.React
         ))}
       </ul>
       <p className="t-mono mt-3 text-[12px] text-(--fg-subtle)" aria-live="polite">
-        {n === items.length ? "All materials at hand. Proceed to §3." : `${n} of ${items.length} at hand`}
+        {n === items.length ? "All set. On to the steps." : `${n} of ${items.length} ready`}
       </p>
     </div>
   );
@@ -93,14 +93,14 @@ const Yours = ({ children }: { children: React.ReactNode }) => <span className="
 
 type Step = { title: string; note?: React.ReactNode; cmd?: { text: string; view: React.ReactNode } };
 
-function steps(mode: Mode, x: Experiment, you: string): Step[] {
+function steps(mode: Mode, x: Project, you: string): Step[] {
   const branch = `${you}/first-pr`;
   if (mode === "agent") {
     const label = x.goodFirst > 0 ? `"good first issue"` : `"good first issue" or "help wanted"`;
     const prompt = `Fork ${ORG}/${x.name}, read its README and CONTRIBUTING, pick one open issue labelled ${label}, fix it on a branch named ${branch}, and open a draft pull request that explains the change.`;
     return [
       {
-        title: "Give your agent the protocol.",
+        title: "Give your agent this prompt.",
         note: "Paste into any coding agent (Claude Code, Codex, Cursor…) in an empty folder.",
         cmd: {
           text: prompt,
@@ -112,7 +112,7 @@ function steps(mode: Mode, x: Experiment, you: string): Step[] {
           ),
         },
       },
-      { title: "Read the diff before it's pushed.", note: "You are the author; the agent is the instrument. If you can't explain a line, ask it to." },
+      { title: "Read the diff before it's pushed.", note: "You are the author; the agent is a tool. If you can't explain a line, ask it to." },
       { title: "Run the project and check the fix by hand.", note: "The README says how. A screenshot in the PR helps the reviewer." },
       { title: "Answer review yourself.", note: "Comments are for you, not the agent. Push fixes to the same branch." },
     ];
@@ -120,7 +120,7 @@ function steps(mode: Mode, x: Experiment, you: string): Step[] {
   const list = `gh issue list --repo ${ORG}/${x.name}${x.goodFirst > 0 ? ` --label "good first issue"` : ""}`;
   return [
     {
-      title: "Fork and clone the experiment.",
+      title: "Fork and clone the project.",
       cmd: {
         text: `gh repo fork ${ORG}/${x.name} --clone`,
         view: (
@@ -174,14 +174,14 @@ function steps(mode: Mode, x: Experiment, you: string): Step[] {
   ];
 }
 
-/** §3: pick the experiment, pick the instrument (terminal or agent), work down the steps. */
-export function Procedure({ experiments }: { experiments: Experiment[] }) {
+/** The steps: pick a project, pick terminal or agent, work down. */
+export function Procedure({ projects }: { projects: Project[] }) {
   const [handle, setHandle] = useHandle();
   const [draft, setDraft] = useState<string | null>(null);
-  const [pick, setPick] = useState(experiments[0]?.name);
+  const [pick, setPick] = useState(projects[0]?.name);
   const [mode, setMode] = useState<Mode>("terminal");
   const [ticks, set] = useTicks();
-  const x = experiments.find((e) => e.name === pick) ?? experiments[0];
+  const x = projects.find((e) => e.name === pick) ?? projects[0];
   const you = handle ?? "you";
   const bad = !!draft && !isValidHandle(draft);
   const list = x ? steps(mode, x, you) : [];
@@ -189,10 +189,10 @@ export function Procedure({ experiments }: { experiments: Experiment[] }) {
 
   return (
     <div className="grid gap-y-10">
-      {/* The run sheet's blanks: who is operating, on which experiment, with which instrument. */}
+      {/* The blanks: your handle, and terminal or agent. */}
       <div className="grid gap-px bg-(--line) shadow-[0_0_0_1px_var(--line)] sm:grid-cols-[minmax(0,1fr)_auto]">
         <label className="flex min-h-13 items-center gap-3 bg-(--bg) px-4">
-          <span className="t-mono shrink-0 text-[11px] tracking-[0.08em] text-(--fg-subtle) uppercase">Operator</span>
+          <span className="t-mono shrink-0 text-[11px] tracking-[0.08em] text-(--fg-subtle) uppercase">You</span>
           <span className="t-mono text-(--mark-ink)">@</span>
           <input
             value={draft ?? handle ?? ""}
@@ -210,7 +210,7 @@ export function Procedure({ experiments }: { experiments: Experiment[] }) {
           />
           {bad && <span className="t-mono shrink-0 text-[11px] text-(--fg-subtle)">not a handle</span>}
         </label>
-        <div role="group" aria-label="Instrument" className="flex bg-(--bg)">
+        <div role="group" aria-label="Terminal or agent" className="flex bg-(--bg)">
           {(["terminal", "agent"] as const).map((m) => (
             <button
               key={m}
@@ -228,20 +228,19 @@ export function Procedure({ experiments }: { experiments: Experiment[] }) {
       </div>
 
       <fieldset>
-        <legend className="t-mono mb-3 text-[12px] text-(--fg-subtle)">3.0 Select one experiment · {experiments.length} have open issues</legend>
+        <legend className="t-mono mb-3 text-[12px] text-(--fg-subtle)">Pick a project · {projects.length} have open issues</legend>
         <div className="border-t border-(--fg)">
-          {experiments.map((e) => {
+          {projects.map((e) => {
             const on = e.name === x?.name;
             return (
               <label
                 key={e.name}
-                className={`t-mono grid min-h-11 cursor-pointer grid-cols-[2.5ch_7ch_minmax(0,1fr)_auto] items-center gap-x-3 border-b border-(--line) px-2 text-[13px] transition-colors duration-(--d-1) has-focus-visible:outline-2 has-focus-visible:outline-(--focus) sm:grid-cols-[2.5ch_8ch_minmax(0,1fr)_12ch_auto] ${
+                className={`t-mono grid min-h-11 cursor-pointer grid-cols-[2.5ch_minmax(0,1fr)_auto] items-center gap-x-3 border-b border-(--line) px-2 text-[13px] transition-colors duration-(--d-1) has-focus-visible:outline-2 has-focus-visible:outline-(--focus) sm:grid-cols-[2.5ch_minmax(0,1fr)_12ch_auto] ${
                   on ? "bg-(--fg) text-(--bg)" : "text-(--fg-muted) hover:bg-(--surface-2)"
                 }`}
               >
-                <input type="radio" name="experiment" value={e.name} checked={on} onChange={() => setPick(e.name)} className="sr-only" />
+                <input type="radio" name="project" value={e.name} checked={on} onChange={() => setPick(e.name)} className="sr-only" />
                 <span aria-hidden>{on ? "●" : "○"}</span>
-                <span className={on ? "" : "text-(--fg-subtle)"}>{e.id}</span>
                 <span className={`truncate ${on ? "" : "text-(--fg)"}`}>{e.name}</span>
                 <span className="max-sm:hidden">{e.language ?? "—"}</span>
                 <span className="text-right whitespace-nowrap">
@@ -256,7 +255,7 @@ export function Procedure({ experiments }: { experiments: Experiment[] }) {
       <div>
         <p className="t-mono mb-3 flex justify-between gap-4 text-[12px] text-(--fg-subtle)" aria-live="polite">
           <span>
-            {x?.id} · {x?.name} · by {mode}
+            {x?.name} · {mode}
           </span>
           <span>
             {done}/{list.length} done
@@ -267,7 +266,7 @@ export function Procedure({ experiments }: { experiments: Experiment[] }) {
             const k = `${mode}-${i}`;
             return (
               <li key={k} className="grid grid-cols-[3.5ch_minmax(0,1fr)] gap-x-3 border-b border-(--line) py-4 sm:grid-cols-[5ch_minmax(0,1fr)]">
-                <span className="t-mono pt-3 text-(--fg-subtle)">3.{i + 1}</span>
+                <span className="t-mono pt-3 text-(--fg-subtle)">{i + 1}</span>
                 <div className="min-w-0">
                   <Tick label={s.title} at={ticks[k]} onChange={set(k)} />
                   {s.cmd && (
