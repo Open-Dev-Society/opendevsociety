@@ -87,7 +87,7 @@ export default async function Home() {
       <LabHero now={now} tools={tools} people={people} lastPush={lastPush} stars={totals.stars} />
 
       {/* ── §01 Experiments: the lead figure, and the head of the log ── */}
-      <section id="work" aria-labelledby="work-h" className="scroll-mt-16 pt-(--section-y)">
+      <section id="work" aria-labelledby="work-h" className="tone-emerald scroll-mt-16 pt-[calc(var(--section-y)*0.75)] pb-(--section-y)">
         <Container>
           <Record
             n="01"
