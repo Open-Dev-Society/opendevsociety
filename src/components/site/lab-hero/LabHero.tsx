@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Fragment } from "react";
 import { ago, compact } from "@/lib/format";
 import type { getWorkshop } from "@/lib/workshop";
@@ -7,7 +8,8 @@ import { LabClock, TuringField } from "./TuringField";
 
 type Workshop = Awaited<ReturnType<typeof getWorkshop>>;
 
-const H1 = "Software for everyone, built by anyone who shows up.";
+// One line per beat; each line may still wrap on narrow screens.
+const H1 = ["Open source", "is a living", "system."];
 const num = (x: number) => x.toFixed(3).replace(/^0/, "");
 
 // Specimen plates: one size, one hairline, pinned to the same 16/20px inset. data-plate also hushes the field around them (field.ts).
@@ -36,11 +38,20 @@ export function LabHero({ now, tools, people, lastPush, stars }: Pick<Workshop, 
     >
       <TuringField />
 
-      <Label className="top-4 left-4 md:top-5 md:left-5">
+      {/* The nav is hidden over the hero, so the brand hangs from the top edge like a tab. */}
+      <div
+        data-plate
+        className="absolute top-0 left-1/2 flex -translate-x-1/2 items-center gap-2.5 border-x border-b border-(--line) bg-(--bg) py-2.5 pr-4 pl-3 whitespace-nowrap md:gap-3 md:py-3 md:pr-5 md:pl-3.5"
+      >
+        <Image src="/logo.png" alt="" width={40} height={40} priority className="size-8 md:size-10" />
+        <span className="text-[19px] leading-none font-[800] tracking-[-0.01em] text-(--fg) [font-stretch:75%] md:text-[23px]">Open Dev Society</span>
+      </div>
+
+      <Label className="top-[76px] left-4 lg:top-5 lg:left-5">
         <span className="text-(--fg)">ODS·LAB / EXP-000</span>
         <span>Morphogenesis · after Turing, 1952</span>
       </Label>
-      <Label className="top-5 right-5 hidden text-right md:flex">
+      <Label className="top-5 right-5 hidden text-right lg:flex">
         <span className="text-(--fg)">
           Gray–Scott · f {num(spots[0])}→{num(coral[0])} · k {num(spots[1])}→{num(coral[1])}
         </span>
@@ -66,13 +77,17 @@ export function LabHero({ now, tools, people, lastPush, stars }: Pick<Workshop, 
         {/* Real text: readable before the field starts and without WebGL. Once the field runs it fades out and the canvas grows the same glyphs in place. */}
         <h1
           id="lab-h1"
-          className="max-w-[13ch] text-[clamp(3rem,0.9rem+6.4vw,8.25rem)] leading-[0.88] font-[800] tracking-[-0.018em] text-balance text-(--fg) transition-colors duration-(--d-5) [font-stretch:75%] group-data-[live]:text-transparent"
+          className="text-[clamp(2.75rem,0.5rem+6vw,8rem)] leading-[0.88] font-[800] tracking-[-0.018em] text-(--fg) transition-colors duration-(--d-5) [font-stretch:75%] group-data-[live]:text-transparent"
         >
-          {H1.split(" ").map((w, i) => (
-            <Fragment key={i}>
-              {i > 0 && " "}
-              <span data-w>{w}</span>
-            </Fragment>
+          {H1.map((line, l) => (
+            <span key={l} className="block">
+              {line.split(" ").map((w, i) => (
+                <Fragment key={i}>
+                  {i > 0 && " "}
+                  <span data-w>{w}</span>
+                </Fragment>
+              ))}
+            </span>
           ))}
         </h1>
         <p className="mt-8 flex flex-wrap items-center justify-center gap-3 md:mt-10">
