@@ -28,19 +28,19 @@ export function LabHero({ now, tools, people, lastPush, stars }: Pick<Workshop, 
   const { spots, coral } = REGIMES;
 
   return (
-    // Pulled up under the sticky nav (-mt-16 pt-16): the field runs to the top of the viewport and the nav floats over it (data-under-nav).
+    // Exactly one screen, field to the top edge: on Home the nav is fixed and hidden while this is in view (data-under-nav, Nav.tsx).
     <section
       aria-labelledby="lab-h1"
       data-under-nav
-      className="group relative isolate -mt-16 h-[calc(clamp(520px,78svh,640px)+4rem)] cursor-crosshair overflow-hidden border-b border-(--line) pt-16 md:h-[calc(clamp(600px,calc(85svh-4rem),860px)+4rem)]"
+      className="group relative isolate h-svh min-h-[560px] cursor-crosshair overflow-hidden border-b border-(--line)"
     >
       <TuringField />
 
-      <Label className="top-20 left-4 md:top-21 md:left-5">
+      <Label className="top-4 left-4 md:top-5 md:left-5">
         <span className="text-(--fg)">ODS·LAB / EXP-000</span>
         <span>Morphogenesis · after Turing, 1952</span>
       </Label>
-      <Label className="top-21 right-5 hidden text-right md:flex">
+      <Label className="top-5 right-5 hidden text-right md:flex">
         <span className="text-(--fg)">
           Gray–Scott · f {num(spots[0])}→{num(coral[0])} · k {num(spots[1])}→{num(coral[1])}
         </span>

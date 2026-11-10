@@ -20,8 +20,9 @@ const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visi
 
 /**
  * Sticky site nav in the lab's instrument language: logo + ODS·LAB, mono labels with a sliding teal marker,
- * a plain stars label and the lab's primary button. Over a [data-under-nav] hero (Home) it is transparent and the field runs
- * beneath it; past the hero it turns solid with a hairline. Below 768 the links move into a modal sheet (Escape closes it).
+ * a plain stars label and the lab's primary button. On Home it is fixed (takes no space) and hidden while the [data-under-nav] hero
+ * is in view, so the field owns the whole screen; it slides in past the hero, or as soon as keyboard focus enters it.
+ * Elsewhere it is sticky and always shown. Below 768 the links move into a modal sheet (Escape closes it).
  */
 export function Nav({
   brand,
@@ -40,9 +41,11 @@ export function Nav({
   const home = path === "/";
   const [open, setOpen] = useState(false);
   const [section, setSection] = useState<string | null>(null);
-  // Home renders transparent from the server (the page loads at the top, over the hero); the observer corrects it from there.
+  // Home renders hidden from the server (the page loads at the top, over the hero); the observer corrects it from there.
   const [overHero, setOverHero] = useState(true);
-  const over = home && overHero;
+  // Keyboard focus (focus-visible only, so a clicked #link doesn't pin it open over the hero) reveals it.
+  const [focused, setFocused] = useState(false);
+  const hidden = home && overHero && !focused && !open;
 
   useEffect(() => {
     const hero = document.querySelector("[data-under-nav]");
@@ -93,9 +96,13 @@ export function Nav({
   return (
     <>
       <header
+        aria-hidden={hidden || undefined}
+        onFocus={(e) => e.target.matches(":focus-visible") && setFocused(true)}
+        onBlur={(e) => !e.currentTarget.contains(e.relatedTarget) && setFocused(false)}
         className={cn(
-          "sticky top-0 z-50 transition-[background-color,box-shadow] duration-(--d-3) ease-(--ease-ui)",
-          over && !open ? "bg-transparent" : "bg-(--bg)/88 shadow-[0_1px_0_var(--line)] backdrop-blur-md backdrop-saturate-[1.4]",
+          "top-0 z-50 bg-(--bg)/88 shadow-[0_1px_0_var(--line)] backdrop-blur-md backdrop-saturate-[1.4] transition-[translate,opacity] duration-(--d-3) ease-(--ease-ui) motion-reduce:transition-none!",
+          home ? "fixed inset-x-0" : "sticky",
+          hidden && "pointer-events-none -translate-y-full opacity-0",
         )}
       >
         <nav aria-label="Main" className="mx-auto flex h-16 w-full max-w-(--container) items-center gap-3 px-(--gutter) font-mono text-[13px]">
