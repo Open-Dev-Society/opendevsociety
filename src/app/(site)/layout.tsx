@@ -24,7 +24,7 @@ export default async function SiteLayout({
         brand={{ name: siteName, logo: logo.src }}
         links={links}
         stars={{ label: compact(totals.stars), href: social.github.href }}
-        contribute={{ label: "Contribute", href: "/contribute" }}
+        contribute={{ label: "Join the lab →", href: "/contribute" }}
         socials={socials}
       />
       <main>{children}</main>

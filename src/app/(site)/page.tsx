@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
 import {
   Bench,
-  Button,
-  CopyCommand,
-  FORK_COMMAND,
   Masthead,
   PartnerCard,
-  Print,
   Quote,
   RepoIndex,
   RepoTile,
@@ -16,9 +12,10 @@ import {
   SourceLine,
   Wall,
 } from "@/components/site";
+import { LabHero } from "@/components/site/lab-hero/LabHero";
 import { mentions } from "@/data/mentions";
 import { partners } from "@/data/partners";
-import { ago, compact, isLive } from "@/lib/format";
+import { compact } from "@/lib/format";
 import { getOrgContributors, getOrgTotals } from "@/lib/github";
 import { getWorkshop, listNames } from "@/lib/workshop";
 
@@ -32,7 +29,6 @@ export async function generateMetadata(): Promise<Metadata> {
     description: `A public workshop of developers, designers and writers building free, open-source tools. ${compact(totals.stars)} stars, ${people.length} builders, no paywalls.`,
   };
 }
-
 
 // Brief §10 §5: the three quotes, excerpted with honest ellipses, matched to their mention for source, year and link.
 const quotes = [
@@ -64,40 +60,13 @@ const partnerLines: Record<string, string> = {
 };
 
 export default async function Home() {
-  const { now, tools, index, featured, builders, people, lastPush, thisWeek, benchRepos, openstockPrint } = await getWorkshop();
+  const [{ now, tools, index, featured, builders, people, lastPush, thisWeek, benchRepos }, totals] = await Promise.all([getWorkshop(), getOrgTotals()]);
   const seat = people.length + 1;
 
   return (
     <>
-      {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="mx-auto w-full max-w-(--container) px-(--gutter) pt-16 lg:pt-24">
-        <p className="rise t-meta flex flex-wrap items-center gap-x-2 gap-y-1 text-(--fg-muted)" style={{ "--i": 0 } as React.CSSProperties}>
-          <span>Est. July 2024</span>
-          <span aria-hidden>·</span>
-          <span className="tabular-nums">{tools.length} tools</span>
-          <span aria-hidden>·</span>
-          <span className="tabular-nums">{people.length} builders</span>
-          <span aria-hidden>·</span>
-          <span className="inline-flex items-center gap-1.5 tabular-nums">
-            {isLive(lastPush, now) && <span className="size-1.5 rounded-full bg-(--live)" aria-hidden />}
-            last commit {ago(lastPush, now)}
-          </span>
-        </p>
-        <h1 className="rise display-1 mt-6 max-w-[14ch] text-(--fg)" style={{ "--i": 1 } as React.CSSProperties}>
-          Software for everyone, built by <span className="sign text-(--accent)">anyone who shows up.</span>
-        </h1>
-        <p className="rise t-lede mt-6 max-w-[52ch] text-(--fg-muted)" style={{ "--i": 2 } as React.CSSProperties}>
-          A public workshop of developers, designers and writers making free, open-source tools. No paywalls. No interviews. Send a
-          pull request and you&apos;re one of us.
-        </p>
-        <div className="rise mt-8 flex flex-col gap-3 sm:flex-row sm:items-center" style={{ "--i": 3 } as React.CSSProperties}>
-          <Button href="#start" size="lg" icon="arrow">
-            Make your first PR
-          </Button>
-          <CopyCommand command={FORK_COMMAND} className="sm:w-[24rem]" />
-        </div>
-        <Print className="rise mt-12 lg:mt-16" priority {...openstockPrint} />
-      </section>
+      {/* ── Hero: the lab, EXP-000 ──────────────────────────── */}
+      <LabHero now={now} tools={tools} people={people} lastPush={lastPush} stars={totals.stars} />
 
       {/* ── Work: the shelf ──────────────────────────────────── */}
       <Section id="work">

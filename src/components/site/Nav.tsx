@@ -4,21 +4,24 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, Star, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { cn } from "./cn";
 
 export type NavLink = {
   label: string;
   href: string;
-  /** On Home, the link scrolls to this section id and the pill follows the section in view. */
+  /** On Home, the link scrolls to this section id and the marker follows the section in view. */
   section?: string;
 };
 
 const isActive = (path: string, href: string) => path === href || path.startsWith(`${href}/`);
+const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus)";
+// The lab's call to action: bracketed mono text that inverts to ink on hover, never a pill.
+const bracket = "inline-flex items-center font-mono text-(--fg) transition-colors duration-(--d-2) ease-(--ease-ui) hover:bg-(--fg) hover:text-(--bg)";
 
 /**
- * Sticky site nav (brief §9): logo, links with a spring pill, a stars chip and the Contribute button.
- * Below 768 the links move into a full-height sheet that closes on route change and Escape.
+ * Sticky site nav in the lab's instrument language: logo + ODS·LAB, mono labels with a sliding teal marker,
+ * a plain stars label and a bracketed call to action. Below 768 the links move into a sheet that closes on route change and Escape.
  */
 export function Nav({
   brand,
@@ -36,17 +39,9 @@ export function Nav({
   const path = usePathname();
   const home = path === "/";
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [section, setSection] = useState<string | null>(null);
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(scrollY > 8);
-    onScroll();
-    addEventListener("scroll", onScroll, { passive: true });
-    return () => removeEventListener("scroll", onScroll);
-  }, []);
-
-  // Home: the pill follows the section in view.
+  // Home: the marker follows the section in view.
   useEffect(() => {
     if (!home) return;
     const els = links.flatMap((l) => (l.section ? [document.getElementById(l.section)] : [])).filter((e): e is HTMLElement => !!e);
@@ -80,17 +75,12 @@ export function Nav({
 
   return (
     <>
-      <header
-        className={cn(
-          "sticky top-0 z-50 bg-(--bg)/82 backdrop-blur-md backdrop-saturate-[1.4] transition-shadow duration-(--d-2)",
-          (scrolled || open) && "shadow-[0_1px_0_var(--line)]",
-        )}
-      >
-        <nav aria-label="Main" className="mx-auto flex h-16 w-full max-w-(--container) items-center gap-3 px-(--gutter)">
-          <Link href="/" className="mr-auto flex items-center gap-2.5 rounded-(--radius-sm) md:mr-4">
+      <header className="sticky top-0 z-50 bg-(--bg)/88 shadow-[0_1px_0_var(--line)] backdrop-blur-md backdrop-saturate-[1.4]">
+        <nav aria-label="Main" className="mx-auto flex h-16 w-full max-w-(--container) items-center gap-3 px-(--gutter) font-mono text-[13px]">
+          <Link href="/" aria-label={`${brand.name}, home`} className={cn(focus, "mr-auto flex items-center gap-2.5 md:mr-6")}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={brand.logo} alt="" width={24} height={24} className="size-6 rounded-md" />
-            <span className="text-[15px] font-semibold text-(--fg) [font-variation-settings:'wdth'_104]">{brand.name}</span>
+            <span className="font-medium tracking-[0.02em] text-(--fg)">ODS·LAB</span>
           </Link>
 
           <ul className="hidden items-center md:flex">
@@ -102,14 +92,15 @@ export function Nav({
                     href={hrefFor(l)}
                     aria-current={active ? (home ? "location" : "page") : undefined}
                     className={cn(
-                      "relative block rounded-full px-3.5 py-2 text-sm font-medium transition-colors duration-(--d-2)",
+                      focus,
+                      "relative flex h-11 items-center px-3 transition-colors duration-(--d-2)",
                       active ? "text-(--fg)" : "text-(--fg-muted) hover:text-(--fg)",
                     )}
                   >
                     {active && (
                       <motion.span
-                        layoutId="site-nav-pill"
-                        className="absolute inset-0 -z-10 rounded-full bg-(--surface-2)"
+                        layoutId="site-nav-marker"
+                        className="absolute inset-x-3 bottom-1.5 h-0.5 bg-(--accent-brand)"
                         transition={{ type: "spring", duration: 0.35, bounce: 0 }}
                       />
                     )}
@@ -125,16 +116,14 @@ export function Nav({
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`${stars.label} stars on GitHub`}
-            className="ml-auto hidden h-9 items-center gap-1.5 rounded-(--radius-sm) bg-(--surface) px-3 font-mono text-[13px] tabular-nums text-(--fg) shadow-(--shadow-sm) transition-colors duration-(--d-2) hover:bg-(--surface-2) md:inline-flex"
+            className={cn(focus, "ml-auto hidden h-11 items-center px-2 tabular-nums text-(--fg-muted) transition-colors duration-(--d-2) hover:text-(--fg) md:inline-flex")}
           >
-            <Star className="size-3.5" strokeWidth={1.75} />
-            {stars.label}
+            {stars.label}&nbsp;<span aria-hidden>★</span>
           </a>
-          <a
-            href={contribute.href}
-            className="inline-flex h-10 items-center rounded-full bg-(--accent) px-4 text-sm font-medium text-(--accent-fg) shadow-[inset_0_1px_0_oklch(1_0_0/0.18)] transition-[background-color,scale] duration-(--d-2) ease-(--ease-ui) hover:bg-(--accent-hover) active:scale-[0.97] md:h-11 md:px-5 md:text-[15px]"
-          >
+          <a href={contribute.href} className={cn(focus, bracket, "h-11 px-1")}>
+            <span aria-hidden>[&nbsp;</span>
             {contribute.label}
+            <span aria-hidden>&nbsp;]</span>
           </a>
 
           <button
@@ -143,7 +132,7 @@ export function Nav({
             aria-controls="site-sheet"
             aria-label={open ? "Close menu" : "Open menu"}
             onClick={() => setOpen((v) => !v)}
-            className="-mr-2.5 grid size-11 place-items-center rounded-full text-(--fg) md:hidden"
+            className={cn(focus, "-mr-2.5 grid size-11 place-items-center text-(--fg) md:hidden")}
           >
             {open ? <X className="size-5" strokeWidth={1.75} /> : <Menu className="size-5" strokeWidth={1.75} />}
           </button>
@@ -160,22 +149,29 @@ export function Nav({
             exit={{ opacity: 0, y: -8, transition: { duration: 0.18, ease: [0.2, 0, 0, 1] } }}
             className="fixed inset-x-0 top-16 bottom-0 z-40 flex flex-col overflow-y-auto bg-(--bg) px-(--gutter) pb-8 pt-4 md:hidden"
           >
-            <ul className="flex flex-col">
-              {links.map((l) => (
-                <li key={l.href}>
-                  <a href={hrefFor(l)} onClick={() => setOpen(false)} className="display-3 block py-3 text-(--fg)">
+            <ul className="flex flex-col font-mono">
+              {links.map((l, i) => (
+                <li key={l.href} className="border-b border-(--line)">
+                  <a
+                    href={hrefFor(l)}
+                    onClick={() => setOpen(false)}
+                    aria-current={activeFor(l) ? (home ? "location" : "page") : undefined}
+                    className={cn(focus, "flex items-baseline gap-4 py-4 text-[22px] text-(--fg) aria-[current]:text-(--accent)")}
+                  >
+                    <span aria-hidden className="text-[12px] text-(--fg-subtle) tabular-nums">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
                     {l.label}
                   </a>
                 </li>
               ))}
             </ul>
-            <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3 text-[15px] text-(--fg-muted)">
-              <a href={stars.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 font-mono tabular-nums text-(--fg)">
-                <Star className="size-4" strokeWidth={1.75} />
-                {stars.label}
+            <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3 font-mono text-[13px] text-(--fg-muted)">
+              <a href={stars.href} target="_blank" rel="noopener noreferrer" className={cn(focus, "min-h-11 content-center tabular-nums text-(--fg)")}>
+                {stars.label}&nbsp;<span aria-hidden>★</span>
               </a>
               {socials.map((s) => (
-                <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer" className="min-h-11 content-center hover:text-(--fg)">
+                <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer" className={cn(focus, "min-h-11 content-center hover:text-(--fg)")}>
                   {s.label}
                 </a>
               ))}
@@ -183,9 +179,11 @@ export function Nav({
             <a
               href={contribute.href}
               onClick={() => setOpen(false)}
-              className="mt-auto inline-flex h-13 items-center justify-center rounded-full bg-(--accent) text-[15px] font-medium text-(--accent-fg)"
+              className={cn(focus, bracket, "mt-auto h-13 justify-center text-[15px] shadow-[0_0_0_1px_var(--fg)]")}
             >
+              <span aria-hidden>[&nbsp;</span>
               {contribute.label}
+              <span aria-hidden>&nbsp;]</span>
             </a>
           </motion.div>
         )}

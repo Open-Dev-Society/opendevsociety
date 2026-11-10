@@ -10,14 +10,23 @@ type Workshop = Awaited<ReturnType<typeof getWorkshop>>;
 const H1 = "Software for everyone, built by anyone who shows up.";
 const num = (x: number) => x.toFixed(3).replace(/^0/, "");
 
+// Specimen plates: one size, one hairline, pinned to the same 16/20px inset. data-plate also hushes the field around them (field.ts).
 function Label({ className, children }: { className: string; children: React.ReactNode }) {
-  return <div className={`t-mono absolute flex flex-col bg-(--bg) px-1.5 py-1 text-[11px] leading-[1.45] text-(--fg-muted) ${className}`}>{children}</div>;
+  return (
+    <div
+      data-plate
+      className={`t-mono absolute flex flex-col bg-(--bg) px-2.5 py-1.5 text-[11px] leading-[1.5] text-(--fg-muted) shadow-[0_0_0_1px_var(--line)] ${className}`}
+    >
+      {children}
+    </div>
+  );
 }
 
 function Cta({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <Link
       href={href}
+      data-plate
       className="-mx-1 inline-flex min-h-11 items-center bg-(--bg) px-1 font-mono text-[15px] text-(--fg) transition-colors duration-(--d-2) ease-(--ease-ui) hover:bg-(--fg) hover:text-(--bg) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus) md:text-base"
     >
       <span aria-hidden>[&nbsp;</span>
@@ -35,7 +44,7 @@ export function LabHero({ now, tools, people, lastPush, stars }: Pick<Workshop, 
   return (
     <section
       aria-labelledby="lab-h1"
-      className="group relative isolate h-[clamp(520px,78svh,640px)] cursor-crosshair overflow-hidden md:h-[clamp(600px,calc(85svh-4rem),860px)]"
+      className="group relative isolate h-[clamp(520px,78svh,640px)] cursor-crosshair overflow-hidden border-b border-(--line) md:h-[clamp(600px,calc(85svh-4rem),860px)]"
     >
       <TuringField />
 
@@ -54,6 +63,7 @@ export function LabHero({ now, tools, people, lastPush, stars }: Pick<Workshop, 
           <span className="text-(--fg)">{people.length}</span> researchers · <span className="text-(--fg)">{tools.length}</span> experiments ·{" "}
           <span className="text-(--fg)">{compact(stars)}</span> ★
         </span>
+        <span>est. July 2024 · free, open source</span>
       </Label>
       <Label className="right-5 bottom-5 hidden text-right md:flex">
         <span className="text-(--fg)">

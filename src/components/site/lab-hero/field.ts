@@ -170,6 +170,11 @@ export function drawGlyphs(h1: HTMLElement, origin: DOMRect, w: number, h: numbe
     ctx.lineJoin = "round";
     words.forEach((wd) => ctx.strokeText(wd.text, wd.x, wd.y + ctx.measureText(wd.text).fontBoundingBoxAscent));
     draw();
+    // Plates (corner labels, CTAs) hush the field around them the same way the letters do.
+    for (const el of h1.closest("section")?.querySelectorAll("[data-plate]") ?? []) {
+      const r = el.getBoundingClientRect(), m = 10;
+      if (r.width) ctx.fillRect((r.left - origin.left - m) * scale, (r.top - origin.top - m) * scale, (r.width + 2 * m) * scale, (r.height + 2 * m) * scale);
+    }
     ctx.filter = "none";
     ctx.globalCompositeOperation = "lighter";
     ctx.fillStyle = "rgb(255,0,0)";
@@ -290,8 +295,8 @@ export function startField(section: HTMLElement, canvas: HTMLCanvasElement, opts
 
   // Parked over the field, right of the type, so the rose reticle is there before anyone moves.
   function park() {
-    lens.x = w * (opts.mobile ? 0.74 : 0.64);
-    lens.y = h * (opts.mobile ? 0.8 : 0.6);
+    lens.x = w * (opts.mobile ? 0.7 : 0.64);
+    lens.y = h * (opts.mobile ? 0.76 : 0.6);
   }
 
   function step(k: number) {
