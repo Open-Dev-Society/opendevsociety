@@ -1,5 +1,5 @@
-// ODS·LAB numbering, kept in one place (docs/lab.md): experiments are EXP-001… by stars, researchers R-01… by join order.
-// Pure functions over getWorkshop()'s data, so server and client pages number things the same way.
+// Shared helpers over getWorkshop()'s data (docs/lab.md), so server and client pages agree: project links,
+// contributor numbers (#01… by join order) and project status.
 import type { OrgContributor, OrgRepo } from "@/lib/github";
 
 const DAY = 864e5;
@@ -17,6 +17,23 @@ export const expId = (name: string, tools: Pick<OrgRepo, "name" | "stars">[]) =>
 /** Where an experiment's record lives: its repo name is the anchor (EXP numbers drift with stars, names don't). */
 export const expHref = (name: string) => `/projects#${name}`;
 
+/** Where a project's entry lives on /projects: its repo name is the anchor. */
+export const projectHref = (name: string) => `/projects#${name}`;
+
+/**
+ * login → "#01", in join order: the first week with a commit in any org repo (OrgContributor.joined).
+ * People GitHub hasn't computed stats for yet go last, in the order given (getWorkshop: most contributions first).
+ */
+export function memberNos(people: Pick<OrgContributor, "login" | "joined">[]) {
+  const at = (p: (typeof people)[number]) => (p.joined ? Date.parse(p.joined) : Infinity);
+  const sorted = people.map((p, i) => ({ p, i })).sort((a, b) => at(a.p) - at(b.p) || a.i - b.i);
+  return new Map(sorted.map(({ p }, n) => [p.login, `#${pad(n + 1, 2)}`]));
+}
+
+/** The next free number: the open spot ("#25 · you"). */
+export const nextMemberNo = (people: unknown[]) => `#${pad(people.length + 1, 2)}`;
+
+// TODO(plain-language pass): the EXP/R helpers below go once home, word-of-mouth and projects stop using them.
 /**
  * login → "R-01", in join order: the first week with a commit in any org repo (OrgContributor.joined).
  * People GitHub hasn't computed stats for yet go last, in the order given (getWorkshop: most contributions first).
