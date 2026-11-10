@@ -5,15 +5,15 @@ import { LabButton } from "@/components/site/lab-hero/LabButton";
 import { contactEmail, partnershipMailto } from "@/content";
 import { mentions, type MentionSource } from "@/data/mentions";
 import { events, partners } from "@/data/partners";
-import { expHref, expId } from "@/lib/lab";
+import { expHref } from "@/lib/lab";
 import { getWorkshop } from "@/lib/workshop";
 import { Bibliography, type Kind, type Ref } from "./Bibliography";
 
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Citations: who wrote about Open Dev Society",
-  description: `Every article, thread and post about Open Dev Society's free, open-source tools (${mentions.length} so far), as a bibliography, plus the partners and events behind the work.`,
+  title: "Word of mouth: what people say about Open Dev Society",
+  description: `Every article, thread and post about Open Dev Society's free, open-source tools (${mentions.length} so far), plus the partners and events behind the work.`,
 };
 
 const kinds: Record<MentionSource, Kind> = {
@@ -42,7 +42,7 @@ const partnerLines: Record<string, string> = {
 
 const list = (xs: string[]) => xs.map((x, i) => (i === 0 ? x : i === xs.length - 1 ? ` and ${x}` : `, ${x}`)).join("");
 
-export default async function Citations() {
+export default async function WordOfMouth() {
   const { tools } = await getWorkshop();
   const names = tools.map((r) => r.name);
 
@@ -66,7 +66,7 @@ export default async function Citations() {
       outlet,
       year: m.date,
       href: m.url,
-      re: tool ? { id: expId(tool, tools), name: tool, href: expHref(tool) } : undefined,
+      re: tool ? { name: tool, href: expHref(tool) } : undefined,
     };
   });
   const epigraph = refs.find((r) => r.author === "Tattva Tarang")!;
@@ -79,17 +79,17 @@ export default async function Citations() {
           as="h1"
           size="page"
           n="06"
-          name="Citations"
-          meta={[`${refs.length} references`, `${years[0]}–${years.at(-1)}`, "on ODS experiments"]}
+          name="Word of mouth"
+          meta={[`${refs.length} mentions`, `${years[0]}–${years.at(-1)}`]}
           title={
             <>
-              Cited by <span className="tabular-nums text-(--accent)">{refs.length}</span>.
+              Written up <span className="tabular-nums text-(--accent)">{refs.length}</span> times.
             </>
           }
           className="lg:col-span-7"
         >
           <p className="mt-6 max-w-[48ch] text-[17px] leading-[1.6] text-(--fg-muted)">
-            Articles, threads and posts from people who found the tools on their own, set as a bibliography. Wrote one?{" "}
+            Articles, threads and posts from people who found the tools on their own. Wrote one?{" "}
             <a href={`mailto:${contactEmail}?subject=ODS mention`} className="ink-link">
               Send us the link
             </a>
@@ -112,23 +112,23 @@ export default async function Citations() {
         </figure>
       </div>
 
-      <section aria-label="References" className="mt-16 lg:mt-24">
+      <section aria-label="Mentions" className="mt-16 lg:mt-24">
         <Bibliography refs={refs} />
       </section>
 
-      {/* Funding & acknowledgements: partners thanked the way a paper thanks its funders. */}
+      {/* Partners, thanked in prose, then the logos and events. */}
       <section id="partners" aria-labelledby="partners-h" className="mt-24 scroll-mt-20 lg:mt-32">
         <div className="grid gap-y-6 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
           <Record
             n="06.1"
-            name="Acknowledgements"
+            name="Partners"
             meta={[`${partners.length} partners`, `${events.length} events`]}
             id="partners-h"
-            title={<>Funding &amp; acknowledge&shy;ments</>}
+            title="Who backs the work."
             className="lg:col-span-5"
           />
           <p className="max-w-[62ch] text-[17px] leading-[1.7] text-(--fg) hyphens-auto lg:col-span-6 lg:col-start-7 lg:pt-9">
-            The work cited above is supported in part by {list(partners.map((p) => p.name))}, who help keep the tools free. We thank the
+            The tools are kept free with help from {list(partners.map((p) => p.name))}, our technology partners. We also thank the
             organisers of{" "}
             {events.map((e, i) => (
               <Fragment key={e.name}>
@@ -136,18 +136,15 @@ export default async function Citations() {
                 {e.name} ({e.organizer}, {e.date})
               </Fragment>
             ))}{" "}
-            for having the lab as a {events[0]?.role.toLowerCase()}.
+            for having us as a {events[0]?.role.toLowerCase()}.
           </p>
         </div>
 
         {/* Partners on a visible grid, logos in ink. */}
         <ul className="mt-12 grid grid-cols-1 gap-px border border-(--line) bg-(--line) md:grid-cols-3">
-          {partners.map((p, i) => (
+          {partners.map((p) => (
             <li key={p.name} className="flex flex-col bg-(--bg) p-5 sm:p-6">
-              <p className="t-mono flex justify-between text-[12px] text-(--fg-subtle)">
-                <span>A{i + 1}</span>
-                <span>{p.type} partner</span>
-              </p>
+              <p className="t-mono text-[12px] text-(--fg-subtle)">{p.type} partner</p>
               <a href={p.url} target="_blank" rel="noopener noreferrer" className="group mt-8 block" aria-label={`${p.name} (opens in a new tab)`}>
                 <span
                   aria-hidden
@@ -166,9 +163,8 @@ export default async function Citations() {
         <table className="mt-10 w-full border-y border-(--fg) text-left text-[15px]">
           <caption className="t-mono mb-3 text-left text-[12px] text-(--fg-muted)">Community events</caption>
           <tbody>
-            {events.map((e, i) => (
+            {events.map((e) => (
               <tr key={e.name} className="border-b border-(--line) align-baseline last:border-0">
-                <td className="t-mono w-12 py-3 text-[12px] text-(--fg-subtle)">E{i + 1}</td>
                 <th scope="row" className="py-3 pr-4 font-[650] text-(--fg)">
                   {e.name}
                   <span className="block text-[13px] font-normal text-(--fg-muted) sm:hidden">
@@ -185,7 +181,7 @@ export default async function Citations() {
 
         <div id="partner-cta" className="mt-16 grid scroll-mt-24 gap-8 border border-(--fg) p-6 sm:p-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end lg:mt-24 lg:p-10">
           <div>
-            <p className="t-mono text-[12px] text-(--fg-muted)">Open call · partners</p>
+            <p className="t-mono text-[12px] text-(--fg-muted)">Partnerships</p>
             <h3 className="mt-3 max-w-[18ch] text-[clamp(2rem,1.4rem+2.4vw,3.25rem)] leading-[0.92] font-[800] tracking-[-0.018em] text-(--fg) [font-stretch:75%]">
               Back free software. Partner with us.
             </h3>
