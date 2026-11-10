@@ -12,11 +12,13 @@ import type { RepoSummary } from "./RepoTile";
 export type IndexRepo = RepoSummary & { audience: Audience; goodFirst: number };
 
 type Filter = "all" | Audience;
-const MOBILE_ROWS = 6;
 const audienceLabel: Record<Audience, string> = { everyone: "For everyone", builders: "For builders and agents" };
 
-/** Every tool as hairline rows, filterable by audience. "First issues (n)" shows only when n > 0. */
-export function RepoIndex({ repos }: { repos: IndexRepo[] }) {
+/**
+ * Every tool as hairline rows, filterable by audience. "First issues (n)" shows only when n > 0.
+ * Phones show `mobileRows` rows behind a "Show all" button (pass Infinity on the full index).
+ */
+export function RepoIndex({ repos, mobileRows = 6 }: { repos: IndexRepo[]; mobileRows?: number }) {
   const [filter, setFilter] = useState<Filter>("all");
   // Phones show the first few rows until asked; desktop always shows everything.
   const [expanded, setExpanded] = useState(false);
@@ -36,7 +38,7 @@ export function RepoIndex({ repos }: { repos: IndexRepo[] }) {
       />
       <ul className="mt-6 border-t border-(--line)">
         {shown.map((r, i) => (
-          <li key={r.name} className={`${!expanded && i >= MOBILE_ROWS ? "max-lg:hidden " : ""}group relative border-b border-(--line) transition-colors duration-(--d-2) hover:bg-(--surface-2)`}>
+          <li key={r.name} className={`${!expanded && i >= mobileRows ? "max-lg:hidden " : ""}group relative border-b border-(--line) transition-colors duration-(--d-2) hover:bg-(--surface-2)`}>
             <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-x-3 gap-y-0.5 px-2 py-2.5 lg:min-h-14 lg:grid-cols-[11rem_minmax(0,1fr)_12rem_6.5rem_5.5rem_6.5rem_1rem] lg:gap-x-4 lg:py-2">
               <span className="flex items-center gap-2">
                 <a
@@ -79,7 +81,7 @@ export function RepoIndex({ repos }: { repos: IndexRepo[] }) {
           </li>
         ))}
       </ul>
-      {!expanded && shown.length > MOBILE_ROWS && (
+      {!expanded && shown.length > mobileRows && (
         <button
           type="button"
           onClick={() => setExpanded(true)}

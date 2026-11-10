@@ -1,131 +1,80 @@
-"use client";
+import type { Metadata } from "next";
+import { Button, Print, RepoIndex, RepoTile, Section, SectionHeader } from "@/components/site";
+import { social } from "@/content";
+import { compact } from "@/lib/format";
+import { getOrgTotals } from "@/lib/github";
+import { getWorkshop, listNames } from "@/lib/workshop";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { featuredModules } from "@/data/projects";
-import { ArrowLeft, Star, GitFork, CircleDot, Package, Globe, ExternalLink } from "lucide-react";
+// Matches the GitHub lib's cache.
+export const revalidate = 3600;
 
-export default function ProjectsPage() {
-    const [repos, setRepos] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+export async function generateMetadata(): Promise<Metadata> {
+  const [{ tools }, totals] = await Promise.all([getWorkshop(), getOrgTotals()]);
+  return {
+    title: `Work: ${tools.length} free, open-source tools · Open Dev Society`,
+    description: `Every Open Dev Society tool, free to use and free to fork. ${compact(totals.stars)} stars on GitHub, built in public.`,
+  };
+}
 
-    useEffect(() => {
-        async function fetchRepos() {
-            try {
-                const res = await fetch("/api/github/orgs/Open-Dev-Society/repos?per_page=100");
-                if (!res.ok) throw new Error("Failed to fetch");
-                const data = await res.json();
+// What the society gives a project that joins (from the manifesto's "Platform, not gatekeeper").
+const gives = [
+  { title: "Contributors", body: "People who fork it, fix it and review each other's pull requests." },
+  { title: "Visibility", body: "A shelf next to OpenStock, and a community whose work gets written about." },
+  { title: "Review", body: "Maintainers review in the open. You keep full credit and every decision." },
+];
 
-                // 1. Process Curated List (with custom tags)
-                const curatedList = featuredModules.map(config => {
-                    const repo = data.find((r: any) => r.name.toLowerCase() === config.name.toLowerCase());
-                    if (!repo) return null;
-                    return {
-                        ...repo,
-                        customTags: config.tags
-                    };
-                }).filter(Boolean);
+export default async function WorkPage() {
+  const { tools, index, featured, thisWeek, openstockPrint } = await getWorkshop();
 
-                // 2. Strict Whitelist: Only show what is in the config
-                console.log("Filtered Repos:", curatedList);
-                setRepos(curatedList);
-            } catch (error) {
-                console.error("Error fetching repos:", error);
-            } finally {
-                setLoading(false);
-            }
-        }
+  return (
+    <>
+      <Section className="pt-16 lg:pt-24">
+        <SectionHeader
+          as="h1"
+          eyebrow="Work"
+          count={`${tools.length} tools`}
+          title={`${tools.length} tools. 0 paywalls.`}
+          description={
+            thisWeek.length
+              ? `Free to use, free to fork, all public on GitHub. Pushed to this week: ${listNames(thisWeek)}.`
+              : "Free to use, free to fork, all public on GitHub."
+          }
+        />
+        <Print priority {...openstockPrint} />
 
-        fetchRepos();
-    }, []);
-
-    return (
-        <div className="px-6 py-20">
-
-            {/* Header */}
-            <header className="mb-20">
-                <Link href="/" className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-gray-500 hover:text-black transition-colors mb-8">
-                    <ArrowLeft className="w-3 h-3" /> Return_Index
-                </Link>
-                <div className="flex items-center gap-3 mb-6">
-                    <div className="w-3 h-3 bg-black rounded-full" />
-                    <span className="font-mono text-sm tracking-widest uppercase">System_Modules // Full_Index</span>
-                </div>
-                <h1 className="text-5xl md:text-7xl font-serif italic leading-[0.9] tracking-tighter mb-8">
-                    Curated Index.
-                </h1>
-                <p className="text-xl text-gray-600 max-w-2xl leading-relaxed">
-                    The complete catalog of Open Dev Society initiatives. Open for contribution.
-                </p>
-            </header>
-
-            {/* Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {loading ? (
-                    <div className="col-span-full py-20 text-center font-mono text-gray-400">
-                        INITIALIZING_DATALINK...
-                    </div>
-                ) : (
-                    repos.map((repo) => (
-                        <div key={repo.id} className="p-8 border border-dashed border-gray-300 hover:bg-gray-50 transition-colors group flex flex-col justify-between h-full">
-                            <div>
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className="flex items-center gap-2">
-                                        <Package className="w-5 h-5 text-[var(--color-brand-teal)]" />
-                                        <h3 className="font-bold font-mono uppercase tracking-wider text-sm">{repo.name}</h3>
-                                    </div>
-                                    <span className="text-[10px] font-mono border border-black px-2 py-1 uppercase">
-                                        {repo.customTags?.[0] || repo.language || 'Code'}
-                                    </span>
-                                </div>
-                                <p className="text-sm text-gray-600 mb-6 leading-relaxed line-clamp-4">
-                                    {repo.description || "No description provided."}
-                                </p>
-
-                                {/* Stats */}
-                                <div className="flex flex-wrap gap-4 text-[10px] font-mono text-gray-500 mb-6 border-y border-dashed border-gray-200 py-3">
-                                    <div className="flex items-center gap-1" title="Stars">
-                                        <Star className="w-3 h-3 text-yellow-500" />
-                                        <span>{repo.stargazers_count}</span>
-                                    </div>
-                                    <div className="flex items-center gap-1" title="Forks">
-                                        <GitFork className="w-3 h-3" />
-                                        <span>{repo.forks_count}</span>
-                                    </div>
-                                    <div className="flex items-center gap-1" title="Open Issues">
-                                        <CircleDot className="w-3 h-3 text-blue-500" />
-                                        <span>{repo.open_issues_count}</span>
-                                    </div>
-                                </div>
-
-                                <div className="flex gap-2 text-[10px] font-mono text-gray-400 mb-6">
-                                    {repo.customTags?.slice(1).map((tag: string) => (
-                                        <span key={tag} className="uppercase">#{tag}</span>
-                                    ))}
-                                    {repo.topics?.slice(0, 2).map((topic: string) => (
-                                        <span key={topic} className="uppercase">#{topic}</span>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="flex items-center justify-between mt-auto">
-                                <span className="text-[10px] font-mono uppercase bg-gray-100 px-2 py-1 rounded">
-                                    {repo.language || 'Code'}
-                                </span>
-                                <a href={repo.html_url} target="_blank" className="flex items-center gap-1 text-xs font-mono underline decoration-dashed hover:decoration-solid group-hover:text-[var(--color-brand-rose)]">
-                                    REPO_ACCESS <ExternalLink className="w-3 h-3" />
-                                </a>
-                            </div>
-                        </div>
-                    ))
-                )}
-            </div>
-
-            <footer className="mt-20 pt-10 border-t border-dashed border-gray-300 text-center font-mono text-xs text-gray-500">
-                <p>END_OF_LIST // {repos.length}_MODULES_FOUND</p>
-            </footer>
-
+        <h2 className="t-title mt-20 text-(--fg) lg:mt-24">Recently on the bench</h2>
+        <div className="-mx-(--gutter) mt-6 flex snap-x snap-mandatory scroll-px-(--gutter) gap-3 overflow-x-auto px-(--gutter) pb-2 lg:mx-0 lg:grid lg:grid-cols-3 lg:gap-(--grid-gap) lg:overflow-visible lg:px-0 lg:pb-0">
+          {featured.map(({ repo, shot }) => (
+            <RepoTile key={repo.name} repo={repo} shot={shot} className="w-[78vw] max-w-sm shrink-0 snap-start lg:w-auto lg:max-w-none" />
+          ))}
         </div>
 
-    );
+        <h2 className="t-title mt-20 text-(--fg) lg:mt-24">Every tool</h2>
+        <div className="mt-6">
+          <RepoIndex repos={index} mobileRows={Infinity} />
+        </div>
+      </Section>
+
+      <Section tone="muted">
+        <SectionHeader
+          eyebrow="Bring your project"
+          title="Your project. Your vision. Our community."
+          description="Have something worth building in the open? Bring it here and build it with us."
+        />
+        <ul className="grid grid-cols-1 gap-x-(--grid-gap) gap-y-8 md:grid-cols-3 lg:ml-[25%]">
+          {gives.map((g) => (
+            <li key={g.title} className="border-t border-(--line) pt-5">
+              <h3 className="t-title text-(--fg)">{g.title}</h3>
+              <p className="mt-2 text-(--fg-muted)">{g.body}</p>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-10 lg:ml-[25%]">
+          <Button href={social.discord.href} external icon="external" size="lg">
+            Pitch it on Discord
+          </Button>
+        </div>
+      </Section>
+    </>
+  );
 }
