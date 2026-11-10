@@ -3,21 +3,17 @@
 import { useState } from "react";
 import { Check, Download, Link2 } from "lucide-react";
 import { cn } from "../cn";
+import { labButton } from "../lab-hero/LabButton";
 
 type Variant = "primary" | "secondary" | "quiet";
-const variants: Record<Variant, string> = {
-  primary: "h-11 rounded-full px-5 bg-(--accent) text-(--accent-fg) shadow-[inset_0_1px_0_oklch(1_0_0/0.18)] hover:bg-(--accent-hover)",
-  secondary: "h-11 rounded-full px-5 bg-(--surface) text-(--fg) shadow-(--shadow-sm) hover:bg-(--surface-2)",
-  quiet: "h-11 rounded-(--radius-sm) px-3 text-sm text-(--fg-muted) hover:bg-(--surface-2) hover:text-(--fg)",
-};
 
-/** Button styling for <button>s in the tool pages (the site's Button is link-only). */
+/** Button styling for <button>s in the tool pages: LabButton's square classes; quiet is a bare mono text button. */
 export const toolButton = (variant: Variant = "secondary", className?: string) =>
   cn(
-    "inline-flex shrink-0 items-center justify-center gap-1.5 text-[15px] font-medium whitespace-nowrap",
-    "transition-[background-color,color,box-shadow,scale] duration-(--d-2) ease-(--ease-ui) active:scale-[0.97] active:duration-(--d-1)",
-    "disabled:pointer-events-none disabled:opacity-60",
-    variants[variant],
+    variant === "quiet"
+      ? "inline-flex min-h-11 items-center justify-center rounded-[2px] px-3 font-mono text-[13px] whitespace-nowrap text-(--fg-muted) transition-colors duration-(--d-2) hover:text-(--fg) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus)"
+      : labButton(variant, "md"),
+    "shrink-0 gap-1.5 disabled:pointer-events-none disabled:opacity-60",
     className,
   );
 
