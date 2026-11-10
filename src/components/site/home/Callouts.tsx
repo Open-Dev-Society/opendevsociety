@@ -51,13 +51,13 @@ export function Callouts({ parts }: { parts: Part[] }) {
 
   let n = -1;
   return (
-    <div ref={root} className="relative grid gap-8 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
+    <div ref={root} className="relative grid gap-6 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
       <p data-statement className={`${display} self-start leading-[1.06] text-[clamp(2.25rem,1.3rem+3.6vw,4.75rem)] lg:col-span-8 lg:max-w-[16ch]`}>
         {parts.map((p, i) => {
           if (typeof p === "string") return p;
           n++;
           return (
-            <span key={i}>
+            <span key={i} className="whitespace-nowrap">
               <span data-word={n}>
                 {p.word}
                 <i className="inline-block size-0 align-baseline" />

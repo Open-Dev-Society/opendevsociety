@@ -4,6 +4,7 @@ import { LabButton } from "../lab-hero/LabButton";
 import { Container } from "../Section";
 import { Rotator } from "./live";
 import { band, display, ext, focus, label } from "./ui";
+import { ArrowRight, External } from "../Icon";
 
 const promises = [
   {
@@ -60,7 +61,7 @@ export function Founders() {
                   <footer className="t-mono mt-3 text-[12px] text-(--fg-muted)">
                     <a href={q.url} {...ext} className={`underline-offset-4 hover:underline ${focus}`}>
                       <span className="sign text-[16px] text-(--fg)">{q.who}</span>
-                      {q.where && <>, {q.where}</>} ↗
+                      {q.where && <>, {q.where}</>} <External size="1em" />
                     </a>
                   </footer>
                 </blockquote>
@@ -104,7 +105,9 @@ export function Founders() {
         </div>
 
         <p className="mt-10 flex flex-wrap gap-3 md:mt-12">
-          <LabButton href="/contribute">Bring your project →</LabButton>
+          <LabButton href="/contribute">
+            Bring your project <ArrowRight size="1em" />
+          </LabButton>
           <LabButton href="/manifesto" variant="secondary">
             Read the manifesto
           </LabButton>

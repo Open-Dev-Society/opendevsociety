@@ -92,9 +92,7 @@ export function About({
               <span key={s.name} title={s.name} className={`size-2.5 ${s.active ? "bg-(--accent)" : "shadow-[inset_0_0_0_1px_var(--fg-subtle)]"}`} />
             ))}
           </span>
-          <span className="mt-1.5 block">
-            {active} active · {tools.length - active} quiet or archived
-          </span>
+          <span className="mt-1.5 block">{active} active right now</span>
         </>
       ),
     },
@@ -133,7 +131,7 @@ export function About({
           ]}
         />
 
-        <dl className="mt-12 grid grid-cols-2 border-t border-(--fg) md:mt-16 md:grid-cols-4">
+        <dl className="mt-10 grid grid-cols-2 border-t border-(--fg) md:mt-16 md:grid-cols-4">
           {numbers.map((x, i) => (
             <div
               key={x.what}

@@ -6,6 +6,7 @@ import { compact } from "@/lib/format";
 import { LabButton } from "../lab-hero/LabButton";
 import { Dither } from "../lab/Dither";
 import { display, focus } from "./ui";
+import { ArrowRight, ArrowUp, Star } from "../Icon";
 
 export type IndexRow = {
   name: string;
@@ -37,7 +38,11 @@ function Shot({ row }: { row: IndexRow }) {
   );
 }
 
-const caption = (r: IndexRow) => `★ ${compact(r.stars)} · ${r.contributors} contributor${r.contributors === 1 ? "" : "s"}`;
+const caption = (r: IndexRow) => (
+  <>
+    <Star size="1em" label="Stars" /> {compact(r.stars)} · {r.contributors} contributor{r.contributors === 1 ? "" : "s"}
+  </>
+);
 
 /**
  * The projects as a type specimen. Pointer: a preview frame follows the cursor (lerped, clamped to the list) and develops.
@@ -188,7 +193,7 @@ export function ProjectIndex({ rows }: { rows: IndexRow[] }) {
                 aria-hidden
                 className={`t-mono ml-auto text-(--fg) transition-transform duration-(--d-2) md:ml-0 ${active === i ? "translate-x-1" : ""}`}
               >
-                {open === i ? "↑" : "→"}
+                {open === i ? <ArrowUp size="1em" /> : <ArrowRight size="1em" />}
               </span>
             </Link>
             {open === i && (
@@ -197,7 +202,7 @@ export function ProjectIndex({ rows }: { rows: IndexRow[] }) {
                 <p className="text-[16px] text-(--fg-muted)">{r.tagline}</p>
                 <p className="t-mono text-[12px] text-(--fg-muted)">{caption(r)}</p>
                 <LabButton href={r.href} size="md" className="justify-self-start">
-                  Open project →
+                  Open project <ArrowRight size="1em" />
                 </LabButton>
               </div>
             )}
