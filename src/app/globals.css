@@ -13,7 +13,7 @@
   --fg-muted: oklch(0.44 0.025 212); /* #43565b 7.3:1, 6.8:1 on surface-2 */
   --fg-subtle: oklch(0.52 0.02 212); /* #5c6c70 5.2:1, 4.8:1 on surface-2. Meta only */
   --line: oklch(0.21 0.03 212 / 0.1);
-  --accent-brand: #288488; /* logo teal, 4.2:1: large text and focus rings only */
+  --accent-brand: #10777b; /* the one emerald: the hero field, dither ink and plates all match the emerald bands (5.0:1) */
   --accent: oklch(0.52 0.085 199); /* #10777b the logo teal one step deeper, for links, buttons, names. 5.0:1; white on it 5.3:1 */
   --accent-hover: oklch(0.46 0.08 200); /* #00656a white on it 6.8:1 */
   --accent-fg: oklch(1 0 0);

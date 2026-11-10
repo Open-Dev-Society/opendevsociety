@@ -140,7 +140,7 @@ export function Dither({
       if (!w || !h) return;
       const size = cell * STEPS[step];
       const gw = Math.max(1, Math.round(w / size)), gh = Math.max(1, Math.round(h / size));
-      const ink = variant === "mark" ? token(el, "--mark", "#d03c5c") : token(el, "--accent-brand", "#288488");
+      const ink = variant === "mark" ? token(el, "--mark", "#d03c5c") : token(el, "--accent-brand", "#10777b");
       const paper = token(el, "--bg", "#f8f9fa");
       const palette: RGB[] = tone === "duotone" ? [token(el, "--fg", "#051c20"), ink, paper] : [ink, paper];
       const q = dither(sample(img, gw, gh, align, negative), gw, gh, palette.length, matrix);
