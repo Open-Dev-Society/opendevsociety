@@ -14,7 +14,7 @@ export type Ref = {
   outlet: string;
   year?: string;
   href: string;
-  re?: { id: string; name: string; href: string };
+  re?: { name: string; href: string };
 };
 
 const KINDS: [Kind | "all", string][] = [
@@ -25,14 +25,14 @@ const KINDS: [Kind | "all", string][] = [
 ];
 const cjk = (s: string) => (/[぀-鿿]/.test(s) ? "zh-Hant" : undefined);
 
-/** The numbered references, filterable by kind. Numbers stay with their entry, as in any bibliography. */
+/** Every mention, numbered and filterable by kind. Numbers stay with their entry when filtered. */
 export function Bibliography({ refs }: { refs: Ref[] }) {
   const [kind, setKind] = useState<Kind | "all">("all");
   const shown = kind === "all" ? refs : refs.filter((r) => r.kind === kind);
 
   return (
     <>
-      <div role="group" aria-label="Filter citations by kind" className="flex w-fit flex-wrap gap-px bg-(--line) p-px max-sm:grid max-sm:w-full max-sm:grid-cols-2">
+      <div role="group" aria-label="Filter mentions by kind" className="flex w-fit flex-wrap gap-px bg-(--line) p-px max-sm:grid max-sm:w-full max-sm:grid-cols-2">
         {KINDS.map(([k, label]) => {
           const on = k === kind;
           return (
@@ -83,8 +83,8 @@ export function Bibliography({ refs }: { refs: Ref[] }) {
               {r.re && (
                 <>
                   {" · "}
-                  <a href={r.re.href} aria-label={`re ${r.re.id}, ${r.re.name}`} className="text-(--fg-muted) hover:text-(--accent)">
-                    re {r.re.id}
+                  <a href={r.re.href} className="text-(--fg-muted) hover:text-(--accent)">
+                    on {r.re.name}
                   </a>
                 </>
               )}
