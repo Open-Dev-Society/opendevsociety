@@ -1,4 +1,4 @@
-// Fig. 1: EXP-000 grown from a single seed. The hero's reaction (Gray–Scott, coral regime, same Laplacian) run once
+// The manifesto's figure: the hero's pattern grown from a single seed. The hero's reaction (Gray–Scott, coral regime, same Laplacian) run once
 // on the server, sampled at three times and set 1-bit through the same Bayer 8×8, as a PNG used for a CSS mask so
 // the ink follows the theme. Deterministic, so the figure never changes between builds.
 import { crc32, deflateSync } from "node:zlib";
@@ -96,5 +96,5 @@ function png({ bits, stride }: { bits: Uint8Array; stride: number }) {
 }
 
 let frames: string[] | undefined;
-/** The three panels of Fig. 1 as PNG data URLs, computed once per server process (~0.3s). */
+/** The figure's three panels as PNG data URLs, computed once per server process (~0.3s). */
 export const figureFrames = () => (frames ??= simulate().map((v) => png(dither(v))));

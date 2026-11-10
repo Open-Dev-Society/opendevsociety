@@ -149,7 +149,8 @@ export function Nav({
           >
             {stars.label}&nbsp;<span aria-hidden>★</span>
           </a>
-          <LabButton href={contribute.href} size="sm">
+          {/* Below 640 the wordmark needs the room; the sheet carries the button. */}
+          <LabButton href={contribute.href} size="sm" className="max-sm:hidden">
             {contribute.label}
           </LabButton>
 
