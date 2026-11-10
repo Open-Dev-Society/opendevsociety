@@ -8,3 +8,5 @@ export { Avatar, AvatarStack, type Person } from "./Avatar";
 export { CopyCommand } from "./CopyCommand";
 export { Nav } from "./Nav";
 export { Footer, type FooterColumn } from "./Footer";
+export { SegmentedControl, type Segment } from "./SegmentedControl";
+export { Steps, type Step } from "./Steps";

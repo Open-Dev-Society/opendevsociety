@@ -38,75 +38,181 @@
   }
 }
 
-/* ─── Redesign tokens ────────────────────────────────────────────────────────
+/* ─── Redesign tokens: "Signed in ink" (docs/design-brief.md §4–6) ───────────
    The only place the new site's theme lives. Components in src/components/site/
-   use these semantic variables and nothing else, so a theme is a token edit.
-   Values below are neutral placeholders until the art director picks a theme. */
+   use these semantic variables and nothing else. Tokens stay on :root: the
+   certificate print clone is appended to <body> and needs them. */
 :root {
-  --bg: #ffffff;
-  --surface: #ffffff;
-  --surface-2: #f4f4f5;
-  --fg: #0a0a0a;
-  --fg-muted: #52525b;
-  --fg-subtle: #6b6b74;
-  --line: rgb(10 10 10 / 0.1);
-  --accent: #2563eb;
-  --accent-fg: #ffffff;
-  --accent-soft: rgb(37 99 235 / 0.1);
+  --bg: oklch(0.975 0.004 95); /* bone daylight */
+  --surface: oklch(0.995 0.002 95);
+  --surface-2: oklch(0.948 0.006 95);
+  --fg: oklch(0.2 0.025 265); /* blue-black ink, 16.9:1 on bg */
+  --fg-muted: oklch(0.43 0.025 265); /* 7.6:1 */
+  --fg-subtle: oklch(0.53 0.02 265); /* 4.9:1 on bg; meta only, 12px min */
+  --line: oklch(0.2 0.025 265 / 0.1);
+  --accent: oklch(0.48 0.2 265); /* cobalt ink */
+  --accent-hover: oklch(0.42 0.19 265);
+  --accent-fg: oklch(1 0 0);
+  --accent-soft: oklch(0.94 0.03 265); /* text on it: --accent-hover */
+  --mark: oklch(0.925 0.125 102); /* highlighter: backgrounds only, marks what is yours */
+  --live: oklch(0.52 0.12 152); /* live (<24h) and verified */
   --focus: var(--accent);
-  --img-outline: rgb(0 0 0 / 0.1);
+  --img-outline: oklch(0.2 0.025 265 / 0.1);
 
-  /* Inverse band (footer, dark sections). Applied by .tone-inverse. */
-  --inv-bg: #0a0a0a;
-  --inv-surface: #18181b;
-  --inv-fg: #fafafa;
-  --inv-fg-muted: #a1a1aa;
-  --inv-line: rgb(255 255 255 / 0.12);
+  /* The inkwell: bench, footer, tooltips. Applied by .tone-inverse. */
+  --inv-bg: oklch(0.19 0.03 268);
+  --inv-surface: oklch(0.245 0.035 268);
+  --inv-fg: oklch(0.96 0.006 95);
+  --inv-fg-muted: oklch(0.8 0.02 265);
+  --inv-fg-subtle: oklch(0.68 0.02 265);
+  --inv-accent: oklch(0.76 0.12 262);
+  --inv-line: oklch(1 0 0 / 0.1);
 
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --radius-xl: 28px;
+  --radius-sm: 8px; /* chips, inputs, seats, inner frames */
+  --radius-md: 14px; /* cards, tiles */
+  --radius-lg: 20px; /* print frame, terminal */
 
-  --shadow-sm: 0 0 0 1px var(--line), 0 1px 2px rgb(0 0 0 / 0.04);
-  --shadow-md: 0 0 0 1px var(--line), 0 2px 4px rgb(0 0 0 / 0.04), 0 12px 28px -12px rgb(0 0 0 / 0.16);
+  --shadow-sm: 0 0 0 1px var(--line), 0 1px 2px oklch(0.2 0.025 265 / 0.04);
+  --shadow-md: 0 0 0 1px var(--line), 0 2px 4px oklch(0.2 0.025 265 / 0.04), 0 12px 28px -14px oklch(0.2 0.025 265 / 0.16);
+  --shadow-lg: 0 0 0 1px var(--line), 0 2px 4px oklch(0.2 0.025 265 / 0.04), 0 32px 64px -32px oklch(0.25 0.06 265 / 0.35);
 
-  --container: 72rem;
-  --gutter: 16px;
-  --section-y: clamp(64px, 8vw, 112px);
-  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --container: 76rem;
+  --gutter: clamp(20px, 5vw, 48px);
+  --grid-gap: 16px;
+  --section-y: clamp(5rem, 3rem + 7vw, 9rem);
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* entrances, reveals */
+  --ease-ui: cubic-bezier(0.2, 0, 0, 1); /* hovers, presses, state changes */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1); /* travel, resize, outline draw */
+  --d-1: 100ms;
+  --d-2: 160ms;
+  --d-3: 240ms;
+  --d-4: 360ms;
+  --d-5: 560ms;
 }
-@media (min-width: 640px) {
+@media (min-width: 768px) {
   :root {
-    --gutter: 24px;
+    --grid-gap: 24px;
   }
 }
 
-/* Font tokens sit on body so var(--font-sans) resolves to next/font's loaded family set on <body>. */
+/* Font tokens sit on body so they resolve to next/font's families, which the root layout sets on <body>. */
 body {
   --font-display: var(--font-sans);
   --font-body: var(--font-sans);
-  /* --font-mono comes from the root layout */
 }
 
-/* Section tones: re-point the tokens, so anything inside adapts without props. */
+/* Section tones re-point the tokens, so anything inside adapts without props. */
 .tone-muted {
   background: var(--surface-2);
 }
 .tone-inverse {
   --bg: var(--inv-bg);
   --surface: var(--inv-surface);
-  --surface-2: var(--inv-surface);
+  --surface-2: var(--inv-bg); /* recessed: segmented tracks, hovered rows */
   --fg: var(--inv-fg);
   --fg-muted: var(--inv-fg-muted);
-  --fg-subtle: var(--inv-fg-muted);
+  --fg-subtle: var(--inv-fg-subtle);
   --line: var(--inv-line);
-  --img-outline: rgb(255 255 255 / 0.1);
+  --accent: var(--inv-accent);
+  --accent-hover: oklch(0.82 0.1 262);
+  --accent-fg: var(--inv-bg);
+  --accent-soft: oklch(0.76 0.12 262 / 0.16);
+  --img-outline: oklch(1 0 0 / 0.1);
   /* re-declared so var(--line) resolves to the inverse value */
-  --shadow-sm: 0 0 0 1px var(--line), 0 1px 2px rgb(0 0 0 / 0.2);
-  --shadow-md: 0 0 0 1px var(--line), 0 2px 4px rgb(0 0 0 / 0.2), 0 12px 28px -12px rgb(0 0 0 / 0.5);
+  --shadow-sm: 0 0 0 1px var(--line), 0 1px 2px oklch(0 0 0 / 0.2);
+  --shadow-md: 0 0 0 1px var(--line), 0 2px 4px oklch(0 0 0 / 0.2), 0 12px 28px -14px oklch(0 0 0 / 0.5);
+  --shadow-lg: 0 0 0 1px var(--line), 0 2px 4px oklch(0 0 0 / 0.2), 0 32px 64px -32px oklch(0 0 0 / 0.6);
   background: var(--bg);
   color: var(--fg);
+}
+
+/* Type tokens (brief §3). Width rides on font-variation-settings, weight on font-weight. */
+.display-1,
+.display-2,
+.display-3,
+.t-title {
+  font-family: var(--font-display);
+  text-wrap: balance;
+}
+.display-1 {
+  font-size: clamp(2.75rem, 1.5rem + 4.4vw, 5.25rem);
+  line-height: 0.96;
+  font-weight: 680;
+  font-variation-settings: "wdth" 112;
+  letter-spacing: -0.035em;
+}
+.display-2 {
+  font-size: clamp(2.25rem, 1.6rem + 2.4vw, 3.5rem);
+  line-height: 1.02;
+  font-weight: 650;
+  font-variation-settings: "wdth" 108;
+  letter-spacing: -0.03em;
+}
+.display-3 {
+  font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.25rem);
+  line-height: 1.08;
+  font-weight: 620;
+  font-variation-settings: "wdth" 104;
+  letter-spacing: -0.022em;
+}
+.t-title {
+  font-size: 1.375rem;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+}
+.t-lede {
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  letter-spacing: -0.005em;
+  text-wrap: pretty;
+}
+@media (min-width: 768px) {
+  .t-lede {
+    font-size: 1.1875rem;
+  }
+}
+.t-meta {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: 0.005em;
+}
+.t-mono {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  font-weight: 450;
+  font-variant-numeric: tabular-nums;
+}
+/* The hand that signs the work: names, signatures, quotes, the H1 clause. Never body text or buttons. */
+.sign {
+  font-family: var(--font-sign);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.08em;
+  letter-spacing: -0.01em;
+}
+.quote-feature {
+  font-family: var(--font-sign);
+  font-style: italic;
+  font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.75rem);
+  line-height: 1.2;
+  font-variation-settings: "opsz" 72;
+  letter-spacing: -0.015em;
+  hanging-punctuation: first;
+}
+/* Links in running text: cobalt underline at 30% that goes solid on hover. */
+.ink-link {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklch, var(--accent) 30%, transparent);
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color var(--d-2) var(--ease-ui);
+}
+.ink-link:hover {
+  text-decoration-color: var(--accent);
 }
 
 /* Root of the new shell: (site)/layout.tsx wraps pages in .site once the theme is chosen. Covers the old dot grid. */
@@ -128,6 +234,20 @@ body {
 }
 .site p {
   text-wrap: pretty;
+}
+.site ::selection {
+  background: var(--mark);
+  color: oklch(0.2 0.025 265);
+}
+@media (prefers-reduced-motion: reduce) {
+  .site *,
+  .site *::before,
+  .site *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-property: opacity, background-color, color, box-shadow !important;
+    transition-duration: 150ms !important;
+  }
 }
 
 .font-display {

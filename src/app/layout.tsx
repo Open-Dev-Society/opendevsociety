@@ -1,15 +1,19 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display, JetBrains_Mono, Rock_3D } from "next/font/google";
+import { Mona_Sans, Newsreader, Geist_Mono, Playfair_Display, Rock_3D } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+// Mona Sans is the machine (display + text), Newsreader Italic the hand that signs, Geist Mono the commands.
+const sans = Mona_Sans({ subsets: ["latin"], axes: ["wdth"], variable: "--font-sans", display: "swap" });
+const sign = Newsreader({ subsets: ["latin"], style: "italic", axes: ["opsz"], variable: "--font-sign", display: "swap" });
+const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" });
+// Legacy faces, still used by pages that haven't been rebuilt yet. Drop at cleanup.
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-serif" });
-const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 const rock3d = Rock_3D({ weight: "400", subsets: ["latin"], variable: "--font-rock3d" });
 
 export const metadata: Metadata = {
-  title: "Open Dev Society — The Operating System for Open Source",
-  description: "A decentralized society of developers, designers, and writers building free, open-source public goods. No paywalls. No gatekeeping. Just code.",
+  title: "Open Dev Society: free, open-source software, built in public",
+  description:
+    "A public workshop of developers, designers and writers building free, open-source tools. No paywalls, no interviews.",
   icons: {
     icon: "/logo.png",
   },
@@ -22,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${inter.variable} ${playfair.variable} ${jetbrains.variable} ${rock3d.variable} antialiased`}>
+      <body className={`${sans.variable} ${sign.variable} ${mono.variable} ${playfair.variable} ${rock3d.variable} antialiased`}>
         {children}
       </body>
     </html>
