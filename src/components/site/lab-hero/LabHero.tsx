@@ -34,7 +34,7 @@ export function LabHero({ now, tools, people, lastPush, stars }: Pick<Workshop, 
     <section
       aria-labelledby="lab-h1"
       data-under-nav
-      className="group relative isolate h-svh min-h-[560px] cursor-crosshair overflow-hidden"
+      className="group relative isolate h-svh min-h-[560px] overflow-hidden"
     >
       <TuringField />
 

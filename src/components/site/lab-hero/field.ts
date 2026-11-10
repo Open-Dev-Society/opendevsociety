@@ -177,7 +177,8 @@ export function startField(section: HTMLElement, canvas: HTMLCanvasElement, opts
   const sim = compile(gl, SIM), show = compile(gl, SHOW);
   let colors = readColors(section);
   const SIM_SCALE = opts.mobile ? 1 / 4 : 1 / 3; // sim cells per CSS px
-  const STEPS = opts.mobile ? 8 : 16;
+  const STEPS = opts.mobile ? 14 : 28;
+  const WARM = opts.mobile ? 500 : 900; // steps run before the first paint, so the letters are already grown and spreading
 
   const state = [texture(gl, gl.NEAREST), texture(gl, gl.NEAREST)];
   const fbo = state.map((t) => {
@@ -215,13 +216,13 @@ export function startField(section: HTMLElement, canvas: HTMLCanvasElement, opts
     gl!.texImage2D(gl!.TEXTURE_2D, 0, gl!.R8, gl!.RED, gl!.UNSIGNED_BYTE, drawGlyphs(h1, r, canvas.width, canvas.height, dpr));
     gl!.pixelStorei(gl!.UNPACK_FLIP_Y_WEBGL, false);
 
-    // The culture: U = 1 everywhere, V dropped in 5×5 specks inside the letters only (smaller or weaker specks just dissolve).
+    // The culture: U = 1 everywhere, V dropped in 5×5 specks, dense inside the letters and sparse across the field so it fills fast (smaller or weaker specks just dissolve).
     const zd = z.getContext("2d")!.getImageData(0, 0, sw, sh).data;
     const init = new Float32Array(sw * sh * 4);
     for (let i = 0; i < sw * sh; i++) init[i * 4] = 1;
     for (let y = 2; y < sh - 2; y++)
       for (let x = 2; x < sw - 2; x++)
-        if (zd[(y * sw + x) * 4] > 160 && Math.random() < 0.006)
+        if (Math.random() < (zd[(y * sw + x) * 4] > 160 ? 0.006 : 0.0005))
           for (let dy = -2; dy <= 2; dy++)
             for (let dx = -2; dx <= 2; dx++) {
               const i = ((sh - 1 - y - dy) * sw + x + dx) * 4; // canvas rows run down, GL rows up
@@ -284,7 +285,7 @@ export function startField(section: HTMLElement, canvas: HTMLCanvasElement, opts
   let raf = 0, onScreen = false;
   const loop = () => {
     raf = 0;
-    if (setup() && motion.matches) step(6000);
+    if (setup()) step(motion.matches ? 6000 : WARM);
     if (!motion.matches) step(STEPS);
     render();
     if (!motion.matches) kick();
