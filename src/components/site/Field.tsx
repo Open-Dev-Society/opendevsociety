@@ -2,7 +2,7 @@
 
 import { useId, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle, ArrowRight } from "lucide-react";
+import { Alert, ArrowRight } from "@/components/site/Icon";
 import { cn } from "./cn";
 
 /** 44px input: label above (meta), optional prefix (e.g. "@"), error below in muted text with an icon. Never red. */
@@ -36,7 +36,7 @@ export function Field({
       </div>
       {error && (
         <p id={`${id}-err`} className="mt-1.5 flex items-center gap-1.5 text-sm text-(--fg-muted)">
-          <AlertCircle className="size-4 shrink-0" strokeWidth={1.75} />
+          <Alert className="shrink-0" />
           {error}
         </p>
       )}
@@ -63,7 +63,7 @@ export function VerifyForm() {
         aria-label="Verify certificate"
         className="grid size-11 shrink-0 place-items-center rounded-(--radius-sm) bg-(--surface) text-(--fg) shadow-(--shadow-sm) transition-[background-color,scale] duration-(--d-2) hover:bg-(--surface-2) active:scale-[0.97]"
       >
-        <ArrowRight className="size-4" strokeWidth={1.75} />
+        <ArrowRight />
       </button>
     </form>
   );

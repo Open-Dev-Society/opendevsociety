@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { AlertCircle, ArrowUpRight, Plus, RefreshCw } from "lucide-react";
+import { Alert, External, Plus, Refresh } from "@/components/site/Icon";
 import { Badge, Container, Field, Ledger, type LedgerColumn } from "@/components/site";
 import { CopyLinkButton, toolButton } from "@/components/site/certificate/actions";
 import { certificateRoles, type CertRoleKey } from "@/content";
@@ -112,7 +112,7 @@ export default function ManagePage() {
       actions: (
         <span className="-mx-3 flex flex-wrap items-center gap-0 md:justify-end">
           <a href={`/verify/${c.id}`} target="_blank" rel="noopener noreferrer" className={toolButton("quiet")}>
-            View <ArrowUpRight className="size-4" strokeWidth={1.75} />
+            View <External />
           </a>
           <CopyLinkButton text={`/verify/${c.id}`} label="Copy" variant="quiet" />
           <button
@@ -145,7 +145,7 @@ export default function ManagePage() {
           </p>
         </div>
         <Link href="/certificate" className={toolButton("primary", "self-start sm:self-auto")}>
-          <Plus className="size-4" strokeWidth={2} /> New certificate
+          <Plus /> New certificate
         </Link>
       </div>
 
@@ -158,14 +158,14 @@ export default function ManagePage() {
           className="min-w-0 flex-1"
         />
         <button type="button" onClick={load} disabled={loading} className={toolButton("secondary")} aria-label="Refresh">
-          <RefreshCw className={`size-4 ${loading ? "animate-spin motion-reduce:animate-none" : ""}`} strokeWidth={1.75} />
+          <Refresh className={loading ? "animate-spin motion-reduce:animate-none" : undefined} />
           <span className="hidden sm:inline">Refresh</span>
         </button>
       </div>
 
       {error && (
         <div role="alert" className="mt-6 flex gap-3 border-l-[3px] border-(--fg-muted) bg-(--surface-2) p-4">
-          <AlertCircle className="mt-0.5 size-4 shrink-0 text-(--fg-muted)" strokeWidth={1.75} />
+          <Alert className="mt-0.5 shrink-0 text-(--fg-muted)" />
           <p className="min-w-0 text-sm break-words text-(--fg-muted)">{error}</p>
         </div>
       )}

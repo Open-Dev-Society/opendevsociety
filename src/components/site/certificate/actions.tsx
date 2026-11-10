@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Download, Link2 } from "lucide-react";
+import { Check, Download, LinkIcon } from "@/components/site/Icon";
 import { cn } from "../cn";
 import { labButton } from "../lab-hero/LabButton";
 
@@ -51,7 +51,7 @@ export function printCertificate() {
 export function DownloadButton({ variant = "secondary", className }: { variant?: Variant; className?: string }) {
   return (
     <button type="button" onClick={printCertificate} className={toolButton(variant, className)}>
-      <Download className="size-4" strokeWidth={1.75} /> Download PDF
+      <Download /> Download PDF
     </button>
   );
 }
@@ -70,7 +70,7 @@ export function CopyLinkButton({ text, label = "Copy link", variant = "secondary
   }
   return (
     <button type="button" onClick={copy} className={toolButton(variant, className)} aria-live="polite">
-      {state === "copied" ? <Check className="size-4" strokeWidth={1.75} /> : <Link2 className="size-4" strokeWidth={1.75} />}
+      {state === "copied" ? <Check /> : <LinkIcon />}
       {state === "copied" ? "Copied" : state === "failed" ? "Couldn't copy" : label}
     </button>
   );
