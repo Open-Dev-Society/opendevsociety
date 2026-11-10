@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useId, useState } from "react";
 import { Dither } from "@/components/site/lab/Dither";
 import { Plate } from "@/components/site/lab/Plate";
@@ -114,10 +115,13 @@ export function Log({ rows }: { rows: LogRow[] }) {
           >
             <span className="t-mono col-start-1 row-start-1 text-[12px] text-(--fg-subtle) lg:col-auto lg:row-auto lg:text-(--fg)">{r.rank}</span>
             <div className="col-start-1 row-start-2 min-w-0 lg:col-auto lg:row-auto">
-              <a href={r.url} className="font-[700] text-(--fg) underline-offset-4 after:absolute after:inset-0 hover:underline focus-visible:outline-none [&:focus-visible]:after:outline-2 [&:focus-visible]:after:outline-(--focus)">
+              <Link href={`/projects/${r.name}`} className="font-[700] text-(--fg) underline-offset-4 after:absolute after:inset-0 hover:underline focus-visible:outline-none [&:focus-visible]:after:outline-2 [&:focus-visible]:after:outline-(--focus)">
                 {r.name}
-              </a>
+              </Link>
               {r.badge && <span className="t-mono ml-2 text-[11px] text-(--mark-ink)">{r.badge}</span>}
+              <a href={r.url} className="t-mono relative z-10 ml-2 text-[11px] text-(--fg-subtle) underline-offset-4 hover:text-(--fg) hover:underline">
+                GitHub ↗
+              </a>
               <span className="mt-0.5 block text-[15px] leading-snug text-(--fg-muted) lg:truncate">{r.tagline}</span>
             </div>
             <span className="col-span-2 row-start-3 flex flex-wrap items-center gap-x-4 gap-y-2 lg:contents">

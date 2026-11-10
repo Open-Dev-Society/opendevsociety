@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Container } from "@/components/site";
 import { LabButton } from "@/components/site/lab-hero/LabButton";
 import { Dither } from "@/components/site/lab/Dither";
@@ -99,7 +100,7 @@ export default async function ProjectsPage() {
             <span>{live.replace(/^https?:\/\//, "")}</span>
           </div>
 
-          <a href={live} className="group relative mt-3 block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--focus)">
+          <Link href={`/projects/${lead.name}`} className="group relative mt-3 block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--focus)">
             <Dither
               src="/shots/openstock-desktop.jpg"
               alt={`${lead.name}, live: index prices, the market clock and a chart`}
@@ -119,24 +120,29 @@ export default async function ProjectsPage() {
             </Plate>
             <Plate as="div" className="absolute bottom-3 left-3 hidden md:bottom-4 md:left-4 md:inline-flex">
               <span className="group-hover:hidden group-focus-visible:hidden">hover to see it</span>
-              <span className="hidden group-hover:inline group-focus-visible:inline">open the live site ↗</span>
+              <span className="hidden group-hover:inline group-focus-visible:inline">see the project →</span>
             </Plate>
-          </a>
+          </Link>
 
           <div className="mt-8 grid gap-x-(--grid-gap) gap-y-8 lg:grid-cols-12">
             <div className="lg:col-span-5">
               <h2 id="lead-name" className="text-[clamp(2.5rem,1rem+4vw,4.5rem)] leading-[0.9] font-[800] tracking-[-0.018em] text-(--fg) [font-stretch:75%]">
-                {lead.name}
+                <Link href={`/projects/${lead.name}`} className="underline-offset-8 hover:underline">
+                  {lead.name}
+                </Link>
               </h2>
               <p className="mt-4 max-w-[48ch] text-[17px] leading-relaxed text-(--fg-muted)">
                 {catalog[lead.name].tagline}
               </p>
               <p className="mt-6 flex flex-wrap gap-3">
-                <LabButton href={live} size="sm">
+                <LabButton href={`/projects/${lead.name}`} size="sm">
+                  See the project →
+                </LabButton>
+                <LabButton href={live} size="sm" variant="secondary">
                   Open the live site ↗
                 </LabButton>
                 <LabButton href={lead.html_url} size="sm" variant="secondary">
-                  Source on GitHub
+                  Source on GitHub ↗
                 </LabButton>
               </p>
             </div>
