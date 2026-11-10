@@ -38,6 +38,105 @@
   }
 }
 
+/* ─── Redesign tokens ────────────────────────────────────────────────────────
+   The only place the new site's theme lives. Components in src/components/site/
+   use these semantic variables and nothing else, so a theme is a token edit.
+   Values below are neutral placeholders until the art director picks a theme. */
+:root {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f4f4f5;
+  --fg: #0a0a0a;
+  --fg-muted: #52525b;
+  --fg-subtle: #6b6b74;
+  --line: rgb(10 10 10 / 0.1);
+  --accent: #2563eb;
+  --accent-fg: #ffffff;
+  --accent-soft: rgb(37 99 235 / 0.1);
+  --focus: var(--accent);
+  --img-outline: rgb(0 0 0 / 0.1);
+
+  /* Inverse band (footer, dark sections). Applied by .tone-inverse. */
+  --inv-bg: #0a0a0a;
+  --inv-surface: #18181b;
+  --inv-fg: #fafafa;
+  --inv-fg-muted: #a1a1aa;
+  --inv-line: rgb(255 255 255 / 0.12);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+
+  --shadow-sm: 0 0 0 1px var(--line), 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-md: 0 0 0 1px var(--line), 0 2px 4px rgb(0 0 0 / 0.04), 0 12px 28px -12px rgb(0 0 0 / 0.16);
+
+  --container: 72rem;
+  --gutter: 16px;
+  --section-y: clamp(64px, 8vw, 112px);
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+}
+@media (min-width: 640px) {
+  :root {
+    --gutter: 24px;
+  }
+}
+
+/* Font tokens sit on body so var(--font-sans) resolves to next/font's loaded family set on <body>. */
+body {
+  --font-display: var(--font-sans);
+  --font-body: var(--font-sans);
+  /* --font-mono comes from the root layout */
+}
+
+/* Section tones: re-point the tokens, so anything inside adapts without props. */
+.tone-muted {
+  background: var(--surface-2);
+}
+.tone-inverse {
+  --bg: var(--inv-bg);
+  --surface: var(--inv-surface);
+  --surface-2: var(--inv-surface);
+  --fg: var(--inv-fg);
+  --fg-muted: var(--inv-fg-muted);
+  --fg-subtle: var(--inv-fg-muted);
+  --line: var(--inv-line);
+  --img-outline: rgb(255 255 255 / 0.1);
+  /* re-declared so var(--line) resolves to the inverse value */
+  --shadow-sm: 0 0 0 1px var(--line), 0 1px 2px rgb(0 0 0 / 0.2);
+  --shadow-md: 0 0 0 1px var(--line), 0 2px 4px rgb(0 0 0 / 0.2), 0 12px 28px -12px rgb(0 0 0 / 0.5);
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* Root of the new shell: (site)/layout.tsx wraps pages in .site once the theme is chosen. Covers the old dot grid. */
+.site {
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+.site :focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.site h1,
+.site h2,
+.site h3 {
+  text-wrap: balance;
+}
+.site p {
+  text-wrap: pretty;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+.font-body {
+  font-family: var(--font-body);
+}
+
 /* Technical / Editorial Utilities */
 
 .container-narrow {
