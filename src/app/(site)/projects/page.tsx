@@ -181,7 +181,7 @@ export default async function ProjectsPage() {
             <span>you keep ownership and credit</span>
           </div>
           <div className="mt-8 grid gap-8 md:grid-cols-12 md:items-end">
-            <div className="md:col-span-8">
+            <div className="md:col-span-7">
               <h2 id="bring" className="text-[clamp(2.25rem,1rem+3.5vw,4rem)] leading-[0.92] font-[800] tracking-[-0.018em] text-balance text-(--fg) [font-stretch:75%]">
                 Have a project? Bring it to ODS.
               </h2>
@@ -190,7 +190,7 @@ export default async function ProjectsPage() {
                 decision.
               </p>
             </div>
-            <p className="flex flex-wrap gap-3 md:col-span-4 md:justify-end">
+            <p className="flex flex-wrap gap-3 md:col-span-5 md:justify-end">
               <LabButton href="/contribute">Bring your project →</LabButton>
               <LabButton href="/manifesto" variant="secondary">
                 See how it works
