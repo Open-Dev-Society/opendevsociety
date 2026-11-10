@@ -97,7 +97,9 @@ export function ProjectIndex({ rows }: { rows: IndexRow[] }) {
     return i < 0 ? current : i;
   };
   const place = () => {
-    frame.current!.style.transform = `translate3d(${pos.current.x}px, ${pos.current.y}px, 0)`;
+    // React detaches the ref before the effect cleanup cancels the rAF, so one tick can land after unmount.
+    if (!frame.current) return;
+    frame.current.style.transform = `translate3d(${pos.current.x}px, ${pos.current.y}px, 0)`;
   };
 
   useEffect(() => {
