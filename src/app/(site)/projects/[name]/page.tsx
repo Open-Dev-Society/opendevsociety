@@ -153,7 +153,7 @@ export default async function ProjectPage({ params }: Props) {
       </Container>
 
       <Container data-grid="Built by" className="pt-24 lg:pt-32">
-        <Record name="Built by" meta={[`${people} ${people === 1 ? "person" : "people"}`, "most commits first"]} title={`The people behind ${repo.name}.`} className="mb-8" />
+        <Record name="Built by" meta={[`${people} ${people === 1 ? "person" : "people"}`, "all-time commits, most first"]} title={`The people behind ${repo.name}.`} className="mb-8" />
         <ul className="grid grid-cols-1 shadow-[inset_0_1px_0_var(--fg)] sm:grid-cols-2 lg:grid-cols-4">
           {p.contributors.slice(0, MAX_PEOPLE).map((c) => (
             <li key={c.login} className="border-b border-(--line) sm:border-r sm:[&:nth-child(2n)]:border-r-0 lg:[&:nth-child(2n)]:border-r lg:[&:nth-child(4n)]:border-r-0">
