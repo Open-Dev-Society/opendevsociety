@@ -105,7 +105,7 @@ export function Rails() {
             <div className={s.rail} data-side="r" />
             <div className={s.guides} />
             {nums
-              .filter((n) => n >= b.top && n < b.bottom - 24)
+              .filter((n) => n >= b.top && n < b.bottom - 32)
               .map((n) => (
                 <span key={n} className={s.num} style={{ top: n - b.top + 3 }}>
                   {n}
