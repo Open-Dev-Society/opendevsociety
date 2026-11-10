@@ -4,10 +4,11 @@ import { useId, useState } from "react";
 import { Dither } from "@/components/site/lab/Dither";
 import { Plate } from "@/components/site/lab/Plate";
 import { STATUS_MARK, type Status } from "@/lib/lab";
+import { STATUS_LABEL } from "./status";
 import type { Audience } from "@/data/catalog";
 
 export type LogRow = {
-  id: string;
+  rank: string;
   name: string;
   url: string;
   tagline: string;
@@ -15,7 +16,7 @@ export type LogRow = {
   status: Status;
   audience: Audience;
   stars: string;
-  researchers: number;
+  contributors: number;
   language: string | null;
   languageColor?: string;
   days: number;
@@ -55,9 +56,9 @@ function Choice<T extends string>({ legend, value, options, onChange }: { legend
   );
 }
 
-const COLS = "lg:grid lg:grid-cols-[5.5rem_minmax(0,1fr)_7.5rem_5.5rem_6.5rem_9.5rem_7.5rem] lg:gap-x-5";
+const COLS = "lg:grid lg:grid-cols-[2.5rem_minmax(0,1fr)_7.5rem_5.5rem_6.5rem_9.5rem_7.5rem] lg:gap-x-5";
 
-/** The full log: one ruled row per experiment, filterable by status and audience. */
+/** Every project: one ruled row each, filterable by status and audience. */
 export function Log({ rows }: { rows: LogRow[] }) {
   const [status, setStatus] = useState<Status | "all">("all");
   const [audience, setAudience] = useState<Audience | "all">("all");
@@ -74,7 +75,7 @@ export function Log({ rows }: { rows: LogRow[] }) {
             onChange={setStatus}
             options={[
               { v: "all", label: "all", n: rows.length },
-              ...(["running", "paused", "archived"] as const).map((s) => ({ v: s, label: `${STATUS_MARK[s]} ${s}`, n: count("status", s) })),
+              ...(["running", "paused", "archived"] as const).map((s) => ({ v: s, label: `${STATUS_MARK[s]} ${STATUS_LABEL[s]}`, n: count("status", s) })),
             ]}
           />
           <Choice
@@ -84,23 +85,23 @@ export function Log({ rows }: { rows: LogRow[] }) {
             options={[
               { v: "all", label: "all", n: rows.length },
               { v: "everyone", label: "everyone", n: count("audience", "everyone") },
-              { v: "builders", label: "builders", n: count("audience", "builders") },
+              { v: "builders", label: "developers", n: count("audience", "builders") },
             ]}
           />
         </div>
         <p className="t-mono text-[12px] text-(--fg-subtle)" aria-live="polite">
-          showing {shown.length} of {rows.length} records
+          showing {shown.length} of {rows.length} projects
         </p>
       </div>
 
       <div aria-hidden className={`t-mono hidden border-b border-(--fg) py-2 text-[11px] text-(--fg-subtle) uppercase ${COLS}`}>
-        <span>ID</span>
-        <span>Experiment · purpose</span>
+        <span>#</span>
+        <span>Project</span>
         <span>Status</span>
-        <span className="text-right">Subjects ★</span>
-        <span className="text-right">Researchers</span>
-        <span>Last activity</span>
-        <span>Fig.</span>
+        <span className="text-right">Stars ★</span>
+        <span className="text-right">Contributors</span>
+        <span>Last push</span>
+        <span>Preview</span>
       </div>
 
       <ol>
@@ -111,7 +112,7 @@ export function Log({ rows }: { rows: LogRow[] }) {
             data-develop
             className={`group relative grid scroll-mt-24 grid-cols-[minmax(0,1fr)_6rem] gap-x-4 gap-y-2 border-b border-(--line) py-4 transition-colors duration-(--d-2) hover:bg-(--surface-2) target:bg-(--accent-soft) lg:items-center lg:py-3 ${COLS}`}
           >
-            <span className="t-mono col-start-1 row-start-1 text-[12px] text-(--fg-subtle) lg:col-auto lg:row-auto lg:text-(--fg)">{r.id}</span>
+            <span className="t-mono col-start-1 row-start-1 text-[12px] text-(--fg-subtle) lg:col-auto lg:row-auto lg:text-(--fg)">{r.rank}</span>
             <div className="col-start-1 row-start-2 min-w-0 lg:col-auto lg:row-auto">
               <a href={r.url} className="font-[700] text-(--fg) underline-offset-4 after:absolute after:inset-0 hover:underline focus-visible:outline-none [&:focus-visible]:after:outline-2 [&:focus-visible]:after:outline-(--focus)">
                 {r.name}
@@ -122,7 +123,7 @@ export function Log({ rows }: { rows: LogRow[] }) {
             <span className="col-span-2 row-start-3 flex flex-wrap items-center gap-x-4 gap-y-2 lg:contents">
               <span className="lg:col-auto">
                 <Plate tone={r.status === "running" ? "accent" : "plain"}>
-                  {STATUS_MARK[r.status]} {r.status}
+                  {STATUS_MARK[r.status]} {STATUS_LABEL[r.status]}
                 </Plate>
               </span>
               <span className="t-mono text-[13px] text-(--fg) tabular-nums lg:text-right">
@@ -130,8 +131,8 @@ export function Log({ rows }: { rows: LogRow[] }) {
                 {r.stars}
               </span>
               <span className="t-mono text-[13px] text-(--fg) tabular-nums lg:text-right">
-                {r.researchers}
-                <span className="text-(--fg-subtle) lg:hidden"> researchers</span>
+                {r.contributors}
+                <span className="text-(--fg-subtle) lg:hidden"> contributors</span>
               </span>
               <span className="t-mono flex min-w-32 flex-col gap-1 text-[12px] text-(--fg-muted)">
                 <Track days={r.days} />
@@ -151,7 +152,7 @@ export function Log({ rows }: { rows: LogRow[] }) {
                       {r.language}
                     </span>
                   ) : (
-                    "no plate"
+                    "no preview"
                   )}
                 </span>
               )}
@@ -159,7 +160,7 @@ export function Log({ rows }: { rows: LogRow[] }) {
           </li>
         ))}
       </ol>
-      {shown.length === 0 && <p className="t-mono border-b border-(--line) py-8 text-[13px] text-(--fg-muted)">No records match. Clear a filter.</p>}
+      {shown.length === 0 && <p className="t-mono border-b border-(--line) py-8 text-[13px] text-(--fg-muted)">No projects match. Clear a filter.</p>}
     </div>
   );
 }
