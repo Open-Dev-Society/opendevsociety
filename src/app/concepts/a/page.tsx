@@ -30,7 +30,7 @@ const PRINCIPLES = [
 
 const FOOTER: [string, [string, string][]][] = [
   ["society", [["manifesto", "/manifesto"], ["projects", "/projects"], ["contributors", "/contributors"], ["contribute", "/contribute"]]],
-  ["network", [["partners", "/partners"], ["word of mouth", "/word-of-mouth"], ["verify a certificate", "/certificate"]]],
+  ["network", [["partners", "/partners"], ["word of mouth", "/word-of-mouth"]]],
   ["elsewhere", [["github", "https://github.com/Open-Dev-Society"], ["discord", "https://discord.gg/9xywA3pj"], ["linkedin", "https://www.linkedin.com/company/opendevsociety-in/"], ["x", "https://x.com/opendevsociety"]]],
 ];
 
