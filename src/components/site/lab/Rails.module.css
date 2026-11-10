@@ -210,8 +210,13 @@
 }
 
 /* Footer scale bar: real px, so 200 px on the bar is 200 px on screen. */
+/* In the components layer, so a caller's Tailwind display utility (e.g. hidden md:flex) wins. */
+@layer components {
+  .scale {
+    display: flex;
+  }
+}
 .scale {
-  display: flex;
   align-items: flex-start;
   gap: 16px;
   font: 450 10px/1 var(--font-mono);
