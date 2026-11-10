@@ -194,7 +194,7 @@ const themes: Theme[] = [
       ["--accent-soft", "oklch(0.925 0.038 58)"],
       ["--live", "oklch(0.5 0.09 145)"],
     ],
-    display: { fontWeight: 650, fontVariationSettings: '"opsz" 96, "wdth" 92', letterSpacing: "-0.03em" },
+    display: { fontWeight: 650, fontVariationSettings: '"opsz" 96, "wdth" 92', letterSpacing: "-0.02em" },
     emphasis: { color: "var(--accent)" },
   },
 ];
@@ -253,9 +253,9 @@ function Specimen({ theme: t, n, recommended }: { theme: Theme; n: number; recom
       </div>
 
       {/* Swatches */}
-      <ul className="grid grid-cols-2 gap-px border-b border-(--line) bg-(--line) sm:grid-cols-4 lg:grid-cols-8">
+      <ul className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] border-b border-(--line)">
         {t.swatches.map(([token, value]) => (
-          <li key={token} className="bg-(--bg) p-3">
+          <li key={token} className="p-3 shadow-[inset_-1px_-1px_0_var(--line)]">
             <span className="block h-10 rounded-[8px] shadow-[inset_0_0_0_1px_oklch(0_0_0/0.08)]" style={{ background: value }} />
             <span className="mt-2 block font-(family-name:--f-mono) text-[12px]">{token}</span>
             <span className="block font-(family-name:--f-mono) text-[11px] text-(--fg-subtle)">{value.replace("oklch", "")}</span>
