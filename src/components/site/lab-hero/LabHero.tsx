@@ -57,14 +57,14 @@ export function LabHero({ now, tools, people, lastPush, stars }: Pick<Workshop, 
         </span>
         <span>dither Bayer 8×8 · 1-bit</span>
       </Label>
-      <Label className="bottom-0 left-0">
+      <Label className="-bottom-px left-0">
         <span>
           <span className="text-(--accent-fg)">{people.length}</span> researchers · <span className="text-(--accent-fg)">{tools.length}</span> experiments ·{" "}
           <span className="text-(--accent-fg)">{compact(stars)}</span> ★
         </span>
         <span>est. July 2024 · free, open source</span>
       </Label>
-      <Label className="right-0 bottom-0 hidden text-right md:flex">
+      <Label className="right-0 -bottom-px hidden text-right md:flex">
         <span className="text-(--accent-fg)">
           <LabClock />
         </span>
