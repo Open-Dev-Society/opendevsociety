@@ -19,7 +19,7 @@ const SHOW_EXPS = 3;
 const month = (iso?: string) => (iso ? new Date(iso).toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" }) : "—");
 
 // A head and shoulders, dithered rose on the vacant badge.
-const SILHOUETTE = `data:image/svg+xml,${encodeURIComponent(
+export const SILHOUETTE = `data:image/svg+xml,${encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 120 120"><defs><linearGradient id="g" x2="0" y2="1"><stop offset="0" stop-color="#555"/><stop offset="1" stop-color="#d8d8d8"/></linearGradient></defs><rect width="120" height="120" fill="#fff"/><g fill="url(#g)"><circle cx="60" cy="46" r="22"/><path d="M14 120c4-30 22-44 46-44s42 14 46 44z"/></g></svg>',
 )}`;
 
