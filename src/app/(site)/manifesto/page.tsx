@@ -25,7 +25,6 @@ export const metadata: Metadata = {
     "The Open Dev Society manifesto: why we build free, open-source tools in public. Four principles, what we build, three promises, and who owns your work.",
 };
 
-const repoUrl = (name: string) => `https://github.com/Open-Dev-Society/${name}`;
 const ext = { target: "_blank", rel: "noopener noreferrer" } as const;
 
 const rules = [
@@ -388,7 +387,7 @@ export default async function Manifesto() {
             </p>
             <Notes ns={[6]} />
 
-            <h2 className="mt-16 mb-4 text-[1.0625rem] font-[650] text-(--fg)">Acknowledgements</h2>
+            <h2 className="mt-16 mb-4 text-[1.0625rem] font-[650] text-(--fg)">Thanks</h2>
             <p>
               Maintained with{" "}
               {maintainers.map((m, i) => (
