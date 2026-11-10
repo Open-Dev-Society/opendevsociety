@@ -23,16 +23,7 @@ export function People({ builders }: { builders: Builder[] }) {
           {faces.map((b) => (
             <li key={b.login}>
               <a href={b.url} {...ext} title={b.name ?? `@${b.login}`} className={`block ${focus}`}>
-                <Dither
-                  src={sizedAvatar(b.avatar, 56)}
-                  alt={b.name ?? b.login}
-                  width={1}
-                  height={1}
-                  tone="duotone"
-                  negative
-                  cell={1}
-                  className={face}
-                />
+                <Dither src={sizedAvatar(b.avatar, 56)} alt={b.name ?? b.login} width={1} height={1} tone="duotone" cell={1} className={face} />
               </a>
             </li>
           ))}
@@ -45,7 +36,6 @@ export function People({ builders }: { builders: Builder[] }) {
                 height={1}
                 variant="mark"
                 tone="duotone"
-                negative
                 cell={1}
                 develop
                 className={`${face} shadow-[0_0_0_1px_var(--mark)]`}
