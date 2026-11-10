@@ -17,7 +17,7 @@ const FACES = 7;
 const and = (xs: string[]) => (xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}`);
 
 /**
- * 01 · What Open Dev Society is: the statement, annotated like a drawing, and four real numbers that each show themselves.
+ * 01 · What Open Dev Society is: the statement with cited words (hover, focus or tap for its note), and four real numbers that each show themselves.
  * `weeks` is org-wide commits per week, oldest first (the last 12).
  */
 export function About({
@@ -123,11 +123,12 @@ export function About({
             "A ",
             { word: "community", note: `${builders.length} contributors since July 2024. Anyone can join: code, design, writing or teaching.` },
             " building ",
-            { word: "free,", note: "No paywalls, no gatekeeping, ever." },
-            " ",
+            { word: "free", note: "No paywalls, no gatekeeping, ever." },
+            ", ",
             { word: "open-source", note: `${and(licenses)} licensed: fork any of it.` },
             " tools ",
-            { word: "in public.", note: "Every pull request is reviewed in the open." },
+            { word: "in public", note: "Every pull request is reviewed in the open." },
+            ".",
           ]}
         />
 

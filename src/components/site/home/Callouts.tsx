@@ -1,87 +1,135 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { display } from "./ui";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { display, focus } from "./ui";
 
 export type Part = string | { word: string; note: string };
 
+/** The fixed nav (h-16) plus a little air: a card that would sit under it flips below its word. */
+const TOP = 72;
+const GAP = 10;
+
+/** A citation number in a small square; `on` fills it. */
+function Num({ n, on }: { n: number; on?: boolean }) {
+  return (
+    <span
+      aria-hidden
+      className={`t-mono grid size-[18px] place-items-center border border-(--accent) text-[10px] md:size-5 md:text-[11px] leading-none font-normal tracking-normal not-italic transition-colors duration-150 motion-reduce:transition-none ${on ? "bg-(--accent) text-(--accent-fg)" : "bg-(--bg) text-(--accent)"}`}
+    >
+      {n}
+    </span>
+  );
+}
+
 /**
- * A display statement with architect-style callouts: each marked word gets a ticked dimension line under it and a
- * leader out to its numbered note in the margin. The leaders are an SVG overlay measured from the DOM (lg and up);
- * below that, the numbers alone pair words with the notes listed underneath.
+ * A display statement with citations: each marked word is underlined with its number in a square on its top-right.
+ * Hover, keyboard focus or a tap shows its note as a card over the word. The cards are always in the DOM (hidden) so
+ * each word's aria-describedby reads its note; one is open at a time, and Escape or a click outside closes it.
  */
 export function Callouts({ parts }: { parts: Part[] }) {
+  const id = useId();
   const root = useRef<HTMLDivElement>(null);
-  const [d, setD] = useState("");
+  const pointer = useRef("");
+  const [open, setOpen] = useState<number | null>(null);
+  const [pos, setPos] = useState({
+    i: -1,
+    left: 0,
+    top: 0,
+    notch: 0,
+    below: false,
+  });
   const notes = parts.filter((p) => typeof p !== "string");
-  const count = notes.length;
+
+  useLayoutEffect(() => {
+    if (open === null) return;
+    const el = root.current!;
+    const box = el.getBoundingClientRect();
+    const word = el.querySelector(`[data-word="${open}"]`)!.getBoundingClientRect();
+    const card = el.querySelector<HTMLElement>(`[data-card="${open}"]`)!;
+    const { offsetWidth: w, offsetHeight: h } = card;
+    const mid = word.left + word.width / 2 - box.left;
+    const left = Math.min(Math.max(0, mid - w / 2), box.width - w);
+    const below = word.top - h - GAP < TOP;
+    setPos({
+      i: open,
+      left,
+      top: below ? word.bottom - box.top + GAP : word.top - box.top - h - GAP,
+      notch: Math.min(Math.max(14, mid - left), w - 14),
+      below,
+    });
+  }, [open]);
 
   useEffect(() => {
-    const el = root.current!;
-    const draw = () => {
-      const box = el.getBoundingClientRect();
-      const text = el.querySelector("[data-statement]")!.getBoundingClientRect();
-      const lines = new Map<number, number>(); // words already on a line, to space their leaders apart
-      const path = Array.from({ length: count }, (_, i) => {
-        const word = el.querySelector(`[data-word="${i}"]`)!;
-        const w = word.getClientRects()[0];
-        // An inline box runs well below the baseline; the zero-size marker at the word's end sits on it.
-        const base = word.querySelector("i")!.getBoundingClientRect().top;
-        const em = parseFloat(getComputedStyle(word).fontSize);
-        const n = el.querySelector(`[data-note="${i}"]`)!.getBoundingClientRect();
-        const k = lines.get(Math.round(base)) ?? 0;
-        lines.set(Math.round(base), k + 1);
-        const x0 = w.left - box.left,
-          x1 = w.right - box.left;
-        // Just clear of the descenders, in the gap before the next line.
-        const y = Math.round(base - box.top + em * 0.2) + k * 4 + 0.5;
-        const elbow = Math.round(text.right - box.left) + 20 + i * 8 + 0.5;
-        const ny = Math.round(n.top - box.top + 11) + 0.5;
-        const nx = n.left - box.left - 8;
-        // Ticked dimension line under the word, then the leader: along the line gap, down/up the margin, into the note.
-        return `M${x0} ${y - 4}v8M${x0} ${y}H${x1}M${x1} ${y - 4}v8M${x1} ${y}H${elbow}V${ny}H${nx}`;
-      });
-      setD(path.join(""));
+    if (open === null) return;
+    const key = (e: KeyboardEvent) => e.key === "Escape" && setOpen(null);
+    const down = (e: PointerEvent) => !(e.target as Element).closest?.("[data-word]") && setOpen(null);
+    document.addEventListener("keydown", key);
+    document.addEventListener("pointerdown", down);
+    return () => {
+      document.removeEventListener("keydown", key);
+      document.removeEventListener("pointerdown", down);
     };
-    const ro = new ResizeObserver(draw);
-    ro.observe(el);
-    document.fonts.ready.then(draw);
-    return () => ro.disconnect();
-  }, [count]);
+  }, [open]);
 
   let n = -1;
   return (
-    <div ref={root} className="relative grid gap-6 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
-      <p data-statement className={`${display} self-start leading-[1.06] text-[clamp(2.25rem,1.3rem+3.6vw,4.75rem)] lg:col-span-8 lg:max-w-[16ch]`}>
+    <div ref={root} className="relative">
+      <p className={`${display} leading-[1.25] md:leading-[1.06] text-[clamp(2.25rem,1.3rem+3.6vw,4.75rem)]`}>
         {parts.map((p, i) => {
           if (typeof p === "string") return p;
-          n++;
+          const k = ++n;
           return (
-            <span key={i} className="whitespace-nowrap">
-              <span data-word={n}>
-                {p.word}
-                <i className="inline-block size-0 align-baseline" />
+            <button
+              key={i}
+              type="button"
+              data-word={k}
+              aria-describedby={`${id}-${k}`}
+              onPointerDown={(e) => (pointer.current = e.pointerType)}
+              onPointerEnter={(e) => e.pointerType === "mouse" && setOpen(k)}
+              onPointerLeave={(e) => e.pointerType === "mouse" && setOpen((o) => (o === k ? null : o))}
+              onFocus={(e) => e.currentTarget.matches(":focus-visible") && setOpen(k)}
+              onBlur={() => setOpen((o) => (o === k ? null : o))}
+              onClick={() => {
+                // A mouse already opened it on hover; a tap or Enter toggles.
+                if (pointer.current === "mouse") setOpen(k);
+                else setOpen((o) => (o === k ? null : k));
+                pointer.current = "";
+              }}
+              className={`relative cursor-help whitespace-nowrap underline decoration-(--accent) decoration-2 underline-offset-[0.12em] [text-decoration-skip-ink:none] ${focus}`}
+            >
+              {p.word}
+              <span className="absolute top-[0.04em] right-0 translate-x-[60%] -translate-y-1/4 md:translate-x-1/2 md:translate-y-0">
+                <Num n={k + 1} on={open === k} />
               </span>
-              <sup className="t-mono ml-0.5 align-super text-[max(11px,0.2em)] font-normal text-(--accent)">{n + 1}</sup>
-            </span>
+            </button>
           );
         })}
       </p>
-      <ol className="self-center lg:col-span-3 lg:col-start-10">
-        {notes.map((p, i) => (
-          <li
+      {notes.map((p, i) => {
+        const at = pos.i === i ? pos : null; // keeps its last place while it fades out
+        return (
+          <span
             key={i}
-            data-note={i}
-            className="grid grid-cols-[1.5rem_minmax(0,1fr)] border-t border-(--line) py-2.5 text-[15px] leading-snug text-(--fg-muted)"
+            id={`${id}-${i}`}
+            role="tooltip"
+            data-card={i}
+            style={at ? { left: at.left, top: at.top } : undefined}
+            className={`pointer-events-none absolute top-0 left-0 z-20 flex w-[min(20rem,100%)] gap-3 border border-(--fg) bg-(--bg) p-3 text-[15px] leading-snug text-(--fg) transition-[opacity,translate] duration-150 motion-reduce:transition-none ${
+              open === i
+                ? "visible translate-y-0 opacity-100"
+                : `invisible opacity-0 ${at?.below ? "-translate-y-1" : "translate-y-1"}`
+            }`}
           >
-            <span className="t-mono text-[12px] text-(--accent)">{i + 1}</span>
+            <Num n={i + 1} on />
             {typeof p !== "string" && p.note}
-          </li>
-        ))}
-      </ol>
-      <svg aria-hidden className="pointer-events-none absolute inset-0 hidden size-full overflow-visible lg:block" shapeRendering="crispEdges">
-        <path d={d} fill="none" stroke="var(--accent)" strokeWidth="1" />
-      </svg>
+            <span
+              aria-hidden
+              style={{ left: at?.notch ?? 14 }}
+              className={`absolute size-2.5 -translate-x-1/2 rotate-45 border-(--fg) bg-(--bg) ${at?.below ? "-top-[6px] border-t border-l" : "-bottom-[6px] border-r border-b"}`}
+            />
+          </span>
+        );
+      })}
     </div>
   );
 }
