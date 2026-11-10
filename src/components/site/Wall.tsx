@@ -67,8 +67,6 @@ export function Wall({ builders, size = "home" }: { builders: Builder[]; size?: 
   const cols = useColumns(size);
   const [handle, setHandle] = useHandle();
   const root = useRef<HTMLDivElement>(null);
-  // static: server render and no-JS (everything visible) · armed: hidden, waiting for 35% in view · in: playing once
-  const [phase, setPhase] = useState<"static" | "armed" | "in">("static");
   const [claiming, setClaiming] = useState(false);
   const [draft, setDraft] = useState("");
   const [status, setStatus] = useState<"idle" | "checking" | "error">("idle");
@@ -79,14 +77,16 @@ export function Wall({ builders, size = "home" }: { builders: Builder[]; size?: 
   const fillers = (cols - (open % cols)) % cols; // quiet seats only finish the last row
   const px = size === "page" ? 200 : 160;
 
+  // The fill is driven by root's data-phase, set on the DOM (not React state) so SSR and no-JS show the final state:
+  // no attribute = final · "armed" = hidden, waiting for 35% in view · "in" = playing once.
   useLayoutEffect(() => {
     const el = root.current;
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    setPhase("armed");
+    el.dataset.phase = "armed";
     const io = new IntersectionObserver(
       ([e]) => {
         if (!e.isIntersecting) return;
-        setPhase("in");
+        el.dataset.phase = "in";
         io.disconnect();
       },
       { threshold: 0.35 },
@@ -95,15 +95,12 @@ export function Wall({ builders, size = "home" }: { builders: Builder[]; size?: 
     return () => io.disconnect();
   }, []);
 
-  const hidden = phase === "armed";
-  const seatStyle = (i: number): React.CSSProperties => ({
-    opacity: hidden ? 0 : 1,
-    scale: hidden ? "0.92" : "none", // "none" once visible: no lingering stacking context over the tooltips
-    transition: phase === "in" ? `opacity ${SEAT_IN}ms var(--ease-out) ${i * STAGGER}ms, scale ${SEAT_IN}ms var(--ease-out) ${i * STAGGER}ms` : "none",
-  });
+  // "scale: none" once visible keeps seats out of a stacking context, so tooltips sit above their neighbours.
+  const SEAT =
+    "in-data-[phase=armed]:scale-[0.92] in-data-[phase=armed]:opacity-0 in-data-[phase=in]:transition-[opacity,scale] in-data-[phase=in]:duration-[280ms] in-data-[phase=in]:ease-(--ease-out) in-data-[phase=in]:[transition-delay:var(--delay)]";
+  // delays ride a variable and apply only while playing: a transition-delay with a 0s duration would hold the old value
+  const delay = (i: number) => ({ "--delay": `${i * STAGGER}ms` }) as React.CSSProperties;
   const drawDelay = (open - 1) * STAGGER + SEAT_IN + DRAW_GAP; // after the last seat settles
-  const played = phase !== "armed"; // outline drawn (instantly when static)
-  const animated = phase === "in";
 
   function claim() {
     setClaiming(true);
@@ -139,7 +136,7 @@ export function Wall({ builders, size = "home" }: { builders: Builder[]; size?: 
         aria-label={`${n} builders`}
       >
         {builders.map((b, i) => (
-          <li key={b.login} style={seatStyle(i)}>
+          <li key={b.login} className={SEAT} style={delay(i)}>
             <Tooltip content={tip(b)}>
               <a
                 href={b.url}
@@ -164,7 +161,7 @@ export function Wall({ builders, size = "home" }: { builders: Builder[]; size?: 
         ))}
 
         {/* The open seat: position N+1, directly after the last face. */}
-        <li style={seatStyle(n)}>
+        <li className={SEAT} style={delay(n)}>
           <button
             type="button"
             onClick={claim}
@@ -172,15 +169,17 @@ export function Wall({ builders, size = "home" }: { builders: Builder[]; size?: 
             className="relative block aspect-square w-full rounded-(--radius-sm)"
           >
             <span
+              key={handle ? "claimed" : "open"}
               aria-hidden
-              className="absolute inset-0 rounded-[inherit]"
-              style={{
-                backgroundColor: handle ? "var(--surface-2)" : played ? "var(--mark)" : "transparent",
-                transition: animated && !handle ? `background-color var(--d-3) var(--ease-ui) ${drawDelay + DRAW}ms` : "none",
-              }}
+              className={cn(
+                "absolute inset-0 rounded-[inherit]",
+                handle
+                  ? "bg-(--surface-2)"
+                  : "bg-(--mark) in-data-[phase=armed]:bg-transparent in-data-[phase=in]:transition-[background-color] in-data-[phase=in]:duration-(--d-3) in-data-[phase=in]:ease-(--ease-ui) in-data-[phase=in]:[transition-delay:var(--delay)]",
+              )}
+              style={handle ? undefined : ({ "--delay": `${drawDelay + DRAW}ms` } as React.CSSProperties)}
             />
             {handle ? (
-              // eslint-disable-next-line @next/next/no-img-element -- github.com/<handle>.png redirect
               <motion.img
                 key={handle}
                 src={`https://github.com/${handle}.png?size=${px}`}
@@ -201,24 +200,23 @@ export function Wall({ builders, size = "home" }: { builders: Builder[]; size?: 
                     stroke="var(--accent)"
                     strokeWidth={1.5}
                     strokeDasharray={1}
-                    strokeDashoffset={played ? 0 : 1}
-                    style={{
-                      x: "0.75px",
-                      y: "0.75px",
-                      width: "calc(100% - 1.5px)",
-                      height: "calc(100% - 1.5px)",
-                      rx: "calc(var(--radius-sm) - 0.75px)",
-                      transition: animated ? `stroke-dashoffset ${DRAW}ms var(--ease-in-out) ${drawDelay}ms` : "none",
-                    }}
+                    className="[stroke-dashoffset:0] in-data-[phase=armed]:[stroke-dashoffset:1] in-data-[phase=in]:transition-[stroke-dashoffset] in-data-[phase=in]:duration-[600ms] in-data-[phase=in]:ease-(--ease-in-out) in-data-[phase=in]:[transition-delay:var(--delay)]"
+                    style={
+                      {
+                        x: "0.75px",
+                        y: "0.75px",
+                        width: "calc(100% - 1.5px)",
+                        height: "calc(100% - 1.5px)",
+                        rx: "calc(var(--radius-sm) - 0.75px)",
+                        "--delay": `${drawDelay}ms`,
+                      } as React.CSSProperties
+                    }
                   />
                 </svg>
                 <Plus
                   aria-hidden
-                  className="absolute left-1/2 top-1/2 size-[28%] -translate-x-1/2 -translate-y-1/2 text-(--fg)"
-                  style={{
-                    opacity: played ? 1 : 0,
-                    transition: animated ? `opacity var(--d-3) var(--ease-ui) ${drawDelay + DRAW + 120}ms` : "none",
-                  }}
+                  className="absolute left-1/2 top-1/2 size-[28%] -translate-x-1/2 -translate-y-1/2 text-(--fg) in-data-[phase=armed]:opacity-0 in-data-[phase=in]:transition-opacity in-data-[phase=in]:duration-(--d-3) in-data-[phase=in]:ease-(--ease-ui) in-data-[phase=in]:[transition-delay:var(--delay)]"
+                  style={{ "--delay": `${drawDelay + DRAW + 120}ms` } as React.CSSProperties}
                 />
               </>
             )}
@@ -226,7 +224,7 @@ export function Wall({ builders, size = "home" }: { builders: Builder[]; size?: 
         </li>
 
         {Array.from({ length: fillers }, (_, i) => (
-          <li key={`q${i}`} aria-hidden style={seatStyle(open + i)}>
+          <li key={`q${i}`} aria-hidden className={SEAT} style={delay(open + i)}>
             <div className="aspect-square rounded-(--radius-sm) bg-(--line)" />
           </li>
         ))}
