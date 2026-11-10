@@ -15,10 +15,6 @@ export const metadata: Metadata = {
   },
 };
 
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
-import { SidebarPanels } from "@/components/SidebarPanels";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,14 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className={`${inter.variable} ${playfair.variable} ${jetbrains.variable} ${rock3d.variable} antialiased`}>
-        <main className="min-h-screen bg-background text-foreground">
-          <SidebarPanels />
-          <div className="max-w-5xl mx-auto border-x border-dashed border-gray-300 min-h-screen bg-white">
-            <Navbar />
-            {children}
-            <Footer />
-          </div>
-        </main>
+        {children}
       </body>
     </html>
   );
