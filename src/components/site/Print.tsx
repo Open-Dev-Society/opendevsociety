@@ -53,7 +53,7 @@ export function Print({
         <span className="t-mono flex h-8 items-center px-2.5 text-xs text-(--fg-subtle)">{url}</span>
         <picture>
           {m && <source media="(max-width: 1023px)" srcSet={m.srcSet} sizes={m.sizes} />}
-          {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text -- props come from getImageProps */}
+          {/* eslint-disable-next-line jsx-a11y/alt-text -- alt comes from getImageProps */}
           <img
             {...d}
             className={cn(

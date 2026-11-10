@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, Star, X } from "lucide-react";
@@ -57,8 +58,12 @@ export function Nav({
     return () => io.disconnect();
   }, [home, links]);
 
-  // Close the sheet on route change and on Escape.
-  useEffect(() => setOpen(false), [path]);
+  // Close the sheet on route change (adjusted during render, no effect) and on Escape.
+  const [lastPath, setLastPath] = useState(path);
+  if (lastPath !== path) {
+    setLastPath(path);
+    setOpen(false);
+  }
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
@@ -77,11 +82,11 @@ export function Nav({
       )}
     >
       <nav aria-label="Main" className="mx-auto flex h-16 w-full max-w-(--container) items-center gap-3 px-(--gutter)">
-        <a href="/" className="mr-auto flex items-center gap-2.5 rounded-(--radius-sm) md:mr-4">
+        <Link href="/" className="mr-auto flex items-center gap-2.5 rounded-(--radius-sm) md:mr-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={brand.logo} alt="" width={24} height={24} className="size-6 rounded-md" />
           <span className="text-[15px] font-semibold text-(--fg) [font-variation-settings:'wdth'_104]">{brand.name}</span>
-        </a>
+        </Link>
 
         <ul className="hidden items-center md:flex">
           {links.map((l) => {

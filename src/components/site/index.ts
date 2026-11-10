@@ -17,3 +17,6 @@ export { RepoIndex, type IndexRepo } from "./RepoIndex";
 export { SourceLine } from "./SourceLine";
 export { PartnerCard } from "./PartnerCard";
 export { Ledger, type LedgerColumn, type LedgerRow } from "./Ledger";
+export { Tooltip } from "./Tooltip";
+export { Wall, type Builder } from "./Wall";
+export { Bench } from "./Bench";

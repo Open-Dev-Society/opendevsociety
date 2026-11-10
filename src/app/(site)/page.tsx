@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import {
-  Avatar,
+  Bench,
   Button,
   CopyCommand,
   FORK_COMMAND,
@@ -13,6 +13,7 @@ import {
   SectionHeader,
   SectionLink,
   SourceLine,
+  Wall,
   type IndexRepo,
 } from "@/components/site";
 import { catalog } from "@/data/catalog";
@@ -20,7 +21,7 @@ import { manualContributors } from "@/data/contributors";
 import { mentions } from "@/data/mentions";
 import { partners } from "@/data/partners";
 import { ago, compact, isLive } from "@/lib/format";
-import { getOrgContributors, getOrgRepos, getOrgTotals, type OrgContributor } from "@/lib/github";
+import { getOrgContributors, getOrgRepos, getOrgTotals } from "@/lib/github";
 
 // Matches the GitHub lib's cache, so "last commit 14h ago" stays true.
 export const revalidate = 3600;
@@ -83,9 +84,14 @@ function masthead() {
   );
 }
 
-export default async function Home() {
+// Data loading lives outside the component so render stays pure; the page revalidates hourly anyway.
+async function load() {
   const [repos, people] = await Promise.all([getOrgRepos(), getOrgContributors()]);
-  const now = Date.now();
+  return { repos, people, now: Date.now() };
+}
+
+export default async function Home() {
+  const { repos, people, now } = await load();
 
   const builtBy = (name: string) => people.filter((p) => p.repos.includes(name));
   const tools = repos.filter((r) => catalog[r.name]);
@@ -110,6 +116,23 @@ export default async function Home() {
   const openstock = tools.find((r) => r.name === "OpenStock")!;
   const osPeople = builtBy("OpenStock");
   const seat = people.length + 1;
+
+  // The wall: everyone in the contributor graph, most contributions first; core crew named and ringed.
+  const core = new Map(manualContributors.map((c) => [c.login.toLowerCase(), c]));
+  const builders = people.map((p) => ({
+    login: p.login,
+    name: core.get(p.login.toLowerCase())?.name,
+    avatar: p.avatar_url,
+    url: p.html_url,
+    contributions: p.contributions,
+    repos: p.repos,
+    core: core.has(p.login.toLowerCase()),
+  }));
+  // The bench: public tools with open issues, OpenStock first.
+  const benchRepos = tools
+    .filter((r) => r.open_issues > 0)
+    .sort((a, b) => Number(b.name === "OpenStock") - Number(a.name === "OpenStock") || b.open_issues - a.open_issues)
+    .map((r) => ({ name: r.name, openIssues: r.open_issues }));
 
   return (
     <>
@@ -185,8 +208,7 @@ export default async function Home() {
           title={`${people.length} people built all of this. Seat ${seat} is yours.`}
           description="Every merged pull request puts a face on this wall. No interview, no invite."
         />
-        {/* TODO(Claude Code 6): swap for <Wall builders={…} size="home" /> */}
-        <WallPlaceholder people={people} />
+        <Wall builders={builders} size="home" />
         <div className="mt-8">{masthead()}</div>
         <SectionLink href="/contributors">Everyone, by name</SectionLink>
       </Section>
@@ -194,8 +216,7 @@ export default async function Home() {
       {/* ── Start: the bench ─────────────────────────────────── */}
       <Section id="start" tone="inverse">
         <SectionHeader eyebrow="Start" count="3 commands" title="Three commands from here to the wall." />
-        {/* TODO(Claude Code 6): swap for <Bench repos={…} /> */}
-        <CopyCommand command={FORK_COMMAND} className="sm:w-[28rem]" />
+        <Bench repos={benchRepos} />
       </Section>
 
       {/* ── Word of mouth ────────────────────────────────────── */}
@@ -228,14 +249,3 @@ export default async function Home() {
   );
 }
 
-function WallPlaceholder({ people }: { people: OrgContributor[] }) {
-  return (
-    <ul className="grid grid-cols-8 gap-1.5 sm:grid-cols-12 lg:grid-cols-16">
-      {people.map((p) => (
-        <li key={p.login}>
-          <Avatar src={p.avatar_url} name={p.login} href={p.html_url} size={56} shape="square" className="size-full" />
-        </li>
-      ))}
-    </ul>
-  );
-}

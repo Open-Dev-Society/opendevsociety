@@ -38,7 +38,7 @@ export function Footer() {
           <Button href={social.discord.href} size="lg" variant="secondary" external>
             Join the Discord
           </Button>
-          <CopyCommand command={FORK_COMMAND} className="sm:w-[22rem]" />
+          <CopyCommand command={FORK_COMMAND} className="max-sm:hidden sm:w-[22rem]" />
         </div>
 
         <div className="mt-20 grid grid-cols-2 gap-x-(--grid-gap) gap-y-10 md:grid-cols-12">
