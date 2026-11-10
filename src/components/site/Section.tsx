@@ -7,7 +7,7 @@ export function Container({ className, children }: { className?: string; childre
   return <div className={cn("mx-auto w-full max-w-(--container) px-(--gutter)", className)}>{children}</div>;
 }
 
-/** Full-bleed band with the standard vertical rhythm. `tone` re-points the tokens for everything inside. */
+/** Full-bleed band with the one section rhythm. `tone` re-points the tokens for everything inside. */
 export function Section({
   id,
   tone = "default",
@@ -31,65 +31,65 @@ export function Section({
   );
 }
 
-export function Eyebrow({ index, children, className }: { index?: string; children: React.ReactNode; className?: string }) {
-  return (
-    <p className={cn("flex items-center gap-2 text-sm font-medium", className)}>
-      {index && <span className="font-mono text-xs tabular-nums text-(--fg-subtle)">{index}</span>}
-      <span className="text-(--accent)">{children}</span>
-    </p>
-  );
+/** The rail label: meta, subtle, never accent, no numerals. */
+export function Eyebrow({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <p className={cn("t-meta text-(--fg-subtle)", className)}>{children}</p>;
 }
 
+/**
+ * The rail (brief §5): label and live count in cols 1–3, heading and dek in cols 4–12.
+ * Below 1024 the rail collapses to one line above the heading: "Work · 15 tools".
+ * The section's "→" link goes under the content: use <SectionLink>.
+ */
 export function SectionHeader({
   eyebrow,
-  index,
+  count,
   title,
   description,
-  action,
-  align = "start",
   as: Heading = "h2",
   className,
 }: {
   eyebrow?: string;
-  index?: string;
+  count?: React.ReactNode;
   title: React.ReactNode;
   description?: React.ReactNode;
-  action?: { label: string; href: string };
-  align?: "start" | "center";
   as?: "h1" | "h2";
   className?: string;
 }) {
-  const center = align === "center";
   return (
-    <div
-      className={cn(
-        "mb-10 flex flex-wrap gap-x-8 gap-y-4",
-        center ? "flex-col items-center text-center" : "items-end justify-between",
-        className,
-      )}
-    >
-      <div className={cn("max-w-2xl", center && "flex flex-col items-center")}>
-        {eyebrow && <Eyebrow index={index}>{eyebrow}</Eyebrow>}
-        <Heading
-          className={cn(
-            "font-display text-balance tracking-tight text-(--fg)",
-            eyebrow && "mt-3",
-            Heading === "h1" ? "text-[40px] leading-[1] sm:text-6xl" : "text-[32px] leading-[1.08] sm:text-[44px]",
+    <div className={cn("mb-8 grid grid-cols-1 gap-y-3 lg:mb-12 lg:grid-cols-12 lg:gap-x-(--grid-gap)", className)}>
+      {eyebrow && (
+        <div className="t-meta flex flex-wrap items-baseline gap-x-1.5 text-(--fg-subtle) lg:col-span-3 lg:flex-col lg:gap-1 lg:pt-3">
+          <span>{eyebrow}</span>
+          {count && (
+            <>
+              <span aria-hidden className="lg:hidden">
+                ·
+              </span>
+              <span className="t-mono text-(--fg-muted)">{count}</span>
+            </>
           )}
-        >
-          {title}
-        </Heading>
-        {description && <p className="mt-4 max-w-xl text-pretty text-[17px] leading-relaxed text-(--fg-muted)">{description}</p>}
-      </div>
-      {action && (
-        <a
-          href={action.href}
-          className="group inline-flex items-center gap-1.5 text-sm font-medium text-(--fg-muted) transition-colors duration-150 hover:text-(--fg)"
-        >
-          {action.label}
-          <ArrowRight className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
-        </a>
+        </div>
       )}
+      <div className={cn("min-w-0", eyebrow ? "lg:col-span-9" : "lg:col-span-12")}>
+        <Heading className="display-2 max-w-[22ch] text-(--fg)">{title}</Heading>
+        {description && <p className="t-lede mt-4 max-w-[52ch] text-(--fg-muted)">{description}</p>}
+      </div>
+    </div>
+  );
+}
+
+/** The section's escape hatch, right-aligned under the content. */
+export function SectionLink({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) {
+  return (
+    <div className={cn("mt-8 flex justify-end", className)}>
+      <a
+        href={href}
+        className="group inline-flex min-h-11 items-center gap-1.5 text-[15px] font-medium text-(--fg) transition-colors duration-(--d-2) hover:text-(--accent)"
+      >
+        {children}
+        <ArrowRight className="size-4 transition-transform duration-(--d-2) ease-(--ease-ui) group-hover:translate-x-0.5" strokeWidth={1.75} />
+      </a>
     </div>
   );
 }

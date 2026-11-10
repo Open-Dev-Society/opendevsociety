@@ -31,3 +31,11 @@ export const catalog: Record<string, CatalogEntry> = {
 
 // Their homepages return 404 (brief §16): never link them.
 export const deadHomepages = new Set(["openmind", "openhaven"]);
+
+// GitHub's language colours: the only chroma besides cobalt and the highlighter (brief §4).
+export const languageColors: Record<string, string> = {
+  TypeScript: "#3178c6",
+  JavaScript: "#f1e05a",
+  Swift: "#f05138",
+  Python: "#3572a5",
+};

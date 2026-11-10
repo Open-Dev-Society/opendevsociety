@@ -1,564 +1,241 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { ArrowRight, Globe, Zap, Users, Terminal, Unlock, Heart, TrendingUp, Shield, BookOpen, Package, BarChart3, Code2, PenTool, GraduationCap, Star, GitFork, CircleDot, MessageSquareQuote, Youtube, Newspaper, Twitter, Instagram, Linkedin } from "lucide-react";
-import Link from "next/link";
-import { Navbar } from "@/components/Navbar";
-import { HeroSection } from "@/components/HeroSection";
-import { useState, useEffect } from "react";
-import { featuredModules } from "@/data/projects";
-
-import { getFromCache, saveToCache, CACHE_KEYS } from "@/utils/githubCache";
+import type { Metadata } from "next";
+import {
+  Avatar,
+  Button,
+  CopyCommand,
+  FORK_COMMAND,
+  PartnerCard,
+  Print,
+  Quote,
+  RepoIndex,
+  RepoTile,
+  Section,
+  SectionHeader,
+  SectionLink,
+  SourceLine,
+  type IndexRepo,
+} from "@/components/site";
+import { catalog } from "@/data/catalog";
+import { manualContributors } from "@/data/contributors";
 import { mentions } from "@/data/mentions";
+import { partners } from "@/data/partners";
+import { ago, compact, isLive } from "@/lib/format";
+import { getOrgContributors, getOrgRepos, getOrgTotals, type OrgContributor } from "@/lib/github";
 
-const sourceIcons: Record<string, typeof Newspaper> = {
-  article: Newspaper,
-  youtube: Youtube,
-  twitter: Twitter,
-  instagram: Instagram,
-  linkedin: Linkedin,
-  other: MessageSquareQuote,
+// Matches the GitHub lib's cache, so "last commit 14h ago" stays true.
+export const revalidate = 3600;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const [totals, people] = await Promise.all([getOrgTotals(), getOrgContributors()]);
+  return {
+    title: "Open Dev Society: free, open-source software, built in public",
+    description: `A public workshop of developers, designers and writers building free, open-source tools. ${compact(totals.stars)} stars, ${people.length} builders, no paywalls.`,
+  };
+}
+
+const list = (xs: string[]) => (xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}`);
+const DAY = 864e5;
+
+// Brief §10 §5: the three quotes, excerpted with honest ellipses, matched to their mention for source, year and link.
+const quotes = [
+  { author: "Tattva Tarang", text: "…great tools shouldn't hide behind logins or price tiers." },
+  { author: "Mohamed IDBRAHIM", text: "…the democratization of financial information and tools previously available only to institutional investors." },
+  { author: "Built At Lightspeed", text: "It's more than just an app; it's a movement towards transparency in the financial sector." },
+].map((q) => {
+  const m = mentions.find((x) => x.author.startsWith(q.author))!;
+  const [name, source] = m.author.split(/ (?:at|via) /);
+  return { ...q, name, source, year: m.date, href: m.url };
+});
+const press = mentions.filter((m) => !m.author.startsWith("Ravi"));
+const outlets = [
+  ...new Map(
+    press
+      .filter((m) => !quotes.some((q) => q.href === m.url))
+      .map((m) => {
+        const name = m.author.replace(/^.* (at|via) /, "").replace("community-scripts/ProxmoxVE repository", "ProxmoxVE");
+        return [name, { name, href: m.url }] as const;
+      }),
+  ).values(),
+];
+
+// Ours, one line each (brief §10 §5).
+const partnerLines: Record<string, string> = {
+  "Siray.ai": "AI infrastructure behind one API.",
+  StellAILoom: "A hub for publishing and finding AI tools.",
+  "Atlas Cloud": "One API for hundreds of models.",
 };
 
-export default function Home() {
-  const [stats, setStats] = useState<{ repos: number; stars: number; list: any[]; contributors: Record<string, any[]> }>({
-    repos: 0,
-    stars: 0,
-    list: [],
-    contributors: {}
+function masthead() {
+  const by = (re: RegExp) => manualContributors.filter((c) => c.role && re.test(c.role));
+  const sign = (cs: typeof manualContributors) =>
+    cs.map((c, i) => (
+      <span key={c.login}>
+        {i > 0 && (i === cs.length - 1 ? " and " : ", ")}
+        <a href={c.html_url} target="_blank" rel="noopener noreferrer" className="sign text-(--fg) hover:text-(--accent)">
+          {c.name}
+        </a>
+      </span>
+    ));
+  return (
+    <p className="text-sm text-(--fg-muted)">
+      Founded by {sign(by(/^(?!.*Co-Founder).*Founder/i))}. Co-founded by {sign(by(/Co-Founder/i))}. Maintained with {sign(by(/Maintainer/i))}.
+    </p>
+  );
+}
+
+export default async function Home() {
+  const [repos, people] = await Promise.all([getOrgRepos(), getOrgContributors()]);
+  const now = Date.now();
+
+  const builtBy = (name: string) => people.filter((p) => p.repos.includes(name));
+  const tools = repos.filter((r) => catalog[r.name]);
+  const lastPush = tools.reduce((a, r) => (r.pushed_at > a ? r.pushed_at : a), "");
+  const thisWeek = tools.filter((r) => now - Date.parse(r.pushed_at) < 7 * DAY).map((r) => r.name);
+
+  const summary = (r: (typeof tools)[number]) => ({
+    name: r.name,
+    url: r.html_url,
+    tagline: catalog[r.name].tagline,
+    language: r.language,
+    pushedAgo: ago(r.pushed_at, now),
+    stars: r.stars,
+    builders: builtBy(r.name).length,
+    badge: catalog[r.name].badge,
   });
+  const index: IndexRepo[] = [...tools]
+    .sort((a, b) => Number(b.name === "OpenStock") - Number(a.name === "OpenStock") || b.stars - a.stars || b.pushed_at.localeCompare(a.pushed_at))
+    .map((r) => ({ ...summary(r), audience: catalog[r.name].audience, goodFirst: r.good_first_issues }));
+  const featured = ["kine-ui", "openreadme", "kitbash"].flatMap((n) => tools.filter((r) => r.name === n));
 
-  useEffect(() => {
-    async function fetchGitHubStats() {
-      // 1. Try Cache First
-      const cached = getFromCache<{ repos: number; stars: number; list: any[]; contributors: Record<string, any[]> }>(CACHE_KEYS.STATS);
-      if (cached) {
-        setStats(cached);
-        console.log("Loaded stats from local cache");
-        return;
-      }
-
-      try {
-        const res = await fetch("/api/github/orgs/Open-Dev-Society/repos?per_page=100");
-        if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
-        const data = await res.json();
-
-        const totalStars = data.reduce((acc: number, repo: any) => acc + repo.stargazers_count, 0);
-
-        // Filter and Sort based on configuration
-        const curatedList = featuredModules.map(config => {
-          const repo = data.find((r: any) => r.name.toLowerCase() === config.name.toLowerCase());
-          if (!repo) return null;
-          return {
-            ...repo,
-            customTags: config.tags
-          };
-        }).filter(Boolean);
-
-        // Fetch Contributors for curated list
-        const contributorsMap: Record<string, any[]> = {};
-
-        await Promise.all(curatedList.map(async (repo: any) => {
-          try {
-            // Use local proxy for contributors
-            const proxyUrl = repo.contributors_url.replace('https://api.github.com', '/api/github');
-            const contribRes = await fetch(proxyUrl);
-
-            if (contribRes.ok) {
-              const contribData = await contribRes.json();
-              // Take top 5, exclude bots if possible (simplistic check)
-              contributorsMap[repo.name] = contribData
-                .filter((c: any) => c.type === 'User')
-                .slice(0, 5);
-            }
-          } catch (e) {
-            console.error(`Failed to fetch contributors for ${repo.name}`, e);
-          }
-        }));
-
-        const newStats = {
-          repos: curatedList.length,
-          stars: totalStars,
-          list: curatedList,
-          contributors: contributorsMap
-        };
-
-        setStats(newStats);
-        // 2. Save to Cache
-        saveToCache(CACHE_KEYS.STATS, newStats);
-
-      } catch (error) {
-        console.error("Error fetching GitHub stats:", error);
-      }
-    }
-
-    fetchGitHubStats();
-  }, []);
+  const openstock = tools.find((r) => r.name === "OpenStock")!;
+  const osPeople = builtBy("OpenStock");
+  const seat = people.length + 1;
 
   return (
     <>
-      {/* Hero Section */}
-      <HeroSection repos={stats.repos} stars={stats.stars} />
-
-      {/* ECOSYSTEM: What we do */}
-      <section className="border-b border-dashed border-gray-300 bg-gray-50/40">
-        <div className="px-8 pt-16 pb-12 max-w-3xl mx-auto text-center">
-          <h2 className="text-mono text-xs uppercase tracking-widest text-gray-500 mb-4">
-            // SYSTEM_CAPABILITIES [3_VECTORS]
-          </h2>
-          <h3 className="text-4xl md:text-5xl font-serif italic mb-4 leading-tight tracking-tight">
-            What we <span className="not-italic font-bold">do.</span>
-          </h3>
-          <p className="text-gray-600 text-sm max-w-md mx-auto">
-            Three vectors of operation. Find the one that matches your capacity and start shipping.
-          </p>
+      {/* ── Hero ─────────────────────────────────────────────── */}
+      <section className="mx-auto w-full max-w-(--container) px-(--gutter) pt-16 lg:pt-24">
+        <p className="rise t-meta flex flex-wrap items-center gap-x-2 gap-y-1 text-(--fg-muted)" style={{ "--i": 0 } as React.CSSProperties}>
+          <span>Est. July 2024</span>
+          <span aria-hidden>·</span>
+          <span className="tabular-nums">{tools.length} tools</span>
+          <span aria-hidden>·</span>
+          <span className="tabular-nums">{people.length} builders</span>
+          <span aria-hidden>·</span>
+          <span className="inline-flex items-center gap-1.5 tabular-nums">
+            {isLive(lastPush, now) && <span className="size-1.5 rounded-full bg-(--live)" aria-hidden />}
+            last commit {ago(lastPush, now)}
+          </span>
+        </p>
+        <h1 className="rise display-1 mt-6 max-w-[14ch] text-(--fg)" style={{ "--i": 1 } as React.CSSProperties}>
+          Software for everyone, built by <span className="sign text-(--accent)">anyone who shows up.</span>
+        </h1>
+        <p className="rise t-lede mt-6 max-w-[52ch] text-(--fg-muted)" style={{ "--i": 2 } as React.CSSProperties}>
+          A public workshop of developers, designers and writers making free, open-source tools. No paywalls. No interviews. Send a
+          pull request and you&apos;re one of us.
+        </p>
+        <div className="rise mt-8 flex flex-col gap-3 sm:flex-row sm:items-center" style={{ "--i": 3 } as React.CSSProperties}>
+          <Button href="#start" size="lg" icon="arrow">
+            Make your first PR
+          </Button>
+          <CopyCommand command={FORK_COMMAND} className="sm:w-[24rem]" />
         </div>
+        <Print
+          className="rise mt-12 lg:mt-16"
+          priority
+          desktop={{ src: "/shots/openstock-desktop.jpg", width: 2880, height: 1800 }}
+          mobile={{ src: "/shots/openstock-mobile.jpg", width: 1170, height: 2532 }}
+          alt="OpenStock, live: index prices, the market clock and a chart"
+          url={(openstock.homepage ?? openstock.html_url).replace(/^https?:\/\//, "")}
+          href={openstock.homepage ?? openstock.html_url}
+          name="OpenStock"
+          tagline={catalog.OpenStock.tagline}
+          people={osPeople.map((p) => ({ src: p.avatar_url, name: p.login }))}
+          builders={osPeople.length}
+          stats={`★ ${compact(openstock.stars)} · ${compact(openstock.forks)} forks`}
+        />
+      </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-dashed divide-gray-300 border-y border-dashed border-gray-300">
-          {[
-            {
-              num: "01",
-              code: "INITIATIVES",
-              icon: Package,
-              titleStart: "We",
-              titleEnd: "Build.",
-              description:
-                "From developer tools to open libraries. We create software that solves real problems and release it for free.",
-              tags: ["OPEN_STOCK", "BOOK_TRACE"],
-              href: "/projects",
-            },
-            {
-              num: "02",
-              code: "KNOWLEDGE",
-              icon: BookOpen,
-              titleStart: "We",
-              titleEnd: "Teach.",
-              description:
-                "Knowledge should be free. We produce roadmaps, tutorials, and mentorship programs to help you grow.",
-              tags: ["MENTORSHIP", "ROADMAPS"],
-              href: "/contribute#education",
-            },
-            {
-              num: "03",
-              code: "NETWORK",
-              icon: Globe,
-              titleStart: "We",
-              titleEnd: "Connect.",
-              description:
-                "A global network of like-minded creators. Find your team, launch your project, and make an impact.",
-              tags: ["HACKATHONS", "EVENTS"],
-              href: "/partners",
-            },
-          ].map((pillar, idx) => (
-            <motion.div
-              key={pillar.num}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.45, delay: idx * 0.08 }}
-              className="p-10 relative group hover:bg-white transition-colors overflow-hidden"
-            >
-              {/* Corner brackets reveal on hover */}
-              <div className="absolute top-3 left-3 w-3 h-3 border-l border-t border-[var(--color-brand-teal)] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-              <div className="absolute top-3 right-3 w-3 h-3 border-r border-t border-[var(--color-brand-teal)] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-              <div className="absolute bottom-3 left-3 w-3 h-3 border-l border-b border-[var(--color-brand-teal)] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-              <div className="absolute bottom-3 right-3 w-3 h-3 border-r border-b border-[var(--color-brand-teal)] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-
-              {/* Oversized italic number anchor */}
-              <div className="font-serif italic text-[7rem] leading-[0.85] text-gray-200 group-hover:text-[var(--color-brand-teal)]/30 transition-colors duration-500 mb-4 select-none">
-                {pillar.num}
-              </div>
-
-              {/* Mono code label */}
-              <div className="flex items-center gap-2 mb-4">
-                <pillar.icon className="w-4 h-4 text-[var(--color-brand-teal)]" />
-                <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-gray-500">
-                  // {pillar.code}
-                </span>
-              </div>
-
-              {/* Title */}
-              <h4 className="text-3xl font-serif mb-4 leading-tight">
-                <span className="italic text-gray-700">{pillar.titleStart}</span>{" "}
-                <span className="not-italic font-bold">{pillar.titleEnd}</span>
-              </h4>
-
-              {/* Description */}
-              <p className="text-sm text-gray-600 leading-relaxed mb-6 min-h-[60px]">
-                {pillar.description}
-              </p>
-
-              {/* Tags with bullet markers */}
-              <div className="flex flex-wrap gap-2 mb-6">
-                {pillar.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-[10px] font-mono border border-dashed border-gray-300 px-2 py-1 bg-white"
-                  >
-                    ▸ {tag}
-                  </span>
-                ))}
-              </div>
-
-              {/* Explore link */}
-              <Link
-                href={pillar.href}
-                className="font-mono text-[10px] uppercase tracking-widest text-gray-600 hover:text-[var(--color-brand-teal)] transition-colors inline-flex items-center gap-1.5 border-b border-dashed border-gray-400 hover:border-[var(--color-brand-teal)] pb-0.5"
-              >
-                [ EXPLORE_VECTOR ]{" "}
-                <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </motion.div>
+      {/* ── Work: the shelf ──────────────────────────────────── */}
+      <Section id="work">
+        <SectionHeader
+          eyebrow="Work"
+          count={`${tools.length} tools`}
+          title={`${tools.length} tools. 0 paywalls.`}
+          description={
+            thisWeek.length ? `Free to use, free to fork. Pushed to this week: ${list(thisWeek)}.` : "Free to use, free to fork."
+          }
+        />
+        <div className="-mx-(--gutter) flex snap-x snap-mandatory scroll-px-(--gutter) gap-3 overflow-x-auto px-(--gutter) pb-2 lg:mx-0 lg:grid lg:grid-cols-3 lg:gap-(--grid-gap) lg:overflow-visible lg:px-0 lg:pb-0">
+          {featured.map((r) => (
+            <RepoTile key={r.name} repo={summary(r)} shot={catalog[r.name].shot} className="w-[78vw] max-w-sm shrink-0 snap-start lg:w-auto lg:max-w-none" />
           ))}
         </div>
-      </section>
-
-      {/* MANIFESTO: Operating Principles */}
-      <section id="manifesto" className="border-b border-dashed border-gray-300">
-        <div className="px-8 pt-16 pb-12 max-w-3xl mx-auto text-center">
-          <h2 className="text-mono text-xs uppercase tracking-widest text-gray-500 mb-4">
-            // SYSTEM_MANIFESTO [4_CONSTANTS]
-          </h2>
-          <h3 className="text-4xl md:text-5xl font-serif italic mb-4 leading-tight tracking-tight">
-            Operating <span className="not-italic font-bold">Principles.</span>
-          </h3>
-          <p className="text-gray-600 text-sm max-w-md mx-auto">
-            The non-negotiables. Every decision we make is filtered through these four constants.
-          </p>
+        <div className="mt-16">
+          <RepoIndex repos={index} />
         </div>
+        <SectionLink href="/projects">All tools</SectionLink>
+      </Section>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-dashed divide-gray-300 border-y border-dashed border-gray-300">
-          {[
-            {
-              num: "01",
-              code: "DEFAULT_TO_OPEN",
-              icon: Unlock,
-              displayTitle: "Default to",
-              displayAccent: "Open.",
-              description:
-                "All code is open-source. All knowledge is public. We believe transparency is the only way to build trust at scale.",
-            },
-            {
-              num: "02",
-              code: "PERMISSIONLESS_ACCESS",
-              icon: Users,
-              displayTitle: "Permissionless",
-              displayAccent: "Access.",
-              description:
-                "No gatekeepers. No interviews. You don't need permission to fork, contribute, or start building. Just start.",
-            },
-            {
-              num: "03",
-              code: "RAPID_ITERATION",
-              icon: TrendingUp,
-              displayTitle: "Rapid",
-              displayAccent: "Iteration.",
-              description:
-                "We ship fast. We break things. We solve real problems with code, not endless meetings.",
-            },
-            {
-              num: "04",
-              code: "DISTRIBUTED_STRENGTH",
-              icon: Heart,
-              displayTitle: "Distributed",
-              displayAccent: "Strength.",
-              description:
-                "We are stronger together. We mentor the next generation and lift each other up.",
-            },
-          ].map((p, idx) => (
-            <motion.div
-              key={p.code}
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.45, delay: (idx % 2) * 0.08 }}
-              className="p-10 relative group hover:bg-gray-50 transition-colors flex flex-col min-h-[280px]"
-            >
-              <div className="flex items-center justify-between mb-8">
-                <span className="font-mono text-[10px] uppercase tracking-widest text-gray-400">
-                  // PRINCIPLE_{p.num}
-                </span>
-                <p.icon className="w-6 h-6 text-[var(--color-brand-teal)] group-hover:rotate-12 transition-transform duration-500" />
-              </div>
+      {/* ── People: the wall ─────────────────────────────────── */}
+      <Section id="people" tone="muted">
+        <SectionHeader
+          eyebrow="People"
+          count={`${people.length} builders`}
+          title={`${people.length} people built all of this. Seat ${seat} is yours.`}
+          description="Every merged pull request puts a face on this wall. No interview, no invite."
+        />
+        {/* TODO(Claude Code 6): swap for <Wall builders={…} size="home" /> */}
+        <WallPlaceholder people={people} />
+        <div className="mt-8">{masthead()}</div>
+        <SectionLink href="/contributors">Everyone, by name</SectionLink>
+      </Section>
 
-              <h3 className="text-3xl md:text-4xl font-serif italic mb-2 leading-[1.05] tracking-tight">
-                {p.displayTitle}{" "}
-                <span className="not-italic font-bold">{p.displayAccent}</span>
-              </h3>
+      {/* ── Start: the bench ─────────────────────────────────── */}
+      <Section id="start" tone="inverse">
+        <SectionHeader eyebrow="Start" count="3 commands" title="Three commands from here to the wall." />
+        {/* TODO(Claude Code 6): swap for <Bench repos={…} /> */}
+        <CopyCommand command={FORK_COMMAND} className="sm:w-[28rem]" />
+      </Section>
 
-              <div className="font-mono text-[10px] uppercase tracking-widest text-[var(--color-brand-teal)] mb-4">
-                {p.code}
-              </div>
+      {/* ── Word of mouth ────────────────────────────────────── */}
+      <Section id="signal">
+        <SectionHeader eyebrow="Word of mouth" count={`${mentions.length} mentions`} title="What people wrote when they found it." />
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-(--grid-gap)">
+          <Quote variant="feature" className="lg:col-span-8 lg:pr-12" quote={quotes[0].text} name={quotes[0].name} source={quotes[0].source} year={quotes[0].year} href={quotes[0].href} />
+          <div className="flex flex-col gap-10 lg:col-span-4">
+            {quotes.slice(1).map((q) => (
+              <Quote key={q.href} quote={q.text} name={q.name} source={q.source} year={q.year} href={q.href} />
+            ))}
+          </div>
+        </div>
+        <SourceLine className="mt-12" items={outlets} all={{ label: `All ${mentions.length} mentions`, href: "/word-of-mouth" }} />
 
-              <p className="font-sans text-sm text-gray-600 leading-relaxed max-w-sm mt-auto">
-                {p.description}
-              </p>
-            </motion.div>
+        <h3 className="t-title mt-16 text-(--fg)">Who backs the work</h3>
+        <div className="mt-6 grid grid-cols-1 gap-(--grid-gap) md:grid-cols-3">
+          {partners.map((p) => (
+            <PartnerCard key={p.name} name={p.name} logo={p.logo} invertLogo={p.invertLogo} href={p.url} line={partnerLines[p.name] ?? p.description} />
           ))}
         </div>
-      </section>
-
-      {/* Active Modules (Projects) */}
-      <section id="modules" className="border-b border-dashed border-gray-300">
-        <div className="p-8 border-b border-dashed border-gray-300 bg-gray-50 flex justify-between items-center">
-          <h2 className="text-mono text-xs uppercase tracking-widest text-gray-500">
-            // KERNEL_MODULES [ACTIVE_DEPLOYMENTS]
-          </h2>
-          <Link href="/projects" className="text-xs font-mono underline decoration-dashed hover:decoration-solid">
-            VIEW_ALL_MODULES_({stats.repos})
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-dashed divide-gray-300">
-          {stats.list.length > 0 ? (
-            stats.list.slice(0, 4).map((repo: any) => (
-              <div key={repo.id} className="p-8 hover:bg-gray-50 transition-colors border-b border-dashed border-gray-300">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <Package className="w-4 h-4 text-[var(--color-brand-teal)]" />
-                    <h3 className="font-bold font-mono uppercase tracking-wider">{repo.name}</h3>
-                  </div>
-                  <span className="text-[10px] font-mono border border-black px-2 py-1 uppercase">
-                    {repo.customTags?.[0] || repo.language || 'Code'}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-600 mb-6 leading-relaxed h-16 line-clamp-3">
-                  {repo.description || "No description provided."}
-                </p>
-
-                {/* Repo Stats */}
-                <div className="flex items-center gap-4 text-[10px] font-mono text-gray-500 mb-6">
-                  <div className="flex items-center gap-1">
-                    <Star className="w-3 h-3" />
-                    <span>{repo.stargazers_count}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <GitFork className="w-3 h-3" />
-                    <span>{repo.forks_count}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <CircleDot className="w-3 h-3" />
-                    <span>{repo.open_issues_count}</span>
-                  </div>
-                </div>
-
-                {/* Contributors */}
-                {stats.contributors[repo.name] && stats.contributors[repo.name].length > 0 && (
-                  <div className="mb-6">
-                    <div className="text-[10px] font-mono text-gray-400 mb-2 uppercase tracking-wider">Active Operators:</div>
-                    <div className="flex -space-x-2">
-                      {stats.contributors[repo.name].map((contributor: any) => (
-                        <img
-                          key={contributor.id}
-                          src={contributor.avatar_url}
-                          alt={contributor.login}
-                          title={contributor.login}
-                          className="w-6 h-6 rounded-full border border-white bg-gray-100"
-                        />
-                      ))}
-                      {stats.contributors[repo.name].length >= 5 && (
-                        <div className="w-6 h-6 rounded-full border border-white bg-gray-100 flex items-center justify-center text-[8px] font-mono text-gray-500">
-                          +
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-2 text-[10px] font-mono text-gray-400">
-                    {repo.customTags?.slice(1).map((tag: string) => (
-                      <span key={tag} className="uppercase">#{tag}</span>
-                    ))}
-                    {repo.topics?.slice(0, 2).map((topic: string) => (
-                      <span key={topic} className="uppercase">#{topic}</span>
-                    ))}
-                  </div>
-                  <a href={repo.html_url} target="_blank" className="text-xs font-mono underline decoration-dashed hover:decoration-[var(--color-brand-rose)] hover:text-[var(--color-brand-rose)] hover:decoration-solid">VIEW_REPO</a>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="p-8 col-span-2 text-center text-gray-400 font-mono text-xs">
-              LOADING_SYSTEM_DATA...
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Join the Collective (Target Acquisition) */}
-      <section className="py-20 border-b border-dashed border-gray-300">
-        <div className="p-8 mb-12 text-center">
-          <h2 className="text-mono text-xs uppercase tracking-widest text-gray-500 mb-4">
-                // OPERATOR_ONBOARDING [SELECT_CLASS]
-          </h2>
-          <h3 className="text-4xl font-serif italic mb-6">Initialize Your Role.</h3>
-          <p className="text-gray-600 max-w-lg mx-auto">
-            The society needs all types of operators. Identify your capacity and join the network.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-gray-300 border-y border-dashed border-gray-300">
-          <Link href="/contribute#code" className="bg-white p-12 hover:bg-gray-50 transition-colors group text-center block">
-            <div className="mb-4 inline-flex p-3 bg-gray-100 rounded-full group-hover:bg-black group-hover:text-white transition-colors">
-              <Code2 className="w-6 h-6" />
-            </div>
-            <h4 className="font-bold font-mono uppercase text-sm mb-2">Developer</h4>
-            <p className="text-xs text-gray-500 mb-4">Code, review, optimize.</p>
-            <span className="text-[10px] font-mono border-b border-black pb-0.5">INIT_DEV_PROTOCOL</span>
-          </Link>
-
-          <Link href="/contribute#content" className="bg-white p-12 hover:bg-gray-50 transition-colors group text-center block">
-            <div className="mb-4 inline-flex p-3 bg-gray-100 rounded-full group-hover:bg-black group-hover:text-white transition-colors">
-              <PenTool className="w-6 h-6" />
-            </div>
-            <h4 className="font-bold font-mono uppercase text-sm mb-2">Writer</h4>
-            <p className="text-xs text-gray-500 mb-4">Guide, document, inspire.</p>
-            <span className="text-[10px] font-mono border-b border-black pb-0.5">INIT_DOCS_PROTOCOL</span>
-          </Link>
-
-          <Link href="/contribute#education" className="bg-white p-12 hover:bg-gray-50 transition-colors group text-center block">
-            <div className="mb-4 inline-flex p-3 bg-gray-100 rounded-full group-hover:bg-black group-hover:text-white transition-colors">
-              <GraduationCap className="w-6 h-6" />
-            </div>
-            <h4 className="font-bold font-mono uppercase text-sm mb-2">Educator</h4>
-            <p className="text-xs text-gray-500 mb-4">Teach, mentor, grow.</p>
-            <span className="text-[10px] font-mono border-b border-black pb-0.5">INIT_EDU_PROTOCOL</span>
-          </Link>
-        </div>
-        <div className="text-center mt-12 flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 px-4">
-          <Link href="/contribute" className="btn-tech w-full sm:w-auto text-center">
-            VIEW_FULL_OPERATIONS_MANUAL
-          </Link>
-          <Link href="/contributors" className="px-6 py-2 font-mono text-xs uppercase tracking-widest border border-gray-300 hover:bg-black hover:text-white transition-colors w-full sm:w-auto text-center">
-            [ VIEW_ACTIVE_OPERATORS ]
-          </Link>
-        </div>
-      </section>
-
-      {/* Partners & Events */}
-      <section className="py-20 px-8 border-b border-dashed border-gray-300">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-mono text-xs uppercase tracking-widest text-gray-500 mb-4">
-              // SYSTEM_ALLIANCES [ACTIVE_NETWORKS]
-            </h2>
-            <h3 className="text-4xl font-serif italic mb-4">Trusted <span className="not-italic font-bold">Partners.</span></h3>
-            <p className="text-gray-600 text-sm max-w-md mx-auto">
-              Organizations and events powering our mission to make open source accessible to everyone.
-            </p>
-          </div>
-
-          {/* Partner Logos */}
-          <div className="flex flex-wrap justify-center items-center gap-16 mb-12">
-            <a href="https://siray.ai" target="_blank" rel="noopener noreferrer" className="group flex flex-col items-center gap-3 opacity-80 hover:opacity-100 transition-opacity">
-              <img src="/partners/sirayLogo.svg" alt="siray.ai" className="h-12 w-auto object-contain" />
-            </a>
-            <a href="https://stellailoom.com" target="_blank" rel="noopener noreferrer" className="group flex flex-col items-center gap-3 opacity-80 hover:opacity-100 transition-opacity">
-              <img src="/partners/stellailoomLogo.svg" alt="StellAILoom" className="h-12 w-auto object-contain" style={{ filter: 'invert(1)' }} />
-            </a>
-            <a href="https://atlascloud.ai" target="_blank" rel="noopener noreferrer" className="group flex flex-col items-center gap-3 opacity-80 hover:opacity-100 transition-opacity">
-              <img src="/partners/atlascloud.svg" alt="Atlas Cloud" className="h-12 w-auto object-contain" />
-            </a>
-          </div>
-
-          {/* Events Preview */}
-          <div className="border border-dashed border-gray-300 divide-y divide-dashed divide-gray-300">
-            <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div>
-                <span className="font-mono text-[10px] uppercase tracking-widest px-2 py-0.5 bg-[var(--color-brand-teal)] text-white mr-2">Community Partner</span>
-                <span className="font-bold text-sm">Apretre 3.0</span>
-                <span className="text-xs text-gray-400 ml-2">by Resourcio Community</span>
-              </div>
-            </div>
-            <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div>
-                <span className="font-mono text-[10px] uppercase tracking-widest px-2 py-0.5 bg-[var(--color-brand-teal)] text-white mr-2">Community Partner</span>
-                <span className="font-bold text-sm">JWOC – JGEC Winter of Code</span>
-                <span className="text-xs text-gray-400 ml-2">by JGEC</span>
-              </div>
-            </div>
-          </div>
-
-          {/* CTA */}
-          <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-3 sm:gap-4 mt-10">
-            <Link href="/partners" className="btn-tech w-full sm:w-auto text-center">
-              VIEW_ALL_ALLIANCES
-            </Link>
-            <Link href="/partners#partner-cta" className="font-mono text-[11px] uppercase tracking-widest border border-gray-300 px-5 py-2.5 hover:bg-black hover:text-white hover:border-black transition-colors w-full sm:w-auto text-center">
-              FOR_BRANDS →
-            </Link>
-            <Link href="/partners#partner-cta" className="font-mono text-[11px] uppercase tracking-widest border border-gray-300 px-5 py-2.5 hover:bg-black hover:text-white hover:border-black transition-colors w-full sm:w-auto text-center">
-              FOR_COMMUNITIES →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* The Collective Stats */}
-      <section className="p-8 py-20 border-b border-dashed border-gray-300 bg-gray-50">
-        <div className="max-w-md mx-auto text-center">
-          <Users className="w-8 h-8 mx-auto mb-4" />
-          <h2 className="heading-serif text-3xl mb-4">System Metrics</h2>
-          <p className="font-sans text-sm text-gray-600 mb-8">
-            Founded in July 2024 by <span className="font-bold">Ravi Pratap Singh</span> (@ravixalgorithm).
-          </p>
-          <div className="flex flex-wrap justify-center gap-4 text-mono text-xs border border-dashed border-gray-300 bg-white p-4 inline-flex">
-            <span>MEMBERS: <span className="text-black font-bold">1000+</span></span>
-            <span className="text-gray-300">|</span>
-            <span>REPOS: <span className="text-black font-bold">{stats.repos > 0 ? stats.repos : '...'}</span></span>
-            <span className="text-gray-300">|</span>
-            <span>GITHUB STARS: <span className="text-green-600 font-bold">{stats.stars > 0 ? `${stats.stars}+` : '...'}</span></span>
-          </div>
-        </div>
-      </section>
-
-      {/* Word of Mouth — Quick Preview */}
-      <section className="py-16 px-8 border-b border-dashed border-gray-300">
-        <div className="text-center mb-10">
-          <h2 className="text-mono text-xs uppercase tracking-widest text-gray-500 mb-4">
-            // SIGNAL_INTERCEPT [COMMUNITY_LOVE]
-          </h2>
-          <h3 className="text-4xl font-serif italic mb-4">Word of <span className="not-italic font-bold">Mouth.</span></h3>
-          <p className="text-gray-600 text-sm max-w-md mx-auto">
-            What the community is saying about Open Dev Society across the internet.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-gray-200 border border-gray-200 mb-10">
-          {mentions.filter(m => m.highlight).slice(0, 3).map((mention, index) => {
-            const Icon = sourceIcons[mention.source] || MessageSquareQuote;
-            return (
-              <a
-                key={index}
-                href={mention.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-white p-8 hover:bg-gray-50 transition-colors group block"
-              >
-                <div className="flex items-center gap-2 mb-4">
-                  <Icon className="w-4 h-4 text-gray-400" />
-                  <span className="font-mono text-[10px] uppercase tracking-widest text-gray-400">
-                    {mention.source}
-                  </span>
-                </div>
-                <blockquote className="text-sm italic text-gray-700 leading-relaxed mb-4">
-                  {mention.highlight}
-                </blockquote>
-                <div className="text-xs text-gray-500 font-mono">
-                  — {mention.author}
-                </div>
-              </a>
-            );
-          })}
-        </div>
-
-        <div className="text-center">
-          <Link href="/word-of-mouth" className="btn-tech">
-            VIEW_ALL_SIGNALS
-          </Link>
-        </div>
-      </section>
+        <p className="mt-6 text-sm text-(--fg-muted)">
+          Community partner at Apretre 3.0 (Resourcio Community) and JWOC 2026 (JGEC).{" "}
+          <a href="/word-of-mouth#partner-cta" className="ink-link whitespace-nowrap">
+            Partner with us →
+          </a>
+        </p>
+      </Section>
     </>
+  );
+}
+
+function WallPlaceholder({ people }: { people: OrgContributor[] }) {
+  return (
+    <ul className="grid grid-cols-8 gap-1.5 sm:grid-cols-12 lg:grid-cols-16">
+      {people.map((p) => (
+        <li key={p.login}>
+          <Avatar src={p.avatar_url} name={p.login} href={p.html_url} size={56} shape="square" className="size-full" />
+        </li>
+      ))}
+    </ul>
   );
 }

@@ -5,18 +5,18 @@ type Variant = "primary" | "secondary" | "ghost";
 type Size = "md" | "lg";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-(--accent) text-(--accent-fg) hover:brightness-110",
-  secondary: "bg-(--surface) text-(--fg) shadow-(--shadow-sm) hover:shadow-(--shadow-md)",
-  ghost: "text-(--fg-muted) hover:bg-(--surface-2) hover:text-(--fg)",
+  primary: "bg-(--accent) text-(--accent-fg) shadow-[inset_0_1px_0_oklch(1_0_0/0.18)] hover:bg-(--accent-hover)",
+  secondary: "bg-(--surface) text-(--fg) shadow-(--shadow-sm) hover:bg-(--surface-2)",
+  ghost: "text-(--fg) hover:text-(--accent)",
 };
 const sizes: Record<Size, string> = {
-  md: "h-10 px-4 text-sm gap-1.5",
-  lg: "h-12 px-5 text-[15px] gap-2",
+  md: "h-11 px-5 text-[15px] gap-1.5",
+  lg: "h-13 px-6 text-[15px] gap-2",
 };
 
 /**
- * A link styled as a button (every CTA on the site navigates). `icon="arrow"` for in-site, `"external"` for off-site.
- * External links open in a new tab.
+ * A link styled as a button (every CTA navigates). `icon="arrow"` for in-site, `"external"` for off-site
+ * (external links open in a new tab). Primary and secondary go full width below 640.
  */
 export function Button({
   href,
@@ -42,9 +42,12 @@ export function Button({
       {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
       className={cn(
         "group inline-flex shrink-0 items-center justify-center rounded-full font-medium whitespace-nowrap",
-        "transition-[background-color,color,box-shadow,filter,scale] duration-150 active:scale-[0.96]",
+        "transition-[background-color,color,box-shadow,scale] duration-(--d-2) ease-(--ease-ui) active:scale-[0.97] active:duration-(--d-1)",
+        variant !== "ghost" && "w-full sm:w-auto",
         variants[variant],
         sizes[size],
+        Icon && (size === "lg" ? "pr-4" : "pr-4"),
+        variant === "ghost" && "px-0",
         className,
       )}
     >
@@ -52,7 +55,7 @@ export function Button({
       {Icon && (
         <Icon
           className={cn(
-            "size-4 transition-transform duration-200",
+            "size-4 transition-transform duration-(--d-2) ease-(--ease-ui)",
             icon === "arrow" ? "group-hover:translate-x-0.5" : "group-hover:-translate-y-0.5 group-hover:translate-x-0.5",
           )}
           strokeWidth={2}

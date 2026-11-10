@@ -2,25 +2,29 @@ import { cn } from "./cn";
 
 export type Person = { src: string; name: string; href?: string };
 
+/** GitHub avatars are sized at 2× the display size. */
+export const sizedAvatar = (src: string, px: number) => `${src}${src.includes("?") ? "&" : "?"}s=${px * 2}`;
+
 export function Avatar({
   src,
   name,
   href,
   size = 40,
-  ring,
+  shape = "circle",
   className,
-}: Person & { size?: number; ring?: boolean; className?: string }) {
+}: Person & { size?: number; shape?: "circle" | "square"; className?: string }) {
   const img = (
-    // eslint-disable-next-line @next/next/no-img-element -- external GitHub avatars, no remotePatterns configured
+    // eslint-disable-next-line @next/next/no-img-element -- external GitHub avatars; no remotePatterns configured
     <img
-      src={src}
+      src={sizedAvatar(src, size)}
       alt={name}
       width={size}
       height={size}
       loading="lazy"
+      decoding="async"
       className={cn(
-        "shrink-0 rounded-full bg-(--surface-2) object-cover outline-1 -outline-offset-1 outline-(--img-outline)",
-        ring && "ring-2 ring-(--accent) ring-offset-2 ring-offset-(--bg)",
+        "shrink-0 bg-(--surface-2) object-cover outline-1 -outline-offset-1 outline-(--img-outline)",
+        shape === "circle" ? "rounded-full" : "rounded-(--radius-sm)",
         className,
       )}
       style={{ width: size, height: size }}
@@ -35,23 +39,13 @@ export function Avatar({
   );
 }
 
-/** Overlapping faces with a "+N" chip when there are more than `max`. */
-export function AvatarStack({ people, max = 5, size = 28 }: { people: Person[]; max?: number; size?: number }) {
-  const shown = people.slice(0, max);
-  const more = people.length - shown.length;
+/** Up to 5 overlapping 24px faces with a 2px surface ring. */
+export function AvatarStack({ people, max = 5, size = 24, className }: { people: Person[]; max?: number; size?: number; className?: string }) {
   return (
-    <div className="flex items-center -space-x-2">
-      {shown.map((p) => (
-        <Avatar key={p.src} {...p} size={size} className="ring-2 ring-(--surface)" />
+    <span className={cn("flex items-center -space-x-1.5", className)}>
+      {people.slice(0, max).map((p) => (
+        <Avatar key={p.src} src={p.src} name={p.name} size={size} className="ring-2 ring-(--surface)" />
       ))}
-      {more > 0 && (
-        <span
-          className="grid place-items-center rounded-full bg-(--surface-2) text-xs font-medium tabular-nums text-(--fg-muted) ring-2 ring-(--surface)"
-          style={{ width: size, height: size }}
-        >
-          +{more}
-        </span>
-      )}
-    </div>
+    </span>
   );
 }

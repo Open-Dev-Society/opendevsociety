@@ -250,6 +250,19 @@ body {
   }
 }
 
+/* Hero load-in, the only one on the site (brief §6): rise 8px out of a 4px blur, staggered 60ms via --i. */
+@keyframes site-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(4px);
+  }
+}
+.site .rise {
+  animation: site-rise var(--d-5) var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+
 .font-display {
   font-family: var(--font-display);
 }

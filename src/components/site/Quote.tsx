@@ -1,38 +1,60 @@
 import { cn } from "./cn";
-import { Card } from "./Card";
 
-/** Strips wrapping quotes and turns inner straight quotes into curly singles, so the rendered “ ” never double up. */
+/** Trims straight and curly quotes from both ends and turns inner straight quotes into curly singles. The marks come from <q>. */
 export const cleanQuote = (s: string) =>
   s
     .replace(/&amp;/g, "&")
     .trim()
-    .replace(/^["“]|["”]$/g, "")
+    .replace(/^["“”]+|["“”]+$/g, "")
     .replace(/"([^"]*)"/g, "‘$1’");
 
+/**
+ * A printed review. `feature` sets the quote in Newsreader at display size with hanging punctuation;
+ * `compact` at 22px. Attribution: the name signed, then source and year, linked when there's an href.
+ */
 export function Quote({
   quote,
-  cite,
+  name,
+  source,
+  year,
   href,
-  size = "md",
+  variant = "compact",
   className,
 }: {
   quote: string;
-  cite: React.ReactNode;
+  name: string;
+  source?: string;
+  year?: string;
   href?: string;
-  size?: "md" | "lg";
+  variant?: "feature" | "compact";
   className?: string;
 }) {
+  const rest = [source, year].filter(Boolean).join(" · ");
   return (
-    <Card href={href} external={!!href} className={cn("flex h-full flex-col justify-between gap-6", className)}>
+    <figure className={cn("flex flex-col", className)}>
       <blockquote
         className={cn(
-          "font-display text-pretty text-(--fg)",
-          size === "lg" ? "text-2xl leading-snug sm:text-[28px]" : "text-lg leading-snug",
+          "text-(--fg)",
+          variant === "feature" ? "quote-feature -indent-[0.4em]" : "font-(family-name:--font-sign) text-[22px] leading-[1.35] italic",
         )}
       >
-        “{cleanQuote(quote)}”
+        <q>{cleanQuote(quote)}</q>
       </blockquote>
-      <p className="text-sm text-(--fg-muted)">{cite}</p>
-    </Card>
+      <figcaption className="t-meta mt-5 text-(--fg-muted)">
+        <span className="sign text-(--fg)">{name}</span>
+        {rest && (
+          <>
+            {" · "}
+            {href ? (
+              <a href={href} target="_blank" rel="noopener noreferrer" className="hover:text-(--fg)">
+                {rest} ↗
+              </a>
+            ) : (
+              rest
+            )}
+          </>
+        )}
+      </figcaption>
+    </figure>
   );
 }
