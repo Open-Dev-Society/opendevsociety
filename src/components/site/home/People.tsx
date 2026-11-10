@@ -12,7 +12,7 @@ const face = "size-11 sm:size-14";
 export function People({ builders }: { builders: Builder[] }) {
   const faces = [...builders.filter((b) => b.core), ...builders.filter((b) => !b.core)];
   return (
-    <section id="people" aria-labelledby="people-h" data-grid="Contributors" className={`scroll-mt-16 ${band}`}>
+    <section id="people" aria-labelledby="people-h" data-grid="Contributors" className={`scroll-mt-16 border-t border-(--line) ${band}`}>
       <Container>
         <p className={label}>Contributors · maintainers first</p>
         <h2 id="people-h" className={`${display} mt-3 max-w-[18ch] text-[clamp(2.5rem,1.6rem+3.6vw,5rem)]`}>
@@ -23,7 +23,16 @@ export function People({ builders }: { builders: Builder[] }) {
           {faces.map((b) => (
             <li key={b.login}>
               <a href={b.url} {...ext} title={b.name ?? `@${b.login}`} className={`block ${focus}`}>
-                <Dither src={sizedAvatar(b.avatar, 56)} alt={b.name ?? b.login} width={1} height={1} tone="duotone" cell={1} className={face} />
+                <Dither
+                  src={sizedAvatar(b.avatar, 56)}
+                  alt={b.name ?? b.login}
+                  width={1}
+                  height={1}
+                  tone="duotone"
+                  negative
+                  cell={1}
+                  className={face}
+                />
               </a>
             </li>
           ))}
@@ -36,6 +45,7 @@ export function People({ builders }: { builders: Builder[] }) {
                 height={1}
                 variant="mark"
                 tone="duotone"
+                negative
                 cell={1}
                 develop
                 className={`${face} shadow-[0_0_0_1px_var(--mark)]`}

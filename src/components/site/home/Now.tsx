@@ -15,7 +15,7 @@ function line(a: Activity) {
 export function Now({ activity, now }: { activity: Activity[]; now: number }) {
   const feed = activity.slice(0, 8);
   return (
-    <section aria-labelledby="now-h" data-grid="Happening now" className={`tone-inverse ${band}`}>
+    <section aria-labelledby="now-h" data-grid="Happening now" className={`border-t border-(--line) ${band}`}>
       <Container className="grid gap-10 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
         <div className="lg:col-span-4">
           <h2 id="now-h" className={`${display} text-[clamp(2.5rem,1.6rem+3.6vw,5rem)]`}>
