@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { cn } from "./cn";
+import { LabButton } from "./lab-hero/LabButton";
 
 export type NavLink = {
   label: string;
@@ -16,12 +17,11 @@ export type NavLink = {
 
 const isActive = (path: string, href: string) => path === href || path.startsWith(`${href}/`);
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus)";
-// The lab's call to action: bracketed mono text that inverts to ink on hover, never a pill.
-const bracket = "inline-flex items-center font-mono text-(--fg) transition-colors duration-(--d-2) ease-(--ease-ui) hover:bg-(--fg) hover:text-(--bg)";
 
 /**
  * Sticky site nav in the lab's instrument language: logo + ODS·LAB, mono labels with a sliding teal marker,
- * a plain stars label and a bracketed call to action. Below 768 the links move into a sheet that closes on route change and Escape.
+ * a plain stars label and the lab's primary button. Over a [data-under-nav] hero (Home) it is transparent and the field runs
+ * beneath it; past the hero it turns solid with a hairline. Below 768 the links move into a modal sheet (Escape closes it).
  */
 export function Nav({
   brand,
@@ -40,6 +40,17 @@ export function Nav({
   const home = path === "/";
   const [open, setOpen] = useState(false);
   const [section, setSection] = useState<string | null>(null);
+  // Home renders transparent from the server (the page loads at the top, over the hero); the observer corrects it from there.
+  const [overHero, setOverHero] = useState(true);
+  const over = home && overHero;
+
+  useEffect(() => {
+    const hero = document.querySelector("[data-under-nav]");
+    if (!hero) return;
+    const io = new IntersectionObserver(([e]) => setOverHero(e.isIntersecting), { rootMargin: "-64px 0px 0px 0px" });
+    io.observe(hero);
+    return () => io.disconnect();
+  }, [path]);
 
   // Home: the marker follows the section in view.
   useEffect(() => {
@@ -67,7 +78,13 @@ export function Nav({
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     addEventListener("keydown", onKey);
-    return () => removeEventListener("keydown", onKey);
+    // The sheet is modal: the page behind it doesn't scroll.
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      removeEventListener("keydown", onKey);
+      document.body.style.overflow = overflow;
+    };
   }, [open]);
 
   const hrefFor = (l: NavLink) => (home && l.section ? `#${l.section}` : l.href);
@@ -75,7 +92,12 @@ export function Nav({
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-(--bg)/88 shadow-[0_1px_0_var(--line)] backdrop-blur-md backdrop-saturate-[1.4]">
+      <header
+        className={cn(
+          "sticky top-0 z-50 transition-[background-color,box-shadow] duration-(--d-3) ease-(--ease-ui)",
+          over && !open ? "bg-transparent" : "bg-(--bg)/88 shadow-[0_1px_0_var(--line)] backdrop-blur-md backdrop-saturate-[1.4]",
+        )}
+      >
         <nav aria-label="Main" className="mx-auto flex h-16 w-full max-w-(--container) items-center gap-3 px-(--gutter) font-mono text-[13px]">
           <Link href="/" aria-label={`${brand.name}, home`} className={cn(focus, "mr-auto flex items-center gap-2.5 md:mr-6")}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -120,11 +142,9 @@ export function Nav({
           >
             {stars.label}&nbsp;<span aria-hidden>★</span>
           </a>
-          <a href={contribute.href} className={cn(focus, bracket, "h-11 px-1")}>
-            <span aria-hidden>[&nbsp;</span>
+          <LabButton href={contribute.href} size="sm">
             {contribute.label}
-            <span aria-hidden>&nbsp;]</span>
-          </a>
+          </LabButton>
 
           <button
             type="button"
@@ -144,6 +164,9 @@ export function Nav({
         {open && (
           <motion.div
             id="site-sheet"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu"
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0, transition: { duration: 0.28, ease: [0.16, 1, 0.3, 1] } }}
             exit={{ opacity: 0, y: -8, transition: { duration: 0.18, ease: [0.2, 0, 0, 1] } }}
@@ -176,15 +199,9 @@ export function Nav({
                 </a>
               ))}
             </div>
-            <a
-              href={contribute.href}
-              onClick={() => setOpen(false)}
-              className={cn(focus, bracket, "mt-auto h-13 justify-center text-[15px] shadow-[0_0_0_1px_var(--fg)]")}
-            >
-              <span aria-hidden>[&nbsp;</span>
+            <LabButton href={contribute.href} onClick={() => setOpen(false)} className="mt-auto w-full">
               {contribute.label}
-              <span aria-hidden>&nbsp;]</span>
-            </a>
+            </LabButton>
           </motion.div>
         )}
       </AnimatePresence>

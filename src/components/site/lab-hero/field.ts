@@ -1,23 +1,12 @@
 // The Turing field: Gray–Scott reaction–diffusion on the GPU, shown through a 1-bit Bayer 8×8 dither.
 // The H1's glyphs are the culture: they are seeded first, the reaction fills them, then spreads into the field.
-// A loupe under the pointer re-dithers what it sees on the CPU with real error diffusion.
-
-export const ALGOS = ["Floyd–Steinberg", "Atkinson", "Jarvis–Judice–Ninke"] as const;
-// [dx, dy, weight] per kernel, weights already divided by their sum.
-const KERNELS: [number, number, number][][] = [
-  [[1, 0, 7], [-1, 1, 3], [0, 1, 5], [1, 1, 1]].map(([x, y, w]) => [x, y, w / 16]),
-  [[1, 0, 1], [2, 0, 1], [-1, 1, 1], [0, 1, 1], [1, 1, 1], [0, 2, 1]].map(([x, y, w]) => [x, y, w / 8]),
-  [[1, 0, 7], [2, 0, 5], [-2, 1, 3], [-1, 1, 5], [0, 1, 7], [1, 1, 5], [2, 1, 3], [-2, 2, 1], [-1, 2, 3], [0, 2, 5], [1, 2, 3], [2, 2, 1]].map(
-    ([x, y, w]) => [x, y, w / 48],
-  ),
-];
 
 // Spots (mitosis) on the left drift into coral on the right; letters always coral, so they fill.
 export const REGIMES = { spots: [0.0367, 0.0649], coral: [0.0545, 0.062] } as const;
 
 const BAYER = [0, 32, 8, 40, 2, 34, 10, 42, 48, 16, 56, 24, 50, 18, 58, 26, 12, 44, 4, 36, 14, 46, 6, 38, 60, 28, 52, 20, 62, 30, 54, 22, 3, 35, 11, 43, 1, 33, 9, 41, 51, 19, 59, 27, 49, 17, 57, 25, 15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55, 23, 61, 29, 53, 21];
 
-export type FieldOpts = { reduced: boolean; mobile: boolean; onLens: (x: number, y: number, r: number, algo: number) => void };
+export type FieldOpts = { mobile: boolean };
 
 const VS = `#version 300 es
 void main() { vec2 p = vec2(float((gl_VertexID << 1) & 2), float(gl_VertexID & 2)); gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0); }`;
@@ -48,13 +37,11 @@ void main() {
 
 const SHOW = `#version 300 es
 precision highp float;
-uniform sampler2D u_sim, u_zone, u_glyph, u_lens;
+uniform sampler2D u_sim, u_zone, u_glyph;
 uniform vec2 u_css;    // canvas size, CSS px
 uniform float u_dpr, u_cell; // device px per CSS px, dither cell in device px
-uniform vec3 u_lensP;  // centre (CSS px, y up), radius
-uniform float u_lensN, u_mag;
-uniform int u_pass;    // 0: screen, 1: lens tone tile
-uniform vec3 u_paper, u_ink, u_teal, u_rose;
+uniform float u_band;  // CSS px at the top kept as paper for the nav, fading back over as much again
+uniform vec3 u_paper, u_ink, u_teal;
 out vec4 o;
 const int B[64] = int[64](${BAYER});
 float bayer(ivec2 c) { c &= 7; return (float(B[c.y * 8 + c.x]) + 0.5) / 64.0; }
@@ -67,44 +54,19 @@ vec4 sim(vec2 uv) {
   vec4 c = texelFetch(u_sim, clamp(i + ivec2(0, 1), ivec2(0), m), 0), d = texelFetch(u_sim, clamp(i + ivec2(1, 1), ivec2(0), m), 0);
   return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
 }
-// Pattern tone in the field: full inside the letters, hushed in the halo around them so the type reads.
-float tone(vec2 uv, vec4 s) {
-  vec4 z = texture(u_zone, uv);
-  float gain = max(mix(1.0, 0.1, smoothstep(0.05, 0.55, z.g)), z.r);
-  return smoothstep(0.1, 0.42, s.g) * gain;
-}
 void main() {
-  if (u_pass == 1) {
-    vec2 src = u_lensP.xy + ((gl_FragCoord.xy / u_lensN) * 2.0 - 1.0) * u_lensP.z / u_mag;
-    vec2 uv = src / u_css;
-    vec4 s = sim(uv);
-    float g = texture(u_glyph, uv).r * smoothstep(0.2, 0.9, s.b);
-    o = vec4(max(tone(uv, s), g), step(0.5, g), 0.0, 1.0);
-    return;
-  }
-  vec2 fc = gl_FragCoord.xy, p = fc / u_dpr;
-  float d = length(p - u_lensP.xy), R = u_lensP.z;
-  if (R > 0.0 && d < R + 9.0) {
-    vec2 q = p - u_lensP.xy;
-    if (d < R) {
-      vec2 v = texelFetch(u_lens, ivec2((q / R * 0.5 + 0.5) * u_lensN), 0).rg;
-      o = vec4(v.r > 0.5 ? (v.g > 0.5 ? u_ink : u_teal) : u_paper, 1.0);
-      return;
-    }
-    // The reticle: a 1.5px ring and four ticks, the one rose thing on the page.
-    float ring = 1.0 - smoothstep(0.75, 0.75 + 1.0 / u_dpr, abs(d - R - 0.75));
-    float tick = step(d, R + 8.0) * (1.0 - smoothstep(0.5, 1.25, min(abs(q.x), abs(q.y))));
-    float a = max(ring, tick);
-    if (a > 0.0) { o = vec4(mix(u_paper, u_rose, a), 1.0); return; }
-  }
+  vec2 fc = gl_FragCoord.xy;
   ivec2 cell = ivec2(floor(fc / u_cell));
   vec2 uv = (vec2(cell) + 0.5) * u_cell / u_dpr / u_css;
-  vec4 s = sim(uv);
+  vec4 s = sim(uv), z = texture(u_zone, uv);
   float t = bayer(cell);
-  vec3 col = tone(uv, s) > t ? u_teal : u_paper;
+  // Pattern tone: full inside the letters, hushed in the halo around them (and the plates) so the type reads.
+  float gain = max(mix(1.0, 0.1, smoothstep(0.05, 0.55, z.g)), z.r);
+  if (u_band > 0.0) gain *= smoothstep(u_band * 0.75, u_band * 2.0, u_css.y - fc.y / u_dpr);
+  vec3 col = smoothstep(0.1, 0.42, s.g) * gain > t ? u_teal : u_paper;
+  // Letters take ink once the reaction has passed through them (W), at device-pixel crispness.
   float cov = texelFetch(u_glyph, ivec2(fc), 0).r;
-  col = mix(col, u_ink, cov * step(t, s.b * 1.06 - 0.03));
-  o = vec4(col, 1.0);
+  o = vec4(mix(col, u_ink, cov * step(t, s.b * 1.06 - 0.03)), 1.0);
 }`;
 
 function compile(gl: WebGL2RenderingContext, fs: string) {
@@ -132,18 +94,39 @@ function texture(gl: WebGL2RenderingContext, filter: number) {
   return t;
 }
 
-/** CSS colour (oklch, hex, anything) → linear-free sRGB 0..1, via a 1px 2D canvas. */
-export function readColors(el: Element) {
+// Each token with the value globals.css gives it, so a stylesheet that lacks one (an older build, a cached CSS) still
+// renders the brand: teal on off-white, never the canvas default black.
+const TOKENS = { paper: ["--bg", "#f8f9fa"], ink: ["--fg", "#051c20"], teal: ["--accent-brand", "#288488"] } as const;
+type Colors = Record<keyof typeof TOKENS, [number, number, number]>;
+
+/** The field's colours as sRGB 0..1, resolved where `el` sits (so they inherit like any text colour). */
+export function readColors(el: Element): Colors {
+  const probe = el.appendChild(document.createElement("i"));
+  probe.hidden = true;
   const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true })!;
-  const cs = getComputedStyle(el);
-  const rgb = (name: string) => {
-    ctx.fillStyle = "#000";
-    ctx.fillStyle = cs.getPropertyValue(name).trim();
+  const out = {} as Colors;
+  for (const [key, [name, fallback]] of Object.entries(TOKENS) as [keyof Colors, readonly [string, string]][]) {
+    probe.style.color = `var(${name}, ${fallback})`;
+    ctx.fillStyle = fallback;
+    ctx.fillStyle = getComputedStyle(probe).color; // ignored if this browser can't parse it, keeping the fallback
     ctx.fillRect(0, 0, 1, 1);
     const d = ctx.getImageData(0, 0, 1, 1).data;
-    return [d[0] / 255, d[1] / 255, d[2] / 255] as const;
+    out[key] = [d[0] / 255, d[1] / 255, d[2] / 255];
+  }
+  probe.remove();
+  return out;
+}
+
+/** Calls `cb` when the colour scheme or the root's theme attributes change. Returns the cleanup. */
+export function watchTheme(cb: () => void) {
+  const mq = matchMedia("(prefers-color-scheme: dark)");
+  const mo = new MutationObserver(cb);
+  mo.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "style", "data-theme"] });
+  mq.addEventListener("change", cb);
+  return () => {
+    mo.disconnect();
+    mq.removeEventListener("change", cb);
   };
-  return { paper: rgb("--bg"), ink: rgb("--fg"), teal: rgb("--accent-brand"), rose: rgb("--mark") };
 }
 
 /** Draws the H1's words where the DOM put them, into a canvas `scale` device px per CSS px. halo > 0 also paints a blurred dilation in green. */
@@ -183,27 +166,6 @@ export function drawGlyphs(h1: HTMLElement, origin: DOMRect, w: number, h: numbe
   return c;
 }
 
-/** Serpentine error diffusion of an N×N RGBA tone tile (R = tone, G = glyph) into an RG 1-bit tile. */
-export function diffuse(src: Uint8Array, n: number, algo: number, out: Uint8Array, err: Float32Array) {
-  const k = KERNELS[algo];
-  for (let i = 0; i < n * n; i++) err[i] = src[i * 4] / 255;
-  for (let y = 0; y < n; y++) {
-    const rtl = y & 1;
-    for (let j = 0; j < n; j++) {
-      const x = rtl ? n - 1 - j : j;
-      const i = y * n + x;
-      const bit = err[i] > 0.5 ? 1 : 0;
-      const e = err[i] - bit;
-      out[i * 2] = bit * 255;
-      out[i * 2 + 1] = src[i * 4 + 1];
-      for (const [dx, dy, wt] of k) {
-        const xx = rtl ? x - dx : x + dx, yy = y + dy;
-        if (xx >= 0 && xx < n && yy < n) err[yy * n + xx] += e * wt;
-      }
-    }
-  }
-}
-
 /** Starts the field; returns a cleanup, or null when the browser can't run it (no WebGL2 or float targets). */
 export function startField(section: HTMLElement, canvas: HTMLCanvasElement, opts: FieldOpts): (() => void) | null {
   // Probe on a throwaway canvas, so a failure leaves the real one free for the 2D fallback.
@@ -215,10 +177,9 @@ export function startField(section: HTMLElement, canvas: HTMLCanvasElement, opts
   if (!gl || !gl.getExtension("EXT_color_buffer_float")) return null;
   const h1 = section.querySelector("h1")!;
   const sim = compile(gl, SIM), show = compile(gl, SHOW);
-  const colors = readColors(section);
+  let colors = readColors(section);
   const SIM_SCALE = opts.mobile ? 1 / 4 : 1 / 3; // sim cells per CSS px
   const STEPS = opts.mobile ? 8 : 16;
-  const LENS_R = opts.mobile ? 52 : 84, MAG = 2;
 
   const state = [texture(gl, gl.NEAREST), texture(gl, gl.NEAREST)];
   const fbo = state.map((t) => {
@@ -229,13 +190,9 @@ export function startField(section: HTMLElement, canvas: HTMLCanvasElement, opts
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, t, 0);
     return f;
   });
-  const zone = texture(gl, gl.LINEAR), glyph = texture(gl, gl.LINEAR), lensTex = texture(gl, gl.NEAREST);
-  const toneTex = texture(gl, gl.NEAREST), toneFbo = gl.createFramebuffer()!;
+  const zone = texture(gl, gl.LINEAR), glyph = texture(gl, gl.LINEAR);
 
-  let w = 0, h = 0, sw = 0, sh = 0, dpr = 1, cell = 2, cur = 0, n = 0;
-  let lensBuf = new Uint8Array(0), lensOut = new Uint8Array(0), lensErr = new Float32Array(0);
-  let fence: WebGLSync | null = null, fenceAt: [number, number] = [0, 0];
-  const lens = { x: 0, y: 0, shown: null as [number, number] | null, algo: 0, active: false }; // shown: centre of the last tile, null until one lands
+  let w = 0, h = 0, sw = 0, sh = 0, dpr = 1, cell = 2, cur = 0, band = 0;
   let seed: [number, number, number] | null = null;
 
   function setup() {
@@ -250,8 +207,8 @@ export function startField(section: HTMLElement, canvas: HTMLCanvasElement, opts
     cell = Math.max(2, Math.round(2 * dpr));
     sw = Math.max(8, Math.round(w * SIM_SCALE));
     sh = Math.max(8, Math.round(h * SIM_SCALE));
-    n = Math.ceil((2 * LENS_R * dpr) / cell);
-    if (!lens.active) park();
+    band = parseFloat(getComputedStyle(section).paddingTop) || 0; // the nav floats over this strip
+    colors = readColors(section); // again here: by now the stylesheet has certainly applied
 
     gl!.pixelStorei(gl!.UNPACK_FLIP_Y_WEBGL, true);
     const z = drawGlyphs(h1, r, sw, sh, SIM_SCALE, 34 * SIM_SCALE * (opts.mobile ? 0.6 : 1));
@@ -278,25 +235,8 @@ export function startField(section: HTMLElement, canvas: HTMLCanvasElement, opts
       gl!.bindTexture(gl!.TEXTURE_2D, t);
       gl!.texImage2D(gl!.TEXTURE_2D, 0, gl!.RGBA32F, sw, sh, 0, gl!.RGBA, gl!.FLOAT, init);
     }
-    gl!.bindTexture(gl!.TEXTURE_2D, toneTex);
-    gl!.texImage2D(gl!.TEXTURE_2D, 0, gl!.RGBA8, n, n, 0, gl!.RGBA, gl!.UNSIGNED_BYTE, null);
-    gl!.bindFramebuffer(gl!.FRAMEBUFFER, toneFbo);
-    gl!.framebufferTexture2D(gl!.FRAMEBUFFER, gl!.COLOR_ATTACHMENT0, gl!.TEXTURE_2D, toneTex, 0);
-    gl!.bindTexture(gl!.TEXTURE_2D, lensTex);
-    gl!.texImage2D(gl!.TEXTURE_2D, 0, gl!.RG8, n, n, 0, gl!.RG, gl!.UNSIGNED_BYTE, null);
-    lensBuf = new Uint8Array(n * n * 4);
-    lensOut = new Uint8Array(n * n * 2);
-    lensErr = new Float32Array(n * n);
-    if (fence) gl!.deleteSync(fence);
-    fence = null;
     cur = 0;
     return true;
-  }
-
-  // Parked over the field, right of the type, so the rose reticle is there before anyone moves.
-  function park() {
-    lens.x = w * (opts.mobile ? 0.7 : 0.64);
-    lens.y = h * (opts.mobile ? 0.76 : 0.6);
   }
 
   function step(k: number) {
@@ -318,86 +258,43 @@ export function startField(section: HTMLElement, canvas: HTMLCanvasElement, opts
     seed = null;
   }
 
-  function bindShow(pass: number, [lx, ly]: [number, number] = [0, 0], r = LENS_R) {
+  function render() {
     gl!.useProgram(show.p);
     const U = show.u;
-    [state[cur], zone, glyph, lensTex].forEach((t, i) => {
+    [state[cur], zone, glyph].forEach((t, i) => {
       gl!.activeTexture(gl!.TEXTURE0 + i);
       gl!.bindTexture(gl!.TEXTURE_2D, t);
     });
-    ["u_sim", "u_zone", "u_glyph", "u_lens"].forEach((name, i) => gl!.uniform1i(U(name), i));
+    ["u_sim", "u_zone", "u_glyph"].forEach((name, i) => gl!.uniform1i(U(name), i));
+    gl!.activeTexture(gl!.TEXTURE0);
     gl!.uniform2f(U("u_css"), w, h);
     gl!.uniform1f(U("u_dpr"), dpr);
     gl!.uniform1f(U("u_cell"), cell);
-    gl!.uniform3f(U("u_lensP"), lx, h - ly, r);
-    gl!.uniform1f(U("u_lensN"), n);
-    gl!.uniform1f(U("u_mag"), MAG);
-    gl!.uniform1i(U("u_pass"), pass);
+    gl!.uniform1f(U("u_band"), band);
     gl!.uniform3f(U("u_paper"), ...colors.paper);
     gl!.uniform3f(U("u_ink"), ...colors.ink);
     gl!.uniform3f(U("u_teal"), ...colors.teal);
-    gl!.uniform3f(U("u_rose"), ...colors.rose);
-    gl!.activeTexture(gl!.TEXTURE0);
-  }
-
-  // Lens: draw its tone tile, wait for a fence so the read can't stall, read it, diffuse on the CPU, upload.
-  function lensTile() {
-    if (fence) {
-      if (gl!.getSyncParameter(fence, gl!.SYNC_STATUS) !== gl!.SIGNALED) return;
-      gl!.deleteSync(fence);
-      fence = null;
-      gl!.bindFramebuffer(gl!.FRAMEBUFFER, toneFbo);
-      gl!.readPixels(0, 0, n, n, gl!.RGBA, gl!.UNSIGNED_BYTE, lensBuf);
-      diffuse(lensBuf, n, lens.algo, lensOut, lensErr);
-      gl!.bindTexture(gl!.TEXTURE_2D, lensTex);
-      gl!.pixelStorei(gl!.UNPACK_ALIGNMENT, 1);
-      gl!.texSubImage2D(gl!.TEXTURE_2D, 0, 0, 0, n, n, gl!.RG, gl!.UNSIGNED_BYTE, lensOut);
-      lens.shown = fenceAt;
-      opts.onLens(fenceAt[0], fenceAt[1], LENS_R, lens.algo);
-    }
-    // Still frame: nothing new to show unless the lens moved.
-    if (opts.reduced && lens.shown?.[0] === lens.x && lens.shown[1] === lens.y) return;
-    fenceAt = [lens.x, lens.y];
-    bindShow(1, fenceAt);
-    gl!.bindFramebuffer(gl!.FRAMEBUFFER, toneFbo);
-    gl!.viewport(0, 0, n, n);
-    gl!.drawArrays(gl!.TRIANGLES, 0, 3);
-    fence = gl!.fenceSync(gl!.SYNC_GPU_COMMANDS_COMPLETE, 0);
-    gl!.flush();
-  }
-
-  let primed = 0; // frames until the lens tile has real content
-  function render() {
-    lensTile();
-    bindShow(0, lens.shown ?? undefined, lens.shown ? LENS_R : 0);
     gl!.bindFramebuffer(gl!.FRAMEBUFFER, null);
     gl!.viewport(0, 0, canvas.width, canvas.height);
     gl!.drawArrays(gl!.TRIANGLES, 0, 3);
-    if (primed < 3 && ++primed === 3) section.dataset.live = "";
+    section.dataset.live = "";
   }
 
-  // Loop: runs only while on screen and the tab is visible. Reduced motion: no steps, redraw on demand.
-  let raf = 0, onScreen = false, settle = 4, lastCycle = performance.now();
-  const loop = (t: number) => {
+  // Loop: runs only while on screen and the tab is visible. Reduced motion: one grown still, redrawn only on resize or theme change.
+  // Read live, so turning reduced motion on mid-visit freezes the field where it is.
+  const motion = matchMedia("(prefers-reduced-motion: reduce)");
+  const onMotion = () => kick();
+  motion.addEventListener("change", onMotion);
+  let raf = 0, onScreen = false;
+  const loop = () => {
     raf = 0;
-    if (setup() && opts.reduced) step(6000);
-    if (!opts.reduced) {
-      step(STEPS);
-      if (t - lastCycle > 3200) {
-        lens.algo = (lens.algo + 1) % ALGOS.length;
-        lastCycle = t;
-      }
-    }
+    if (setup() && motion.matches) step(6000);
+    if (!motion.matches) step(STEPS);
     render();
-    if (!opts.reduced || --settle > 0 || fence) schedule();
+    if (!motion.matches) kick();
   };
-  const schedule = () => {
-    if (!raf && onScreen && !document.hidden) raf = requestAnimationFrame(loop);
-  };
-  // settle: a few frames after any change, so the lens tile's async readback lands even when nothing animates.
   const kick = () => {
-    settle = 4;
-    schedule();
+    if (!raf && onScreen && !document.hidden) raf = requestAnimationFrame(loop);
   };
   const io = new IntersectionObserver(([e]) => {
     onScreen = e.isIntersecting;
@@ -407,31 +304,21 @@ export function startField(section: HTMLElement, canvas: HTMLCanvasElement, opts
   const ro = new ResizeObserver(() => kick());
   ro.observe(section);
   document.addEventListener("visibilitychange", kick);
+  const unwatch = watchTheme(() => {
+    colors = readColors(section);
+    kick();
+  });
 
+  // Click or tap drops a seed of reaction (not under reduced motion: it would need animating to show).
   const local = (e: PointerEvent) => {
     const r = section.getBoundingClientRect();
     return [e.clientX - r.left, e.clientY - r.top] as const;
   };
-  const move = (e: PointerEvent) => {
-    if (e.pointerType === "touch") return;
-    [lens.x, lens.y] = local(e);
-    lens.active = true;
-    kick();
-  };
-  const leave = () => {
-    lens.active = false;
-    park();
-    kick();
-  };
   const down = (e: PointerEvent) => {
-    if ((e.target as Element).closest("a")) return;
+    if (motion.matches || (e.target as Element).closest("a")) return;
     const [x, y] = local(e);
     seed = [(x * sw) / w, ((h - y) * sh) / h, opts.mobile ? 5 : 7];
-    if (e.pointerType === "touch") [lens.x, lens.y] = [x, y];
-    kick();
   };
-  section.addEventListener("pointermove", move);
-  section.addEventListener("pointerleave", leave);
   section.addEventListener("pointerdown", down);
 
   return () => {
@@ -439,8 +326,8 @@ export function startField(section: HTMLElement, canvas: HTMLCanvasElement, opts
     io.disconnect();
     ro.disconnect();
     document.removeEventListener("visibilitychange", kick);
-    section.removeEventListener("pointermove", move);
-    section.removeEventListener("pointerleave", leave);
+    motion.removeEventListener("change", onMotion);
+    unwatch();
     section.removeEventListener("pointerdown", down);
     delete section.dataset.live;
     gl.getExtension("WEBGL_lose_context")?.loseContext();

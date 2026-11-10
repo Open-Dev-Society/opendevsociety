@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { Fragment } from "react";
 import { ago, compact } from "@/lib/format";
 import type { getWorkshop } from "@/lib/workshop";
 import { REGIMES } from "./field";
+import { LabButton } from "./LabButton";
 import { LabClock, TuringField } from "./TuringField";
 
 type Workshop = Awaited<ReturnType<typeof getWorkshop>>;
@@ -22,37 +22,25 @@ function Label({ className, children }: { className: string; children: React.Rea
   );
 }
 
-function Cta({ href, children }: { href: string; children: React.ReactNode }) {
-  return (
-    <Link
-      href={href}
-      data-plate
-      className="-mx-1 inline-flex min-h-11 items-center bg-(--bg) px-1 font-mono text-[15px] text-(--fg) transition-colors duration-(--d-2) ease-(--ease-ui) hover:bg-(--fg) hover:text-(--bg) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus) md:text-base"
-    >
-      <span aria-hidden>[&nbsp;</span>
-      {children}
-      <span aria-hidden>&nbsp;]</span>
-    </Link>
-  );
-}
-
 /** "ODS presents itself as a lab": Turing's 1952 morphogenesis, live, with the H1 grown out of it. */
 export function LabHero({ now, tools, people, lastPush, stars }: Pick<Workshop, "now" | "tools" | "people" | "lastPush"> & { stars: number }) {
   const latest = tools.find((t) => t.pushed_at === lastPush);
   const { spots, coral } = REGIMES;
 
   return (
+    // Pulled up under the sticky nav (-mt-16 pt-16): the field runs to the top of the viewport and the nav floats over it (data-under-nav).
     <section
       aria-labelledby="lab-h1"
-      className="group relative isolate h-[clamp(520px,78svh,640px)] cursor-crosshair overflow-hidden border-b border-(--line) md:h-[clamp(600px,calc(85svh-4rem),860px)]"
+      data-under-nav
+      className="group relative isolate -mt-16 h-[calc(clamp(520px,78svh,640px)+4rem)] cursor-crosshair overflow-hidden border-b border-(--line) pt-16 md:h-[calc(clamp(600px,calc(85svh-4rem),860px)+4rem)]"
     >
       <TuringField />
 
-      <Label className="top-4 left-4 md:top-5 md:left-5">
+      <Label className="top-20 left-4 md:top-21 md:left-5">
         <span className="text-(--fg)">ODS·LAB / EXP-000</span>
         <span>Morphogenesis · after Turing, 1952</span>
       </Label>
-      <Label className="top-5 right-5 hidden text-right md:flex">
+      <Label className="top-21 right-5 hidden text-right md:flex">
         <span className="text-(--fg)">
           Gray–Scott · f {num(spots[0])}→{num(coral[0])} · k {num(spots[1])}→{num(coral[1])}
         </span>
@@ -87,9 +75,13 @@ export function LabHero({ now, tools, people, lastPush, stars }: Pick<Workshop, 
             </Fragment>
           ))}
         </h1>
-        <p className="mt-7 flex flex-wrap gap-x-7 md:mt-9">
-          <Cta href="/contribute">Join the lab →</Cta>
-          <Cta href="/projects">Experiments</Cta>
+        <p className="mt-8 flex flex-wrap items-center gap-3 md:mt-10">
+          <LabButton href="/contribute" data-plate>
+            Join the lab →
+          </LabButton>
+          <LabButton href="/projects" variant="secondary" data-plate>
+            Experiments
+          </LabButton>
         </p>
       </div>
     </section>

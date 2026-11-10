@@ -1,37 +1,27 @@
 "use client";
 
 import { useEffect, useRef, useSyncExternalStore } from "react";
-import { ALGOS, startField, staticField } from "./field";
+import { startField, staticField, watchTheme } from "./field";
 
-/** The canvas behind the lab hero, plus the instrument label that rides the lens. Must sit inside the hero <section>. */
+/** The canvas behind the lab hero. Must sit inside the hero <section>. */
 export function TuringField() {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const label = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
     const c = canvas.current!;
     const section = c.closest("section")!;
-    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
     const mobile = section.clientWidth < 768;
     let stop: (() => void) | null = null;
     let gone = false;
     // The glyphs are drawn from the loaded font, so wait for it.
     document.fonts.ready.then(() => {
       if (gone) return;
-      stop = startField(section, c, {
-        reduced,
-        mobile,
-        onLens: (x, y, r, algo) => {
-          const el = label.current!;
-          const text = `lens · ${ALGOS[algo]}`;
-          if (el.textContent !== text) el.textContent = text;
-          // Bottom-right of the ring, or bottom-left when that would run off the hero.
-          const right = x + r * 0.72 + 4;
-          const lx = right + el.offsetWidth > section.clientWidth - 8 ? x - r * 0.72 - 4 - el.offsetWidth : right;
-          el.style.transform = `translate(${Math.round(lx)}px, ${Math.round(y + r * 0.72 + 4)}px)`;
-        },
-      });
-      if (!stop) staticField(section, c);
+      stop = startField(section, c, { mobile });
+      // No WebGL2: a CPU still, redrawn if the theme changes.
+      if (!stop) {
+        staticField(section, c);
+        stop = watchTheme(() => staticField(section, c));
+      }
     });
     return () => {
       gone = true;
@@ -39,16 +29,7 @@ export function TuringField() {
     };
   }, []);
 
-  return (
-    <>
-      <canvas ref={canvas} aria-hidden className="absolute inset-0 -z-10 size-full [image-rendering:pixelated]" />
-      <p
-        ref={label}
-        aria-hidden
-        className="t-mono pointer-events-none absolute top-0 left-0 z-10 bg-(--bg) px-1.5 text-[11px] whitespace-nowrap text-(--fg) opacity-0 transition-opacity duration-(--d-4) group-data-[live]:opacity-100"
-      />
-    </>
-  );
+  return <canvas ref={canvas} aria-hidden className="absolute inset-0 -z-10 size-full [image-rendering:pixelated]" />;
 }
 
 const tick = (cb: () => void) => {
