@@ -151,8 +151,9 @@ export function drawGlyphs(h1: HTMLElement, origin: DOMRect, w: number, h: numbe
     ctx.lineJoin = "round";
     words.forEach((wd) => ctx.strokeText(wd.text, wd.x, wd.y + ctx.measureText(wd.text).fontBoundingBoxAscent));
     draw();
-    // Plates (corner labels, CTAs) hush the field around them the same way the letters do.
-    for (const el of h1.closest("section")?.querySelectorAll("[data-plate]") ?? []) {
+    // The CTAs hush the field around them the same way the letters do. The other plates are opaque and flush, so they need
+    // no hush: a halo would only show as a paper notch beside them.
+    for (const el of h1.closest("section")?.querySelectorAll("a[data-plate]") ?? []) {
       const r = el.getBoundingClientRect(), m = 10;
       if (r.width) ctx.fillRect((r.left - origin.left - m) * scale, (r.top - origin.top - m) * scale, (r.width + 2 * m) * scale, (r.height + 2 * m) * scale);
     }
