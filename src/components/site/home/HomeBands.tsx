@@ -1,4 +1,4 @@
-import { getActivity, getCommitsThisWeek, getGoodFirstIssues, getOrgTotals } from "@/lib/github";
+import { getActivity, getCommitsThisWeek, getGoodFirstIssues, getOrgTotals, getProject } from "@/lib/github";
 import { getWorkshop } from "@/lib/workshop";
 import { About } from "./About";
 import { Founders } from "./Founders";
@@ -16,9 +16,12 @@ export async function HomeBands() {
     getGoodFirstIssues(),
     getCommitsThisWeek(),
   ]);
+  // Org-wide commits per week: the projects' 52-week series (same cached calls as their pages), summed, last 12.
+  const series = (await Promise.all(tools.map((t) => getProject(t.name)))).map((p) => p?.weeks.map((w) => w.commits) ?? []);
+  const weeks = Array.from({ length: 12 }, (_, i) => series.reduce((n, s) => n + (s[s.length - 12 + i] ?? 0), 0));
   return (
     <>
-      <About stars={totals.stars} contributors={builders.length} projects={tools.length} commits={commits.count} />
+      <About tools={tools} builders={builders} stars={totals.stars} commits={commits.count} weeks={weeks} now={now} />
       <Projects tools={tools} builders={builders} now={now} />
       {activity.length > 0 && <Now activity={activity} now={now} />}
       <People builders={builders} />
