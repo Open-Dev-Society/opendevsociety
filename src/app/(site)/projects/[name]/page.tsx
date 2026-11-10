@@ -9,7 +9,8 @@ import { Plate } from "@/components/site/lab/Plate";
 import { Record } from "@/components/site/lab/Record";
 import { catalog } from "@/data/catalog";
 import { ago, compact } from "@/lib/format";
-import { labDate, status, STATUS_MARK } from "@/lib/lab";
+import { labDate, status } from "@/lib/lab";
+import { ArrowRight, External, Star, StatusDot } from "@/components/site/Icon";
 import { getWorkshop } from "@/lib/workshop";
 import { CopyButton } from "../../manifesto/CopyButton";
 import { STATUS_LABEL } from "../status";
@@ -65,8 +66,8 @@ export default async function ProjectPage({ params }: Props) {
 
   // Its facts, read left to right.
   const sheet: [string, React.ReactNode][] = [
-    ["Status", `${STATUS_MARK[st]} ${STATUS_LABEL[st]}`],
-    ["Stars", `${repo.stars.toLocaleString("en-US")} ★`],
+    ["Status", <><StatusDot status={st} /> {STATUS_LABEL[st]}</>],
+    ["Stars", <>{repo.stars.toLocaleString("en-US")} <Star size="1em" label="stars" /></>],
     ["Forks", repo.forks.toLocaleString("en-US")],
     ["Contributors", people],
     ["Language", repo.language ?? "—"],
@@ -101,9 +102,9 @@ export default async function ProjectPage({ params }: Props) {
           </p>
           {repo.description && <p className="mt-4 max-w-[65ch] text-[17px] leading-relaxed text-(--fg-muted)">{repo.description}</p>}
           <p className="mt-8 flex flex-wrap gap-3">
-            {repo.homepage && <LabButton href={repo.homepage}>Open the project ↗</LabButton>}
+            {repo.homepage && <LabButton href={repo.homepage}>Open the project <External size="1em" /></LabButton>}
             <LabButton href={repo.html_url} variant={repo.homepage ? "secondary" : "primary"}>
-              Source on GitHub ↗
+              Source on GitHub <External size="1em" />
             </LabButton>
           </p>
         </Record>
@@ -127,7 +128,7 @@ export default async function ProjectPage({ params }: Props) {
             </Plate>
             <Plate as="div" className="absolute bottom-3 left-3 hidden md:bottom-4 md:left-4 md:inline-flex">
               <span className="group-hover:hidden group-focus-visible:hidden">hover to see it</span>
-              <span className="hidden group-hover:inline group-focus-visible:inline">{repo.homepage ? "open the project ↗" : "open on GitHub ↗"}</span>
+              <span className="hidden group-hover:inline group-focus-visible:inline">{repo.homepage ? "open the project" : "open on GitHub"} <External size="1em" /></span>
             </Plate>
           </a>
         </Container>
@@ -146,7 +147,7 @@ export default async function ProjectPage({ params }: Props) {
           <p className="t-mono border-b border-(--line) py-8 text-[13px] text-(--fg-muted)">
             GitHub is still counting this project&apos;s commits. Check back in a few minutes, or{" "}
             <a href={`${repo.html_url}/commits`} className="text-(--accent) underline underline-offset-4">
-              see them on GitHub ↗
+              see them on GitHub <External size="1em" />
             </a>
           </p>
         )}
@@ -174,7 +175,7 @@ export default async function ProjectPage({ params }: Props) {
         {people > MAX_PEOPLE && (
           <p className="t-mono mt-4 text-[13px]">
             <a href={`${repo.html_url}/graphs/contributors`} className="text-(--accent) underline underline-offset-4">
-              and {people - MAX_PEOPLE} more on GitHub ↗
+              and {people - MAX_PEOPLE} more on GitHub <External size="1em" />
             </a>
           </p>
         )}
@@ -196,7 +197,7 @@ export default async function ProjectPage({ params }: Props) {
             </div>
             <p className="mt-8">
               <LabButton href="/contribute" variant="secondary" size="md">
-                How to contribute →
+                How to contribute <ArrowRight size="1em" />
               </LabButton>
             </p>
           </div>
@@ -210,7 +211,7 @@ export default async function ProjectPage({ params }: Props) {
                     <a href={i.url} className="group flex items-baseline gap-4 py-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus)">
                       <span className="t-mono shrink-0 text-[12px] text-(--fg-subtle) tabular-nums">#{i.number}</span>
                       <span className="min-w-0 flex-1 text-(--fg) group-hover:underline group-hover:underline-offset-4">{i.title}</span>
-                      <span className="t-mono shrink-0 text-[12px] text-(--fg-subtle)">{ago(i.createdAt, now)} ↗</span>
+                      <span className="t-mono shrink-0 text-[12px] text-(--fg-subtle)">{ago(i.createdAt, now)} <External size="1em" /></span>
                     </a>
                   </li>
                 ))}
@@ -219,7 +220,7 @@ export default async function ProjectPage({ params }: Props) {
               <p className="border-b border-(--line) py-6 text-[16px] leading-relaxed text-(--fg-muted)">
                 None open right now.{" "}
                 <a href={`${repo.html_url}/issues${repo.open_issues ? "" : "/new"}`} className="text-(--fg) underline underline-offset-4">
-                  {repo.open_issues ? `See all ${repo.open_issues} open issues ↗` : "Open an issue ↗"}
+                  {repo.open_issues ? `See all ${repo.open_issues} open issues` : "Open an issue"} <External size="1em" />
                 </a>{" "}
                 {repo.open_issues ? "or suggest an improvement of your own." : "with a bug or an idea."}
               </p>
@@ -240,7 +241,7 @@ export default async function ProjectPage({ params }: Props) {
                 </span>
                 <span className="t-mono mt-2 block text-[12px] text-(--fg-muted)">
                   {p.release.name && p.release.name !== p.release.tag && `${p.release.name} · `}
-                  {labDate(p.release.publishedAt)} · release notes ↗
+                  {labDate(p.release.publishedAt)} · release notes <External size="1em" />
                 </span>
               </a>
             </div>
@@ -273,7 +274,7 @@ export default async function ProjectPage({ params }: Props) {
                 )}
                 <span className="mt-3 flex items-baseline justify-between gap-3">
                   <span className="font-[700] text-(--fg) group-hover:underline group-hover:underline-offset-4">{t.name}</span>
-                  <span className="t-mono text-[12px] text-(--fg-muted) tabular-nums">{compact(t.stars)} ★</span>
+                  <span className="t-mono text-[12px] text-(--fg-muted) tabular-nums">{compact(t.stars)} <Star size="1em" label="stars" /></span>
                 </span>
                 <span className="mt-0.5 block text-[15px] leading-snug text-(--fg-muted)">{catalog[t.name].tagline}</span>
               </Link>

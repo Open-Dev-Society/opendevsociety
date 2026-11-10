@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { headers } from "next/headers";
 import type { Metadata } from "next";
-import { AlertCircle, CircleCheck } from "lucide-react";
+import { Alert, Check } from "@/components/site/Icon";
 import { getCert, type Cert } from "@/lib/certs";
 import { Container, Footer, Ledger, VerifyForm } from "@/components/site";
 import { CertificateDocument, formatDate } from "@/components/site/certificate/CertificateDocument";
@@ -49,7 +49,7 @@ export default async function VerifyPage({ params }: Props) {
           {error ? (
             <div className="max-w-xl">
               <h1 className="t-title flex items-center gap-2">
-                <AlertCircle className="size-5 shrink-0 text-(--fg-muted)" strokeWidth={1.75} /> Verification is unavailable right now.
+                <Alert size={20} className="shrink-0 text-(--fg-muted)" /> Verification is unavailable right now.
               </h1>
               <p className="mt-2 text-sm text-(--fg-muted)">The certificate registry couldn&apos;t be reached. Try again in a minute.</p>
               <p className="t-mono mt-4 break-all text-(--fg-subtle)">{error}</p>
@@ -94,7 +94,7 @@ function Found({ cert, host }: { cert: Cert; host: string }) {
     <>
       {revoked ? (
         <div role="status" className="flex gap-3 border-l-[3px] border-(--fg-muted) bg-(--surface-2) px-4 py-3">
-          <AlertCircle className="mt-0.5 size-5 shrink-0 text-(--fg-muted)" strokeWidth={1.75} />
+          <Alert size={20} className="mt-0.5 shrink-0 text-(--fg-muted)" />
           <h1 className="t-title text-(--fg)">
             Revoked{cert.revokedOn ? ` on ${formatDate(cert.revokedOn)}` : ""}. This certificate is no longer valid.
             {cert.revokedReason && <span className="block pt-1 text-base font-normal text-(--fg-muted)">Reason: {cert.revokedReason}</span>}
@@ -102,7 +102,7 @@ function Found({ cert, host }: { cert: Cert; host: string }) {
         </div>
       ) : (
         <h1 role="status" className="t-title flex items-start gap-2 text-(--live)">
-          <CircleCheck className="mt-0.5 size-5 shrink-0" strokeWidth={2} />
+          <Check size={20} className="mt-0.5 shrink-0" />
           <span>Verified. Issued by Open Dev Society on {formatDate(cert.issuedOn)}.</span>
         </h1>
       )}

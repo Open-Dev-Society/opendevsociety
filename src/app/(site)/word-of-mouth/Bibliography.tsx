@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { External } from "@/components/site/Icon";
 
 export type Kind = "article" | "social" | "community";
 export type Ref = {
@@ -68,9 +69,7 @@ export function Bibliography({ refs }: { refs: Ref[] }) {
               <span className="whitespace-nowrap">
                 {r.outlet}
                 {r.year && <>, {r.year}</>}.{" "}
-                <span aria-hidden className="text-(--accent)">
-                  ↗
-                </span>
+                <External size="1em" className="text-(--accent)" />
               </span>
               {r.excerpt && (
                 <p lang={cjk(r.excerpt)} className="mt-2 border-l border-(--line) pl-3 text-[14px] leading-[1.55] text-(--fg-muted)">

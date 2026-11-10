@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useId } from "react";
 import Link from "next/link";
-import { AlertCircle, ArrowUpRight, Check, RefreshCw } from "lucide-react";
+import { Alert, ArrowRight, Check, External, Refresh } from "@/components/site/Icon";
 import { Container, Field, SegmentedControl } from "@/components/site";
 import { CertificateDocument } from "@/components/site/certificate/CertificateDocument";
 import { CopyLinkButton, DownloadButton, toolButton } from "@/components/site/certificate/actions";
@@ -229,14 +229,14 @@ export default function CertificatePage() {
             <div className="-mt-2 flex flex-wrap gap-1 -ml-3">
               <CopyLinkButton label="Copy draft link" variant="quiet" />
               <button type="button" onClick={reset} className={toolButton("quiet")}>
-                <RefreshCw className="size-4" strokeWidth={1.75} /> Reset
+                <Refresh /> Reset
               </button>
             </div>
           </form>
 
           {publishError && (
             <div role="alert" className="mt-6 flex gap-3 border-l-[3px] border-(--fg-muted) bg-(--surface-2) p-4">
-              <AlertCircle className="mt-0.5 size-4 shrink-0 text-(--fg-muted)" strokeWidth={1.75} />
+              <Alert className="mt-0.5 shrink-0 text-(--fg-muted)" />
               <div className="min-w-0 text-sm">
                 <p className="font-medium text-(--fg)">Couldn&apos;t publish.</p>
                 <p className="mt-1 break-words text-(--fg-muted)">{publishError}</p>
@@ -248,7 +248,7 @@ export default function CertificatePage() {
           {publishResult && (
             <div role="status" className="mt-6 rounded-(--radius-sm) bg-(--surface) p-4 shadow-(--shadow-sm)">
               <p className="flex items-center gap-2 text-sm font-medium text-(--live)">
-                <Check className="size-4" strokeWidth={2} /> Published
+                <Check /> Published
               </p>
               <p className="mt-1 text-sm text-(--fg-muted)">
                 <span className="font-mono text-(--fg)">{publishResult.id}</span> is live. Send the recipient this link.
@@ -257,10 +257,10 @@ export default function CertificatePage() {
               <div className="mt-3 flex flex-wrap gap-1 -ml-3">
                 <CopyLinkButton text={publishResult.verifyUrl} variant="quiet" />
                 <a href={publishResult.verifyUrl} target="_blank" rel="noopener noreferrer" className={toolButton("quiet")}>
-                  Open verify page <ArrowUpRight className="size-4" strokeWidth={1.75} />
+                  Open verify page <External />
                 </a>
                 <Link href="/certificate/manage" className={toolButton("quiet")}>
-                  View in registry →
+                  View in registry <ArrowRight />
                 </Link>
               </div>
             </div>
