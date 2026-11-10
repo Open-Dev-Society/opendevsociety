@@ -296,7 +296,17 @@ function Terminal({
  * Signature 2, "The bench" (brief §7, §10 §4). The whole interactive content of the Start section: wrap it in
  * <Section tone="inverse"> and put the SectionHeader above it. `repos` = repos with open issues, OpenStock first.
  */
-export function Bench({ repos }: { repos: Repo[] }) {
+export function Bench({
+  repos,
+  wallHref = "#people",
+  notCoderHref = "/contribute",
+}: {
+  repos: Repo[];
+  /** step 4's link to the wall: "#people" on Home, "/contributors" elsewhere */
+  wallHref?: string;
+  /** the "Not a coder?" link: "/contribute" on Home, an in-page anchor on /contribute */
+  notCoderHref?: string;
+}) {
   const desktop = useDesktop();
   const reduce = useCalm();
   const [handle] = useHandle();
@@ -358,7 +368,7 @@ export function Bench({ repos }: { repos: Repo[] }) {
   const notCoder = (
     <p className="text-sm text-(--fg-muted)">
       Not a coder? Writers, designers and teachers start here{" "}
-      <Link href="/contribute" className="ink-link">
+      <Link href={notCoderHref} className="ink-link">
         →
       </Link>
     </p>
@@ -390,7 +400,7 @@ export function Bench({ repos }: { repos: Repo[] }) {
               title: (
                 <>
                   Get merged.{" "}
-                  <Link href="#people" className="ink-link">
+                  <Link href={wallHref} className="ink-link">
                     Your face lands on the wall.
                   </Link>
                 </>

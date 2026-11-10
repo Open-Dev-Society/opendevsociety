@@ -20,3 +20,4 @@ export { Ledger, type LedgerColumn, type LedgerRow } from "./Ledger";
 export { Tooltip } from "./Tooltip";
 export { Wall, type Builder } from "./Wall";
 export { Bench } from "./Bench";
+export { Masthead } from "./Masthead";
