@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { LabButton } from "@/components/site/lab-hero/LabButton";
 import { contactEmail, social } from "@/content";
 import { manualContributors } from "@/data/contributors";
+import { expIds, nextResearcherId } from "@/lib/lab";
 import { getWorkshop } from "@/lib/workshop";
 import { type Experiment, Materials, Procedure } from "./protocol";
 
@@ -133,7 +134,6 @@ const materials = [
   { label: "One open issue", note: "Chosen in step 3.2. Small is good: a typo fix is a real contribution." },
 ];
 
-const pad = (n: number, w: number) => String(n).padStart(w, "0");
 
 /** The protocol's section head: a numeral, a condensed title, and the mono record line. */
 function Head({ n, title, meta, id }: { n: number; title: React.ReactNode; meta: string; id?: string }) {
@@ -183,13 +183,13 @@ function Figure({ repo }: { repo: string }) {
 
 export default async function Contribute() {
   const { tools, people } = await getWorkshop();
-  // ponytail: EXP ids computed here (stars order, OpenStock = EXP-001) until src/lib/lab.ts lands; swap to expId then.
-  const byStars = [...tools].sort((a, b) => Number(b.name === "OpenStock") - Number(a.name === "OpenStock") || b.stars - a.stars);
-  const experiments: Experiment[] = byStars
-    .map((r, i) => ({ id: `EXP-${pad(i + 1, 3)}`, name: r.name, language: r.language, open: r.open_issues, goodFirst: r.good_first_issues }))
-    .filter((e) => e.open > 0);
+  const ids = expIds(tools);
+  const experiments: Experiment[] = tools
+    .filter((r) => r.open_issues > 0)
+    .map((r) => ({ id: ids.get(r.name) ?? "EXP-???", name: r.name, language: r.language, open: r.open_issues, goodFirst: r.good_first_issues }))
+    .sort((a, b) => a.id.localeCompare(b.id));
   const open = experiments.reduce((a, e) => a + e.open, 0);
-  const seat = `R-${pad(people.length + 1, 2)}`;
+  const seat = nextResearcherId(people);
   const signers = [
     ["founder", manualContributors.find((c) => c.role && /^(?!.*Co-Founder).*Founder/i.test(c.role))],
     ["co-founder", manualContributors.find((c) => c.role && /Co-Founder/i.test(c.role))],
