@@ -1,0 +1,81 @@
+.a-root {
+  --acc: oklch(0.82 0.11 178);
+  min-height: 100dvh;
+  background: #09090b;
+  color: #a1a1aa;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  -webkit-font-smoothing: antialiased;
+}
+.a-root ::selection {
+  background: var(--acc);
+  color: #09090b;
+}
+.a-root :focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+.a-root h1,
+.a-root h2,
+.a-root h3 {
+  text-wrap: balance;
+}
+.a-root p {
+  text-wrap: pretty;
+}
+
+@keyframes a-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+.a-line:last-child {
+  animation: a-in 240ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.a-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #e4e4e7;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12);
+  transition-property: background-color, color, scale;
+  transition-duration: 150ms;
+}
+.a-btn:hover {
+  background: rgb(255 255 255 / 0.06);
+}
+.a-btn:active {
+  scale: 0.96;
+}
+.a-btn-primary {
+  background: var(--acc);
+  color: #09090b;
+  box-shadow: none;
+}
+.a-btn-primary:hover {
+  background: oklch(0.88 0.1 178);
+}
+
+.a-kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 4px;
+  border-radius: 4px;
+  font-size: 10px;
+  color: #71717a;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1), inset 0 -1px 0 rgb(255 255 255 / 0.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .a-line:last-child {
+    animation: none;
+  }
+}
