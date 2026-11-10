@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Fragment } from "react";
+import { Record } from "@/components/site/lab/Record";
 import { LabButton } from "@/components/site/lab-hero/LabButton";
 import { contactEmail, partnershipMailto } from "@/content";
-import { catalog } from "@/data/catalog";
 import { mentions, type MentionSource } from "@/data/mentions";
 import { events, partners } from "@/data/partners";
+import { expHref, expId } from "@/lib/lab";
 import { getWorkshop } from "@/lib/workshop";
 import { Bibliography, type Kind, type Ref } from "./Bibliography";
 
@@ -39,13 +40,11 @@ const partnerLines: Record<string, string> = {
   "Atlas Cloud": "One API for hundreds of AI models, plus the infrastructure to run them.",
 };
 
-const names = (xs: string[]) => xs.map((x, i) => (i === 0 ? x : i === xs.length - 1 ? ` and ${x}` : `, ${x}`)).join("");
+const list = (xs: string[]) => xs.map((x, i) => (i === 0 ? x : i === xs.length - 1 ? ` and ${x}` : `, ${x}`)).join("");
 
 export default async function Citations() {
-  const { index } = await getWorkshop();
-  // ponytail: EXP numbers derived here (OpenStock first, then by stars, per docs/lab.md); swap for src/lib/lab.ts once it lands.
-  const exp = (name: string) => `EXP-${String(index.findIndex((r) => r.name === name) + 1).padStart(3, "0")}`;
-  const tools = Object.keys(catalog).filter((n) => index.some((r) => r.name === n));
+  const { tools } = await getWorkshop();
+  const names = tools.map((r) => r.name);
 
   const refs: Ref[] = mentions.map((m, i) => {
     // "Tattva Tarang at Medium" → author and outlet; a bare name gets its site's host.
@@ -56,7 +55,7 @@ export default async function Citations() {
     const said = clean(empty ? m.description || m.highlight || "" : m.title);
     const excerpt = clean(m.highlight ?? "");
     const hay = `${m.title} ${m.description} ${m.highlight ?? ""} ${m.url}`.toLowerCase();
-    const tool = tools.find((t) => new RegExp(`\\b${t.toLowerCase()}\\b`).test(hay));
+    const tool = names.find((t) => new RegExp(`\\b${t.toLowerCase()}\\b`).test(hay));
     return {
       n: i + 1,
       kind: kinds[m.source],
@@ -67,22 +66,28 @@ export default async function Citations() {
       outlet,
       year: m.date,
       href: m.url,
-      re: tool ? { id: exp(tool), name: tool, href: `https://github.com/Open-Dev-Society/${tool}` } : undefined,
+      re: tool ? { id: expId(tool, tools), name: tool, href: expHref(tool) } : undefined,
     };
   });
   const epigraph = refs.find((r) => r.author === "Tattva Tarang")!;
 
   return (
     <article className="mx-auto w-full max-w-(--container) px-(--gutter) pt-12 pb-24 lg:pt-16 lg:pb-32">
-      {/* Title block: the record line, then the count as the headline. */}
-      <header className="grid gap-y-10 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
-        <div className="lg:col-span-7">
-          <p className="t-mono text-[12px] text-(--fg-muted)">
-            <span className="text-(--fg)">CITATIONS</span> · {refs.length} references · {years[0]}–{years.at(-1)} · on ODS experiments
-          </p>
-          <h1 className="mt-5 text-[clamp(3.5rem,1.8rem+7vw,8rem)] leading-[0.86] font-[800] tracking-[-0.02em] text-(--fg) [font-stretch:75%]">
-            Cited by <span className="tabular-nums text-(--accent)">{refs.length}</span>.
-          </h1>
+      {/* Title block: the record, then the count as the headline; the epigraph beside it. */}
+      <div className="grid gap-y-10 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
+        <Record
+          as="h1"
+          size="page"
+          n="06"
+          name="Citations"
+          meta={[`${refs.length} references`, `${years[0]}–${years.at(-1)}`, "on ODS experiments"]}
+          title={
+            <>
+              Cited by <span className="tabular-nums text-(--accent)">{refs.length}</span>.
+            </>
+          }
+          className="lg:col-span-7"
+        >
           <p className="mt-6 max-w-[48ch] text-[17px] leading-[1.6] text-(--fg-muted)">
             Articles, threads and posts from people who found the tools on their own, set as a bibliography. Wrote one?{" "}
             <a href={`mailto:${contactEmail}?subject=ODS mention`} className="ink-link">
@@ -90,7 +95,7 @@ export default async function Citations() {
             </a>
             .
           </p>
-        </div>
+        </Record>
 
         {/* The epigraph: the most-quoted line, set large and flush right, as at the head of a book. */}
         <figure className="self-end lg:col-span-5 lg:pb-2">
@@ -105,25 +110,25 @@ export default async function Citations() {
             </a>
           </figcaption>
         </figure>
-      </header>
+      </div>
 
       <section aria-label="References" className="mt-16 lg:mt-24">
         <Bibliography refs={refs} />
       </section>
 
       {/* Funding & acknowledgements: partners thanked the way a paper thanks its funders. */}
-      <section id="partners" aria-labelledby="partners-h" className="mt-24 scroll-mt-20 border-t-[3px] border-double border-(--fg) pt-8 lg:mt-32">
+      <section id="partners" aria-labelledby="partners-h" className="mt-24 scroll-mt-20 lg:mt-32">
         <div className="grid gap-y-6 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
-          <div className="lg:col-span-4">
-            <p className="t-mono text-[12px] text-(--fg-muted)">
-              {partners.length} partners · {events.length} events
-            </p>
-            <h2 id="partners-h" className="mt-3 text-[clamp(2rem,1.4rem+2.4vw,3.25rem)] leading-[0.92] font-[800] tracking-[-0.018em] text-(--fg) [font-stretch:75%]">
-              Funding &amp; acknowledge&shy;ments
-            </h2>
-          </div>
-          <p className="max-w-[62ch] text-[17px] leading-[1.7] text-(--fg) hyphens-auto lg:col-span-7 lg:col-start-6 lg:pt-7">
-            The work cited above is supported in part by {names(partners.map((p) => p.name))}, who help keep the tools free. We thank the
+          <Record
+            n="06.1"
+            name="Acknowledgements"
+            meta={[`${partners.length} partners`, `${events.length} events`]}
+            id="partners-h"
+            title={<>Funding &amp; acknowledge&shy;ments</>}
+            className="lg:col-span-5"
+          />
+          <p className="max-w-[62ch] text-[17px] leading-[1.7] text-(--fg) hyphens-auto lg:col-span-6 lg:col-start-7 lg:pt-9">
+            The work cited above is supported in part by {list(partners.map((p) => p.name))}, who help keep the tools free. We thank the
             organisers of{" "}
             {events.map((e, i) => (
               <Fragment key={e.name}>

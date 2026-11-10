@@ -32,7 +32,7 @@ export function Bibliography({ refs }: { refs: Ref[] }) {
 
   return (
     <>
-      <div role="group" aria-label="Filter citations by kind" className="flex flex-wrap gap-px bg-(--line) p-px max-sm:grid max-sm:grid-cols-2">
+      <div role="group" aria-label="Filter citations by kind" className="flex w-fit flex-wrap gap-px bg-(--line) p-px max-sm:grid max-sm:w-full max-sm:grid-cols-2">
         {KINDS.map(([k, label]) => {
           const on = k === kind;
           return (
@@ -61,7 +61,7 @@ export function Bibliography({ refs }: { refs: Ref[] }) {
           >
             <span className="font-mono text-[13px] leading-[1.75] text-(--fg)">[{r.n}]</span>
             <div className="min-w-0 text-[16px] leading-[1.6] text-(--fg-muted)">
-              <span className="font-[650] text-(--fg)">{r.author}.</span>{" "}
+              <span className="font-[650] text-(--fg)">{r.author.replace(/\.$/, "")}.</span>{" "}
               <a href={r.href} target="_blank" rel="noopener noreferrer" className="text-(--fg) decoration-(--accent) underline-offset-[0.2em] hover:underline">
                 <span lang={cjk(r.text)}>{r.quoted ? <>&ldquo;{r.text}&rdquo;</> : r.text}</span>
               </a>{" "}
@@ -83,7 +83,7 @@ export function Bibliography({ refs }: { refs: Ref[] }) {
               {r.re && (
                 <>
                   {" · "}
-                  <a href={r.re.href} target="_blank" rel="noopener noreferrer" className="text-(--fg-muted) hover:text-(--accent)">
+                  <a href={r.re.href} aria-label={`re ${r.re.id}, ${r.re.name}`} className="text-(--fg-muted) hover:text-(--accent)">
                     re {r.re.id}
                   </a>
                 </>

@@ -6,6 +6,7 @@ import { contactEmail, social } from "@/content";
 import { manualContributors } from "@/data/contributors";
 import { mentions } from "@/data/mentions";
 import { ago } from "@/lib/format";
+import { expHref, expId } from "@/lib/lab";
 import { getWorkshop } from "@/lib/workshop";
 import { CopyButton } from "./CopyButton";
 import { figureFrames, N, SEED, STEPS } from "./figure";
@@ -57,7 +58,7 @@ const tarang = mentions.find((m) => m.author.startsWith("Tattva Tarang"))!;
 // The reference list, in order of first citation. `cite("turing")` prints [5] linked to it.
 const refs = {
   org: { by: "Open Dev Society", title: "Experiments: source code and history", where: "GitHub, 2024–2026", href: "https://github.com/Open-Dev-Society" },
-  openstock: { by: "Open Dev Society", title: "OpenStock: market prices, alerts and company data. Free", where: "GitHub, EXP-001", href: repoUrl("OpenStock") },
+  openstock: { by: "Open Dev Society", title: "OpenStock: market prices, alerts and company data. Free", where: "GitHub, 2025–2026", href: repoUrl("OpenStock") },
   agpl: { by: "Free Software Foundation", title: "GNU Affero General Public License, version 3", where: "19 Nov 2007", href: "https://www.gnu.org/licenses/agpl-3.0.html" },
   tarang: { by: "T. Tarang", title: "OpenStock: the free, open-source stock market app built for everyone", where: "Coding Nexus (Medium), 2025", href: tarang.url },
   protocol: { by: "Open Dev Society", title: "Protocol 01: First contribution", where: "Lab protocol", href: "/contribute" },
@@ -137,18 +138,13 @@ function H2({ n, id, children }: { n: number; id: string; children: React.ReactN
 }
 
 export default async function Manifesto() {
-  const { tools, index, people, lastPush, now } = await getWorkshop();
-  // ponytail: EXP numbers derived here (index is OpenStock first, then by stars, per docs/lab.md); swap for src/lib/lab.ts once it lands.
-  const exp = (name: string) => {
-    const i = index.findIndex((r) => r.name === name);
-    return i < 0 ? null : `EXP-${String(i + 1).padStart(3, "0")}`;
-  };
+  const { tools, people, lastPush, now } = await getWorkshop();
   const latest = tools.find((t) => t.pushed_at === lastPush)?.name;
   const frames = figureFrames();
   const num = (x: number) => x.toFixed(4).replace(/0+$/, "");
 
   type Status = { label: string; href: string }[] | null;
-  const tool = (n: string) => (exp(n) ? [{ label: `${exp(n)} ${n}`, href: repoUrl(n) }] : []);
+  const tool = (n: string) => (tools.some((r) => r.name === n) ? [{ label: `${expId(n, tools)} ${n}`, href: expHref(n) }] : []);
   const table: { area: string; aim: string; status: Status }[] = [
     { area: "Tools", aim: "Simple utilities, free to use.", status: [...tool("OpenStock"), ...tool("openreadme"), { label: `all ${tools.length} →`, href: "/projects" }] },
     { area: "Library", aim: "A gateway to free books.", status: tool("booktrace").length ? tool("booktrace") : null },
@@ -291,7 +287,7 @@ export default async function Manifesto() {
                           <Note n={3} />
                         </>,
                         <>
-                          The last commit landed {ago(lastPush, now)} ago{latest && <>, to {latest}</>}.
+                          The last commit landed {ago(lastPush, now)}{latest && <>, to {latest}</>}.
                         </>,
                         <>Left as an exercise for the reader, preferably in the Discord.</>,
                       ][i]
@@ -311,7 +307,7 @@ export default async function Manifesto() {
             <p>
               We work the way a reaction–diffusion system does: a few local rules (§2), followed by everyone, produce structure nobody drew
               (Fig. 1). In practice that structure is software. Table 1 lists what we build; where a piece already ships it carries its
-              experiment number and links to the code. The rest is next.
+              experiment number and links to its record. The rest is next.
             </p>
 
             <figure className="my-10 indent-0">
@@ -434,7 +430,7 @@ export default async function Manifesto() {
               the credit. Your project. Your vision. Our community. Three questions come up every time.
             </p>
             {ownership.map((f, i) => (
-              <p key={f.q} className="indent-0">
+              <p key={f.q} className="mt-2 indent-0!">
                 <span className="font-[650]">
                   5.{i + 1}&ensp;{f.q}
                 </span>{" "}
