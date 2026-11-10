@@ -66,7 +66,7 @@ function Bench({ repo, mode, setMode }: { repo: string; mode: Mode; setMode: (m:
         </button>
       </div>
       {mode === "terminal" ? (
-        <pre className="whitespace-pre-wrap break-all p-4 font-mono text-[13px] leading-7">
+        <pre className="whitespace-pre-wrap break-words p-4 font-mono text-[13px] leading-7">
           {commands.map((c) => (
             <div key={c} className="pl-[2ch] -indent-[2ch]">
               <span className="select-none text-(--accent)">$ </span>
@@ -85,12 +85,14 @@ function Bench({ repo, mode, setMode }: { repo: string; mode: Mode; setMode: (m:
   );
 }
 
-export function FirstPR({ repos }: { repos: { name: string; openIssues: number }[] }) {
+export function FirstPR({ repos }: { repos: { name: string; openIssues: number; goodFirst: number }[] }) {
   const [repo, setRepo] = useState(repos[0].name);
   const [mode, setMode] = useState<Mode>("terminal");
-  const issues = repos.find((r) => r.name === repo)?.openIssues ?? 0;
+  const picked = repos.find((r) => r.name === repo);
+  const issues = picked?.openIssues ?? 0;
+  const firsts = picked?.goodFirst ?? 0;
 
-  const step = "relative pl-12 pb-10 last:pb-0";
+  const step = "relative pl-12 pb-8 last:pb-0 lg:pb-10";
   const num =
     "absolute left-0 top-0 grid size-8 place-items-center rounded-full bg-(--ink) font-mono text-xs tabular-nums text-white/70 shadow-[0_0_0_1px_rgb(255_255_255/0.14)]";
   const link =
@@ -133,8 +135,16 @@ export function FirstPR({ repos }: { repos: { name: string; openIssues: number }
           {issues > 0 ? (
             <>
               <p className="mt-1 text-[15px] text-white/65">
-                <a href={`${GH}/${repo}/issues`} target="_blank" rel="noopener noreferrer" className={link}>
-                  {issues} open {issues === 1 ? "issue" : "issues"} in {repo}
+                <a
+                  href={firsts > 0 ? issuesUrl(repo, "good first issue") : `${GH}/${repo}/issues`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={link}
+                >
+                  {firsts > 0
+                    ? `${firsts} good first ${firsts === 1 ? "issue" : "issues"}`
+                    : `${issues} open ${issues === 1 ? "issue" : "issues"}`}{" "}
+                  in {repo}
                   <ArrowUpRight className="size-3.5" />
                 </a>
                 . Filter by who they&apos;re for:
@@ -195,7 +205,7 @@ export function FirstPR({ repos }: { repos: { name: string; openIssues: number }
         <div className="mb-5 hidden lg:block">
           <Bench repo={repo} mode={mode} setMode={setMode} />
         </div>
-        <div className="rounded-2xl p-4 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.1)]">
+        <div className="lg:rounded-2xl lg:p-4 lg:shadow-[inset_0_0_0_1px_rgb(255_255_255/0.1)]">
           <p className="text-sm text-white/65">Not writing code? The society needs every kind of builder.</p>
           <div className="mt-3 flex flex-wrap gap-1.5">
             {roles.map((r) => (

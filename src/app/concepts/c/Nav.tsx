@@ -28,7 +28,7 @@ export function Nav() {
         <a href="#top" className="flex items-center gap-2.5 rounded-md" onClick={() => setOpen(false)}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="" width={24} height={24} className="size-6 rounded-md" />
-          <span className="display text-[15px] font-semibold">Open Dev Society</span>
+          <span className="display-sm text-[15px] font-semibold">Open Dev Society</span>
         </a>
 
         <ul className="ml-auto hidden items-center md:flex">

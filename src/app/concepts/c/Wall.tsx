@@ -63,7 +63,7 @@ export function Wall({ builders, open }: { builders: Builder[]; open: number }) 
         >
           <span className="flex flex-col items-center leading-none">
             <span className="text-lg font-medium">+</span>
-            <span className="mt-0.5 text-[10px] font-semibold uppercase tracking-wide sm:text-xs">You</span>
+            <span className="mt-0.5 text-xs font-semibold uppercase tracking-wide">You</span>
           </span>
           <span className="sr-only">Your seat: make your first pull request</span>
         </a>
