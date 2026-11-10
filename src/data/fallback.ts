@@ -1,7 +1,7 @@
 import type { OrgContributor, OrgRepo } from "../lib/github";
 
 // Real snapshot from the GitHub API (gh api orgs/Open-Dev-Society/repos, /repos/*/contributors,
-// search/issues label:"good first issue"), taken 2026-11-10T11:15Z. Used when live fetches in
+// search/issues label:"good first issue", stats/contributors for "joined"), taken 2026-11-10T11:15Z. Used when live fetches in
 // src/lib/github.ts fail. Refresh: GITHUB_TOKEN=$(gh auth token) node scripts/check-github.mjs --print
 export const snapshotTakenAt = "2026-11-10T11:15Z";
 
@@ -24,7 +24,8 @@ export const snapshotRepos: OrgRepo[] = [
     "forks": 2669,
     "open_issues": 8,
     "good_first_issues": 0,
-    "pushed_at": "2026-11-09T19:21:59Z"
+    "pushed_at": "2026-11-09T19:21:59Z",
+    "created_at": "2025-09-28T18:16:32Z"
   },
   {
     "name": "kitbash",
@@ -58,7 +59,8 @@ export const snapshotRepos: OrgRepo[] = [
     "forks": 2,
     "open_issues": 3,
     "good_first_issues": 0,
-    "pushed_at": "2026-11-08T20:12:46Z"
+    "pushed_at": "2026-11-08T20:12:46Z",
+    "created_at": "2026-07-18T08:22:41Z"
   },
   {
     "name": "kine-ui",
@@ -84,7 +86,8 @@ export const snapshotRepos: OrgRepo[] = [
     "forks": 4,
     "open_issues": 0,
     "good_first_issues": 0,
-    "pushed_at": "2026-02-24T12:28:14Z"
+    "pushed_at": "2026-02-24T12:28:14Z",
+    "created_at": "2026-02-21T21:54:06Z"
   },
   {
     "name": "openreadme",
@@ -104,7 +107,8 @@ export const snapshotRepos: OrgRepo[] = [
     "forks": 7,
     "open_issues": 0,
     "good_first_issues": 0,
-    "pushed_at": "2026-11-08T04:55:11Z"
+    "pushed_at": "2026-11-08T04:55:11Z",
+    "created_at": "2025-10-16T11:38:41Z"
   },
   {
     "name": "booktrace",
@@ -127,7 +131,8 @@ export const snapshotRepos: OrgRepo[] = [
     "forks": 6,
     "open_issues": 1,
     "good_first_issues": 0,
-    "pushed_at": "2025-10-08T20:27:13Z"
+    "pushed_at": "2025-10-08T20:27:13Z",
+    "created_at": "2025-10-07T08:44:35Z"
   },
   {
     "name": "opencosmos",
@@ -140,7 +145,8 @@ export const snapshotRepos: OrgRepo[] = [
     "forks": 5,
     "open_issues": 0,
     "good_first_issues": 0,
-    "pushed_at": "2026-10-11T22:28:31Z"
+    "pushed_at": "2026-10-11T22:28:31Z",
+    "created_at": "2025-07-02T19:51:36Z"
   },
   {
     "name": "openhaven",
@@ -153,7 +159,8 @@ export const snapshotRepos: OrgRepo[] = [
     "forks": 2,
     "open_issues": 0,
     "good_first_issues": 0,
-    "pushed_at": "2026-01-13T21:38:27Z"
+    "pushed_at": "2026-01-13T21:38:27Z",
+    "created_at": "2026-01-01T12:54:37Z"
   },
   {
     "name": "openmind",
@@ -166,7 +173,8 @@ export const snapshotRepos: OrgRepo[] = [
     "forks": 3,
     "open_issues": 0,
     "good_first_issues": 0,
-    "pushed_at": "2026-03-09T10:08:38Z"
+    "pushed_at": "2026-03-09T10:08:38Z",
+    "created_at": "2026-03-09T08:19:29Z"
   },
   {
     "name": "OpenCine",
@@ -179,7 +187,8 @@ export const snapshotRepos: OrgRepo[] = [
     "forks": 1,
     "open_issues": 0,
     "good_first_issues": 0,
-    "pushed_at": "2025-12-12T18:29:34Z"
+    "pushed_at": "2025-12-12T18:29:34Z",
+    "created_at": "2025-12-12T18:16:22Z"
   },
   {
     "name": "den",
@@ -192,7 +201,8 @@ export const snapshotRepos: OrgRepo[] = [
     "forks": 0,
     "open_issues": 0,
     "good_first_issues": 0,
-    "pushed_at": "2026-10-17T08:12:11Z"
+    "pushed_at": "2026-10-17T08:12:11Z",
+    "created_at": "2026-10-17T06:48:23Z"
   },
   {
     "name": "ports",
@@ -214,7 +224,8 @@ export const snapshotRepos: OrgRepo[] = [
     "forks": 0,
     "open_issues": 5,
     "good_first_issues": 1,
-    "pushed_at": "2026-11-08T13:36:10Z"
+    "pushed_at": "2026-11-08T13:36:10Z",
+    "created_at": "2026-11-02T12:07:21Z"
   },
   {
     "name": "ByteMyCV",
@@ -227,7 +238,8 @@ export const snapshotRepos: OrgRepo[] = [
     "forks": 1,
     "open_issues": 0,
     "good_first_issues": 0,
-    "pushed_at": "2025-11-23T22:27:05Z"
+    "pushed_at": "2025-11-23T22:27:05Z",
+    "created_at": "2025-11-23T22:27:05Z"
   },
   {
     "name": "zomb",
@@ -240,7 +252,8 @@ export const snapshotRepos: OrgRepo[] = [
     "forks": 0,
     "open_issues": 0,
     "good_first_issues": 0,
-    "pushed_at": "2026-10-20T22:26:11Z"
+    "pushed_at": "2026-10-20T22:26:11Z",
+    "created_at": "2026-10-01T16:09:28Z"
   },
   {
     "name": ".github",
@@ -258,7 +271,8 @@ export const snapshotRepos: OrgRepo[] = [
     "forks": 0,
     "open_issues": 0,
     "good_first_issues": 0,
-    "pushed_at": "2026-09-20T10:27:38Z"
+    "pushed_at": "2026-09-20T10:27:38Z",
+    "created_at": "2025-09-04T11:10:31Z"
   },
   {
     "name": "opendevsociety",
@@ -271,7 +285,8 @@ export const snapshotRepos: OrgRepo[] = [
     "forks": 0,
     "open_issues": 0,
     "good_first_issues": 0,
-    "pushed_at": "2026-06-04T20:23:12Z"
+    "pushed_at": "2026-06-04T20:23:12Z",
+    "created_at": "2025-10-04T18:21:26Z"
   },
   {
     "name": "tearcopy",
@@ -284,7 +299,8 @@ export const snapshotRepos: OrgRepo[] = [
     "forks": 0,
     "open_issues": 0,
     "good_first_issues": 0,
-    "pushed_at": "2026-11-08T10:03:25Z"
+    "pushed_at": "2026-11-08T10:03:25Z",
+    "created_at": "2026-11-08T09:10:55Z"
   },
   {
     "name": "settle-ui",
@@ -297,7 +313,8 @@ export const snapshotRepos: OrgRepo[] = [
     "forks": 0,
     "open_issues": 0,
     "good_first_issues": 0,
-    "pushed_at": "2026-11-08T19:30:04Z"
+    "pushed_at": "2026-11-08T19:30:04Z",
+    "created_at": "2026-11-08T18:55:03Z"
   }
 ];
 
@@ -324,7 +341,8 @@ export const snapshotContributors: OrgContributor[] = [
       "ports",
       "tearcopy",
       "settle-ui"
-    ]
+    ],
+    "joined": "2025-06-29T00:00:00.000Z"
   },
   {
     "login": "keshav-005",
@@ -333,7 +351,8 @@ export const snapshotContributors: OrgContributor[] = [
     "contributions": 9,
     "repos": [
       "OpenStock"
-    ]
+    ],
+    "joined": "2026-04-19T00:00:00.000Z"
   },
   {
     "login": "landerdevelopers",
@@ -343,7 +362,8 @@ export const snapshotContributors: OrgContributor[] = [
     "repos": [
       ".github",
       "openreadme"
-    ]
+    ],
+    "joined": "2026-09-20T00:00:00.000Z"
   },
   {
     "login": "diip3sh",
@@ -352,7 +372,8 @@ export const snapshotContributors: OrgContributor[] = [
     "contributions": 7,
     "repos": [
       "zomb"
-    ]
+    ],
+    "joined": "2026-10-04T00:00:00.000Z"
   },
   {
     "login": "PriyanshuCosmos",
@@ -362,7 +383,8 @@ export const snapshotContributors: OrgContributor[] = [
     "repos": [
       "ByteMyCV",
       "OpenCine"
-    ]
+    ],
+    "joined": "2025-11-16T00:00:00.000Z"
   },
   {
     "login": "nb-src",
@@ -371,7 +393,8 @@ export const snapshotContributors: OrgContributor[] = [
     "contributions": 3,
     "repos": [
       "OpenStock"
-    ]
+    ],
+    "joined": "2025-10-12T00:00:00.000Z"
   },
   {
     "login": "Bortlesboat",
@@ -380,7 +403,8 @@ export const snapshotContributors: OrgContributor[] = [
     "contributions": 2,
     "repos": [
       "OpenStock"
-    ]
+    ],
+    "joined": "2026-03-22T00:00:00.000Z"
   },
   {
     "login": "ahmaddirar-ios",
@@ -389,7 +413,8 @@ export const snapshotContributors: OrgContributor[] = [
     "contributions": 2,
     "repos": [
       "OpenStock"
-    ]
+    ],
+    "joined": "2026-10-25T00:00:00.000Z"
   },
   {
     "login": "akoweicollinxx",
@@ -398,7 +423,8 @@ export const snapshotContributors: OrgContributor[] = [
     "contributions": 2,
     "repos": [
       "OpenStock"
-    ]
+    ],
+    "joined": "2026-05-31T00:00:00.000Z"
   },
   {
     "login": "alexander-schneider",
@@ -407,7 +433,8 @@ export const snapshotContributors: OrgContributor[] = [
     "contributions": 2,
     "repos": [
       "OpenStock"
-    ]
+    ],
+    "joined": "2026-03-22T00:00:00.000Z"
   },
   {
     "login": "chinnsenn",
@@ -416,7 +443,8 @@ export const snapshotContributors: OrgContributor[] = [
     "contributions": 2,
     "repos": [
       "OpenStock"
-    ]
+    ],
+    "joined": "2025-10-05T00:00:00.000Z"
   },
   {
     "login": "cosmind-rusu",
@@ -425,7 +453,8 @@ export const snapshotContributors: OrgContributor[] = [
     "contributions": 2,
     "repos": [
       "OpenStock"
-    ]
+    ],
+    "joined": "2026-09-20T00:00:00.000Z"
   },
   {
     "login": "ettoreciolli",
@@ -434,7 +463,8 @@ export const snapshotContributors: OrgContributor[] = [
     "contributions": 2,
     "repos": [
       "OpenStock"
-    ]
+    ],
+    "joined": "2026-01-25T00:00:00.000Z"
   },
   {
     "login": "octo-patch",
@@ -443,7 +473,8 @@ export const snapshotContributors: OrgContributor[] = [
     "contributions": 2,
     "repos": [
       "OpenStock"
-    ]
+    ],
+    "joined": "2026-07-26T00:00:00.000Z"
   },
   {
     "login": "pawisoon",
@@ -452,7 +483,8 @@ export const snapshotContributors: OrgContributor[] = [
     "contributions": 2,
     "repos": [
       "OpenStock"
-    ]
+    ],
+    "joined": "2026-11-08T00:00:00.000Z"
   },
   {
     "login": "BambaSatoru",
@@ -461,7 +493,8 @@ export const snapshotContributors: OrgContributor[] = [
     "contributions": 1,
     "repos": [
       "OpenStock"
-    ]
+    ],
+    "joined": "2026-09-20T00:00:00.000Z"
   },
   {
     "login": "Chukwuebuka-2003",
@@ -470,7 +503,8 @@ export const snapshotContributors: OrgContributor[] = [
     "contributions": 1,
     "repos": [
       "OpenStock"
-    ]
+    ],
+    "joined": "2026-05-24T00:00:00.000Z"
   },
   {
     "login": "NicolasBohn",
@@ -479,7 +513,8 @@ export const snapshotContributors: OrgContributor[] = [
     "contributions": 1,
     "repos": [
       "OpenStock"
-    ]
+    ],
+    "joined": "2026-03-15T00:00:00.000Z"
   },
   {
     "login": "Yi-111-a",
@@ -488,7 +523,8 @@ export const snapshotContributors: OrgContributor[] = [
     "contributions": 1,
     "repos": [
       "OpenStock"
-    ]
+    ],
+    "joined": "2026-09-27T00:00:00.000Z"
   },
   {
     "login": "cosark",
@@ -497,7 +533,8 @@ export const snapshotContributors: OrgContributor[] = [
     "contributions": 1,
     "repos": [
       "OpenStock"
-    ]
+    ],
+    "joined": "2026-09-27T00:00:00.000Z"
   },
   {
     "login": "dajiaohuang",
@@ -506,7 +543,8 @@ export const snapshotContributors: OrgContributor[] = [
     "contributions": 1,
     "repos": [
       "OpenStock"
-    ]
+    ],
+    "joined": "2026-11-08T00:00:00.000Z"
   },
   {
     "login": "kuishou68",
@@ -515,7 +553,8 @@ export const snapshotContributors: OrgContributor[] = [
     "contributions": 1,
     "repos": [
       "OpenStock"
-    ]
+    ],
+    "joined": "2026-09-20T00:00:00.000Z"
   },
   {
     "login": "muskanbandta23",
@@ -524,7 +563,8 @@ export const snapshotContributors: OrgContributor[] = [
     "contributions": 1,
     "repos": [
       "OpenStock"
-    ]
+    ],
+    "joined": "2026-10-11T00:00:00.000Z"
   },
   {
     "login": "samki6576",
@@ -533,6 +573,7 @@ export const snapshotContributors: OrgContributor[] = [
     "contributions": 1,
     "repos": [
       "OpenStock"
-    ]
+    ],
+    "joined": "2026-10-18T00:00:00.000Z"
   }
 ];

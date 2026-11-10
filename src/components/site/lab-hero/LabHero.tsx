@@ -62,7 +62,7 @@ export function LabHero({ now, tools, people, lastPush, stars }: Pick<Workshop, 
         </span>
       </Label>
 
-      <div className="mx-auto flex h-full max-w-(--container) flex-col justify-center px-(--gutter) pt-6 pb-14 md:pb-10">
+      <div className="mx-auto flex h-full max-w-(--container) flex-col items-center justify-center px-(--gutter) pt-6 pb-14 text-center md:pb-10">
         {/* Real text: readable before the field starts and without WebGL. Once the field runs it fades out and the canvas grows the same glyphs in place. */}
         <h1
           id="lab-h1"
@@ -75,7 +75,7 @@ export function LabHero({ now, tools, people, lastPush, stars }: Pick<Workshop, 
             </Fragment>
           ))}
         </h1>
-        <p className="mt-8 flex flex-wrap items-center gap-3 md:mt-10">
+        <p className="mt-8 flex flex-wrap items-center justify-center gap-3 md:mt-10">
           <LabButton href="/contribute" data-plate>
             Join the lab →
           </LabButton>

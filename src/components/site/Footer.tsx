@@ -1,89 +1,108 @@
-import { social } from "@/content";
-import { Button } from "./Button";
-import { CopyCommand } from "./CopyCommand";
+import { contactEmail, social } from "@/content";
 import { VerifyForm } from "./Field";
 import { Container } from "./Section";
 
 export const FORK_COMMAND = "gh repo fork Open-Dev-Society/OpenStock --clone";
 
-const society = [
-  { label: "Work", href: "/projects" },
-  { label: "People", href: "/contributors" },
-  { label: "Manifesto", href: "/manifesto" },
-  { label: "Word of mouth", href: "/word-of-mouth" },
-  { label: "Contribute", href: "/contribute" },
+// Each section by the artefact it is and the numbering it uses (docs/lab.md).
+const artefacts = [
+  { code: "EXP-001…", label: "Experiments", href: "/projects" },
+  { code: "R-01…", label: "Researchers", href: "/contributors" },
+  { code: "ODS-WP-001", label: "Working paper", href: "/manifesto" },
+  { code: "PROTOCOL 01", label: "Protocol", href: "/contribute" },
+  { code: "[1]…", label: "Citations", href: "/word-of-mouth" },
 ];
-const elsewhere = [social.github, social.discord, social.linkedin, { ...social.twitter, label: "X" }, social.email];
+const address = [social.github, social.discord, social.linkedin, { ...social.twitter, label: "X" }, social.email].map((l) => ({
+  ...l,
+  shown: l.href.startsWith("mailto:") ? contactEmail : l.href.replace(/^https:\/\/(www\.)?/, "").replace(/\/$/, ""),
+}));
 
-const link = "text-[15px] text-(--fg-muted) transition-colors duration-(--d-2) hover:text-(--fg)";
+// Paper dissolving into ink: an 8-wide Bayer tile whose threshold rises row by row, repeated across. 16 rows of 2px cells.
+const BAYER = [0, 32, 8, 40, 2, 34, 10, 42, 48, 16, 56, 24, 50, 18, 58, 26, 12, 44, 4, 36, 14, 46, 6, 38, 60, 28, 52, 20, 62, 30, 54, 22, 3, 35, 11, 43, 1, 33, 9, 41, 51, 19, 59, 27, 49, 17, 57, 25, 15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55, 23, 61, 29, 53, 21];
+const ROWS = 16;
+const RAMP = Array.from({ length: 8 * ROWS }, (_, i) => [i % 8, Math.floor(i / 8)])
+  .filter(([x, y]) => BAYER[(y % 8) * 8 + x] < (64 * (y + 0.5)) / ROWS)
+  .map(([x, y]) => `M${x} ${y}h1v1h-1z`)
+  .join("");
 
-/** The closing statement on every non-tool page (brief §10 §6): the manifesto line, the actions, the columns. */
+const link = "transition-colors duration-(--d-2) hover:text-(--fg)";
+const cell = "bg-(--bg) p-5 md:p-6";
+const label = "t-mono mb-4 block text-[11px] tracking-[0.08em] text-(--fg-subtle) uppercase";
+
+/** The colophon on every (site) page: what it's set in, where the lab is, what it publishes, and a certificate check. */
 export function Footer() {
   return (
-    <footer className="tone-inverse py-(--section-y)">
-      <Container>
-        <p className="display-1 max-w-[14ch] text-[calc(0.85*clamp(2.75rem,1.5rem+4.4vw,5.25rem))] text-(--fg)">
-          Technology should belong to <span className="sign text-(--accent)">everyone.</span>
-        </p>
-        <p className="t-lede mt-6 max-w-[52ch] text-(--fg-muted)">
-          So we give ours away. We will never lock knowledge, charge for access, or trade trust for money.{" "}
-          <a href="/manifesto" className="ink-link whitespace-nowrap">
-            Read the manifesto →
-          </a>
-        </p>
-        <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-          <Button href="/contribute" size="lg" icon="arrow">
-            Make your first PR
-          </Button>
-          <Button href={social.discord.href} size="lg" variant="secondary" external>
-            Join the Discord
-          </Button>
-          <CopyCommand command={FORK_COMMAND} className="max-sm:hidden sm:w-[22rem]" />
-        </div>
+    <footer>
+      <svg aria-hidden className="block h-8 w-full" shapeRendering="crispEdges">
+        <defs>
+          <pattern id="colophon-ramp" width="8" height={ROWS} patternUnits="userSpaceOnUse" patternTransform="scale(2)">
+            <path d={RAMP} fill="var(--inv-bg)" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#colophon-ramp)" />
+      </svg>
 
-        <div className="mt-20 grid grid-cols-2 gap-x-(--grid-gap) gap-y-10 md:grid-cols-12">
-          <div className="md:col-span-3">
-            <p className="t-meta text-(--fg-subtle)">Society</p>
-            <ul className="mt-4 space-y-2">
-              {society.map((l) => (
-                <li key={l.href}>
-                  <a href={l.href} className={link}>
-                    {l.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="md:col-span-3">
-            <p className="t-meta text-(--fg-subtle)">Elsewhere</p>
-            <ul className="mt-4 space-y-2">
-              {elsewhere.map((l) => (
-                <li key={l.href}>
-                  <a href={l.href} {...(l.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})} className={link}>
-                    {l.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="col-span-2 md:col-span-4 md:col-start-9">
-            <p className="t-meta text-(--fg-subtle)">Credentials</p>
-            <div className="mt-4">
-              <VerifyForm />
+      <div className="tone-inverse pt-10 pb-8 md:pt-14">
+        <Container>
+          <p className="t-mono flex flex-wrap justify-between gap-x-6 gap-y-1 border-b border-(--line) pb-3 text-[12px] text-(--fg-subtle)">
+            <span>
+              <span className="text-(--fg)">Colophon</span> · ODS·LAB
+            </span>
+            <span>Open Dev Society · est. July 2024</span>
+          </p>
+
+          {/* Each typeface named in itself, as a specimen sheet would. */}
+          <p className="mt-8 max-w-[22ch] text-[clamp(2rem,1.2rem+3vw,3.75rem)] leading-[0.98] font-[800] tracking-[-0.015em] text-balance text-(--fg) [font-stretch:75%] md:mt-12">
+            Set in Mona Sans &amp; <span className="font-mono text-[0.82em] font-[500] tracking-[-0.04em] whitespace-nowrap [font-stretch:100%]">Geist Mono</span>.{" "}
+            <span className="text-(--fg-muted)">Dithered <span className="whitespace-nowrap">in-browser.</span> Built in public.</span>
+          </p>
+
+          <div className="mt-10 grid gap-px bg-(--line) shadow-[0_0_0_1px_var(--line)] md:mt-14 md:grid-cols-12">
+            <div className={`${cell} md:col-span-4`}>
+              <span className={label}>Lab address</span>
+              <ul className="t-mono space-y-1 text-[13px]">
+                {address.map((l) => (
+                  <li key={l.href} className="grid grid-cols-[9ch_minmax(0,1fr)] gap-x-3">
+                    <span className="text-(--fg-subtle)">{l.label}</span>
+                    <a href={l.href} {...(l.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})} className={`truncate text-(--fg-muted) ${link}`}>
+                      {l.shown}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <a href="/contribute#values" className={`${link} mt-4 inline-block`}>
-              Code of conduct
-            </a>
-          </div>
-        </div>
 
-        <p className="t-meta mt-16 border-t border-(--line) pt-6 text-(--fg-subtle)">
-          © {new Date().getFullYear()} Open Dev Society · Founded July 2024 ·{" "}
-          <a href={`${social.github.href}/opendevsociety`} target="_blank" rel="noopener noreferrer" className="hover:text-(--fg)">
-            This site is open source too ↗
-          </a>
-        </p>
-      </Container>
+            <nav aria-label="Artefacts" className={`${cell} md:col-span-4`}>
+              <span className={label}>Artefacts</span>
+              <ul className="space-y-1">
+                {artefacts.map((a) => (
+                  <li key={a.href}>
+                    <a href={a.href} className={`group grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-3 text-(--fg-muted) ${link}`}>
+                      <span className="text-[15px]">{a.label}</span>
+                      <span className="t-mono text-[12px] text-(--fg-subtle) group-hover:text-(--accent)">{a.code}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            <div className={`${cell} md:col-span-4`}>
+              <span className={label}>Credentials</span>
+              <VerifyForm />
+              <a href="/contribute#values" className={`t-mono mt-4 inline-block text-[12px] text-(--fg-muted) ${link}`}>
+                Safety notes: code of conduct →
+              </a>
+            </div>
+          </div>
+
+          <p className="t-mono mt-6 flex flex-wrap justify-between gap-x-6 gap-y-1 text-[12px] text-(--fg-subtle)">
+            <span>© {new Date().getFullYear()} Open Dev Society · free, open source</span>
+            <a href={`${social.github.href}/opendevsociety`} target="_blank" rel="noopener noreferrer" className={link}>
+              This site is open source ↗
+            </a>
+          </p>
+        </Container>
+      </div>
     </footer>
   );
 }
