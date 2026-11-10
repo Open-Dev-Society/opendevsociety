@@ -14,7 +14,7 @@ import { getWorkshop } from "@/lib/workshop";
 import { CopyButton } from "../../manifesto/CopyButton";
 import { STATUS_LABEL } from "../status";
 import { Activity } from "./Activity";
-import { getProject, getProjectNames } from "./data";
+import { getProject, getProjectNames } from "@/lib/github";
 
 // Matches the GitHub lib's cache.
 export const revalidate = 3600;
@@ -137,7 +137,7 @@ export default async function ProjectPage({ params }: Props) {
         <Record
           name="Activity"
           meta={p.weeks.length ? [`${commits.toLocaleString("en-US")} commits`, "last 52 weeks"] : ["last 52 weeks"]}
-          title={p.weeks.length ? `${commits.toLocaleString("en-US")} commits this year.` : "A year of commits."}
+          title={!p.weeks.length ? "A year of commits." : commits ? `${commits.toLocaleString("en-US")} ${commits === 1 ? "commit" : "commits"} in the past year.` : "Quiet this past year."}
           className="mb-8"
         />
         {p.weeks.length ? (
@@ -196,7 +196,7 @@ export default async function ProjectPage({ params }: Props) {
             </div>
             <p className="mt-8">
               <LabButton href="/contribute" variant="secondary" size="md">
-                How to make your first contribution →
+                How to contribute →
               </LabButton>
             </p>
           </div>
