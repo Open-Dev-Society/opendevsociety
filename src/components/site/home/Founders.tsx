@@ -37,7 +37,7 @@ export function Founders() {
       <Container>
         <p className={label}>For founders</p>
         <h2 id="founders-h" className={`${display} mt-3 text-[clamp(2.75rem,1.4rem+5.4vw,7rem)]`}>
-          Bring your project. <span className="text-(--accent)">Keep the credit.</span>
+          Bring your project. Keep the credit.
         </h2>
 
         <ol className="mt-10 grid border-t border-(--fg) md:mt-14 md:grid-cols-3">
@@ -58,7 +58,7 @@ export function Founders() {
                     “{q.text}”
                   </p>
                   <footer className="t-mono mt-3 text-[12px] text-(--fg-muted)">
-                    <a href={q.url} {...ext} className={`hover:text-(--accent) ${focus}`}>
+                    <a href={q.url} {...ext} className={`underline-offset-4 hover:underline ${focus}`}>
                       <span className="sign text-[16px] text-(--fg)">{q.who}</span>
                       {q.where && <>, {q.where}</>} ↗
                     </a>
