@@ -40,7 +40,6 @@ precision highp float;
 uniform sampler2D u_sim, u_zone, u_glyph;
 uniform vec2 u_css;    // canvas size, CSS px
 uniform float u_dpr, u_cell; // device px per CSS px, dither cell in device px
-uniform float u_band;  // CSS px at the top kept as paper for the nav, fading back over as much again
 uniform vec3 u_paper, u_ink, u_teal;
 out vec4 o;
 const int B[64] = int[64](${BAYER});
@@ -62,7 +61,6 @@ void main() {
   float t = bayer(cell);
   // Pattern tone: full inside the letters, hushed in the halo around them (and the plates) so the type reads.
   float gain = max(mix(1.0, 0.1, smoothstep(0.05, 0.55, z.g)), z.r);
-  if (u_band > 0.0) gain *= smoothstep(u_band * 0.75, u_band * 2.0, u_css.y - fc.y / u_dpr);
   vec3 col = smoothstep(0.1, 0.42, s.g) * gain > t ? u_teal : u_paper;
   // Letters take ink once the reaction has passed through them (W), at device-pixel crispness.
   float cov = texelFetch(u_glyph, ivec2(fc), 0).r;
@@ -192,7 +190,7 @@ export function startField(section: HTMLElement, canvas: HTMLCanvasElement, opts
   });
   const zone = texture(gl, gl.LINEAR), glyph = texture(gl, gl.LINEAR);
 
-  let w = 0, h = 0, sw = 0, sh = 0, dpr = 1, cell = 2, cur = 0, band = 0;
+  let w = 0, h = 0, sw = 0, sh = 0, dpr = 1, cell = 2, cur = 0;
   let seed: [number, number, number] | null = null;
 
   function setup() {
@@ -207,7 +205,6 @@ export function startField(section: HTMLElement, canvas: HTMLCanvasElement, opts
     cell = Math.max(2, Math.round(2 * dpr));
     sw = Math.max(8, Math.round(w * SIM_SCALE));
     sh = Math.max(8, Math.round(h * SIM_SCALE));
-    band = parseFloat(getComputedStyle(section).paddingTop) || 0; // the nav floats over this strip
     colors = readColors(section); // again here: by now the stylesheet has certainly applied
 
     gl!.pixelStorei(gl!.UNPACK_FLIP_Y_WEBGL, true);
@@ -270,7 +267,6 @@ export function startField(section: HTMLElement, canvas: HTMLCanvasElement, opts
     gl!.uniform2f(U("u_css"), w, h);
     gl!.uniform1f(U("u_dpr"), dpr);
     gl!.uniform1f(U("u_cell"), cell);
-    gl!.uniform1f(U("u_band"), band);
     gl!.uniform3f(U("u_paper"), ...colors.paper);
     gl!.uniform3f(U("u_ink"), ...colors.ink);
     gl!.uniform3f(U("u_teal"), ...colors.teal);
