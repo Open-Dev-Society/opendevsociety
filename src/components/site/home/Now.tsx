@@ -4,11 +4,11 @@ import { TypeLine } from "./live";
 import { Container } from "../Section";
 import { band, display, ext, focus, label } from "./ui";
 
-function line(a: Activity) {
-  const who = a.who ? `@${a.who}` : "Someone";
-  if (a.kind === "release") return `${a.repo} ${a.tag ?? a.title} released`;
-  if (a.kind === "contributor") return `${who} made a first contribution: ${a.title}`;
-  return `${who} merged “${a.title}”`;
+// The person is shown as a chip, so split each line into who + what happened.
+function line(a: Activity): { who: string | null; rest: string } {
+  if (a.kind === "release") return { who: null, rest: `${a.repo} ${a.tag ?? a.title} released` };
+  const rest = a.kind === "contributor" ? `made a first contribution: ${a.title}` : `merged “${a.title}”`;
+  return a.who ? { who: a.who, rest } : { who: null, rest: `Someone ${rest}` };
 }
 
 /** 03 · ink: the latest merged PRs, releases and first contributions across every project. The newest line types itself in. */
@@ -30,7 +30,9 @@ export function Now({ activity, now }: { activity: Activity[]; now: number }) {
         </div>
 
         <ol className="border-t border-(--fg) lg:col-span-8">
-          {feed.map((a, i) => (
+          {feed.map((a, i) => {
+            const { who, rest } = line(a);
+            return (
             <li key={`${a.url}-${a.at}`} className={i > 3 ? "max-sm:hidden" : ""}>
               <a
                 href={a.url}
@@ -39,12 +41,18 @@ export function Now({ activity, now }: { activity: Activity[]; now: number }) {
               >
                 <span className="t-mono text-[12px] text-(--fg-subtle)">{ago(a.at, now)}</span>
                 <span className={`text-[15px] leading-snug ${i ? "text-(--fg-muted)" : "text-(--fg)"}`}>
-                  {i ? line(a) : <TypeLine text={line(a)} />}
+                  {who && (
+                    <span className="t-mono mr-1.5 inline-block bg-(--accent) px-1.5 py-0.5 align-[0.08em] text-[12px] leading-none text-(--accent-fg)">
+                      @{who}
+                    </span>
+                  )}
+                  {i ? rest : <TypeLine text={rest} />}
                 </span>
                 <span className="t-mono col-start-2 text-[12px] text-(--accent) sm:col-start-auto">{a.repo}</span>
               </a>
             </li>
-          ))}
+            );
+          })}
         </ol>
       </Container>
     </section>
