@@ -56,7 +56,7 @@ export function Start({ issues, tools }: { issues: Issue[]; tools: OrgRepo[] }) 
               <li key={r.who}>
                 <Link
                   href={r.href}
-                  className={`flex items-baseline justify-between gap-4 border-b border-(--line) py-3 hover:bg-(--surface-2) ${focus}`}
+                  className={`flex items-baseline justify-between gap-4 border-b border-(--line) px-3 py-3 hover:bg-(--surface-2) sm:px-4 ${focus}`}
                 >
                   <span className="text-[16px] text-(--fg-muted)">
                     <span className="font-[650] text-(--fg)">{r.who}:</span> {r.what}
@@ -75,7 +75,7 @@ export function Start({ issues, tools }: { issues: Issue[]; tools: OrgRepo[] }) 
           <ol className="mt-3 border-t border-(--fg)">
             {issues.map((i) => (
               <li key={i.url}>
-                <a href={i.url} {...ext} className={`block border-b border-(--line) py-4 hover:bg-(--surface-2) ${focus}`}>
+                <a href={i.url} {...ext} className={`block border-b border-(--line) px-3 py-4 hover:bg-(--surface-2) sm:px-4 ${focus}`}>
                   <span className="block text-[17px] leading-snug font-[650] text-(--fg)">
                     {i.title} <External size="1em" />
                   </span>
@@ -95,7 +95,7 @@ export function Start({ issues, tools }: { issues: Issue[]; tools: OrgRepo[] }) 
                 <a
                   href={`${t.html_url}/issues`}
                   {...ext}
-                  className={`flex items-baseline justify-between gap-4 border-b border-(--line) py-4 hover:bg-(--surface-2) ${focus}`}
+                  className={`flex items-baseline justify-between gap-4 border-b border-(--line) px-3 py-4 hover:bg-(--surface-2) sm:px-4 ${focus}`}
                 >
                   <span className="text-[17px] font-[650] text-(--fg)">
                     {t.name} <External size="1em" />
