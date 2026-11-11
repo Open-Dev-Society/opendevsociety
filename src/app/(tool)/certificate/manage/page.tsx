@@ -59,6 +59,7 @@ export default function ManagePage() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- first load on mount
     load();
   }, []);
 

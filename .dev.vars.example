@@ -1,0 +1,5 @@
+# Copy to .dev.vars for `npm run preview` (local Workers runtime). Never commit .dev.vars.
+# Optional: without it GitHub data falls back to the bundled snapshot.
+GITHUB_TOKEN=
+# Any throwaway value locally; the real one is set with `npx wrangler secret put CERT_PASSWORD`.
+CERT_PASSWORD=
