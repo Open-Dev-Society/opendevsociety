@@ -43,9 +43,9 @@ export function printCertificate() {
   };
   window.addEventListener("afterprint", cleanup);
 
-  requestAnimationFrame(() => {
-    setTimeout(() => window.print(), 50);
-  });
+  // Print only once the fonts (the signature's pen above all) and images are in: no fallback-font PDFs.
+  const images = [...clone.querySelectorAll("img")].map((img) => img.decode().catch(() => {}));
+  Promise.all([document.fonts.ready, ...images]).then(() => requestAnimationFrame(() => setTimeout(() => window.print(), 50)));
 }
 
 export function DownloadButton({ variant = "secondary", className }: { variant?: Variant; className?: string }) {
