@@ -32,4 +32,6 @@ export function status(repo: Pick<OrgRepo, "pushed_at">, now = Date.now()): Stat
 }
 
 /** "10 Nov 2026" */
-export const labDate = (iso: string) => new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" });
+/** "09 Nov 2026", joined by non-breaking spaces so a date never wraps in the middle. */
+export const labDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" }).replaceAll(" ", "\u00a0");
