@@ -145,3 +145,14 @@ npm run preview                  # builds, then serves on http://localhost:8787
   (error 1102) on page refreshes, move to Workers Paid ($5/month).
 - **Logs**: **Workers & Pages → opendevsociety → Logs** (observability is on), or `npx wrangler tail` live.
 - **Rollback**: **Deployments** tab → pick an older version → **Rollback**.
+
+
+## If the deploy stalls on "Populating remote R2 incremental cache"
+
+You'll see lines like `Failed to send request to R2 worker: The operation was aborted due to timeout. Retrying...`.
+The deploy uploads every cached page to R2, and a slow connection times out when too many go at once.
+`npm run deploy` already sends them 4 at a time (`--cacheChunkSize=4`). If it still times out, stop it with Ctrl+C and run
+`npx opennextjs-cloudflare deploy --cacheChunkSize=1` (no rebuild needed; it reuses `.open-next`).
+
+The warning "no such Durable Object class is exported from the worker" for `DOQueueHandler` is a false alarm: the
+generated `.open-next/worker.js` does export it.
