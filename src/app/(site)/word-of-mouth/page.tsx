@@ -48,6 +48,7 @@ export const metadata: Metadata = {
 const kinds: Record<MentionSource, Kind> = {
   article: "article",
   youtube: "social",
+  bilibili: "social",
   twitter: "social",
   instagram: "social",
   linkedin: "social",
