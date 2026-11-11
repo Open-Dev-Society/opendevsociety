@@ -41,6 +41,8 @@ export function About({
   const active = states.filter((s) => s.active).length;
   const peak = Math.max(1, ...weeks);
 
+  // One 24px slot for every visual, contents on its bottom edge, so the four captions share a baseline.
+  const slot = "flex h-6 items-end";
   const numbers = [
     {
       n: stars,
@@ -48,9 +50,11 @@ export function About({
       what: "GitHub stars",
       show: (
         <>
-          <span className="flex h-2.5 gap-0.5" aria-hidden>
-            <span className={checker} style={{ flex: lead.stars }} />
-            <span className="bg-(--fg-subtle)" style={{ flex: Math.max(stars - lead.stars, stars / 200) }} />
+          <span className={slot} aria-hidden>
+            <span className="flex h-2.5 w-full gap-0.5">
+              <span className={checker} style={{ flex: lead.stars }} />
+              <span className="bg-(--fg-subtle)" style={{ flex: Math.max(stars - lead.stars, stars / 200) }} />
+            </span>
           </span>
           <span className="mt-1.5 block">
             {lead.name} {compact(lead.stars)} · {tools.length - 1} others {compact(stars - lead.stars)}
@@ -63,7 +67,7 @@ export function About({
       what: "contributors",
       show: (
         <>
-          <span className="flex items-center" aria-hidden>
+          <span className={`${slot} items-center`} aria-hidden>
             {builders.slice(0, FACES).map((b) => (
               <Dither
                 key={b.login}
@@ -87,7 +91,7 @@ export function About({
       what: "projects",
       show: (
         <>
-          <span className="flex flex-wrap gap-1" aria-hidden>
+          <span className={`${slot} flex-wrap content-end gap-1`} aria-hidden>
             {states.map((s) => (
               <span key={s.name} title={s.name} className={`size-2.5 ${s.active ? "bg-(--accent)" : "shadow-[inset_0_0_0_1px_var(--fg-subtle)]"}`} />
             ))}
@@ -101,7 +105,7 @@ export function About({
       what: "commits this week",
       show: (
         <>
-          <span className="flex h-6 items-end gap-0.5" aria-hidden>
+          <span className={`${slot} gap-0.5`} aria-hidden>
             {weeks.map((c, i) => (
               <span key={i} className={`flex-1 ${checker}`} style={{ height: `${Math.max(8, (c / peak) * 100)}%` }} />
             ))}
