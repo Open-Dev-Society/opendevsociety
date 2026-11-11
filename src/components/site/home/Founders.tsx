@@ -28,7 +28,7 @@ const promises = [
 const quotes = mentions
   .filter((m) => m.highlight && m.highlight.length <= 240 && !m.author.startsWith("Ravi Pratap Singh"))
   .map((m) => ({
-    text: m.highlight!.replace(/^["“]|["”]$/g, ""),
+    text: m.highlight!.replace(/^["“]|["”]$/g, "").replace(/'/g, "’"),
     who: m.author.split(/ (?:at|via) /)[0],
     where: m.author.split(/ (?:at|via) /)[1] ?? "",
     url: m.url,

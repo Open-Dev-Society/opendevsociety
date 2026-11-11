@@ -82,7 +82,7 @@ export function TypeLine({ text }: { text: string }) {
   );
 }
 
-/** One child at a time, every 7s, in a stack sized to the tallest (no reflow). Pauses on hover/focus; reduced motion stays on the first. */
+/** One child at a time, every 7s, in a stack sized to the tallest (no reflow), each on its bottom edge. Pauses on hover/focus; reduced motion stays on the first. */
 export function Rotator({ children, label }: { children: React.ReactNode[]; label: string }) {
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -100,7 +100,7 @@ export function Rotator({ children, label }: { children: React.ReactNode[]; labe
       onPointerLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
-      className="grid"
+      className="grid items-end"
     >
       {children.map((c, k) => (
         <div

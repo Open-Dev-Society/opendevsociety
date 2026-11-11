@@ -85,7 +85,7 @@ export const mentions: Mention[] = [
         author: "@maoyang via Threads",
         url: "https://www.threads.com/@maoyang/post/DTS3I3fE34d?hl=en",
         date: "2026",
-        highlight: "OpenStock's core philosophy is \"Build openly, for everyone, forever free\"",
+        highlight: "OpenStock’s core philosophy is ‘Build openly, for everyone, forever free’",
     },
     {
         title: "Got mentioned by @dankopenguin",
