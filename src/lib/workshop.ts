@@ -13,10 +13,11 @@ export type Builder = {
   core?: boolean;
   /** First week with a commit (ISO), when GitHub's stats have it. */
   joined?: string;
-  role?: "Founder" | "Lead maintainer" | "Maintainer";
+  role: "Founder" | "Lead maintainer" | "Maintainer" | "Contributor";
 };
 
-const roleOf = (r = "") => (/Founder/i.test(r) ? "Founder" : /Lead Maintainer/i.test(r) ? "Lead maintainer" : /Maintainer/i.test(r) ? "Maintainer" : undefined);
+// Everyone without a named role is a contributor.
+const roleOf = (r = "") => (/Founder/i.test(r) ? "Founder" : /Lead Maintainer/i.test(r) ? "Lead maintainer" : /Maintainer/i.test(r) ? "Maintainer" : "Contributor");
 
 export async function getWorkshop() {
   const [repos, people] = await Promise.all([getOrgRepos(), getOrgContributors()]);

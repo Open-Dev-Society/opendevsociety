@@ -55,7 +55,7 @@ export function Badge({ c: r }: { c: Contributor }) {
       <div>
         <Photo src={r.avatar} alt={`${r.name ?? r.login}, GitHub avatar`} />
         {r.role && (
-          <Plate tone="accent" className="mt-2 flex justify-center text-center text-[10px] leading-tight tracking-[0.06em] uppercase whitespace-normal!">
+          <Plate tone={r.role === "Contributor" ? "plain" : "accent"} className="mt-2 flex justify-center text-center text-[10px] leading-tight tracking-[0.06em] uppercase whitespace-normal!">
             {r.role}
           </Plate>
         )}
