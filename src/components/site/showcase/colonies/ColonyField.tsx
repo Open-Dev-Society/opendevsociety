@@ -88,6 +88,8 @@ function plate(c: Colony, box: HTMLElement): Promise<{ src: HTMLCanvasElement; n
 export function ColonyField({ colonies, desktop, mobile }: { colonies: Colony[]; desktop: Layout; mobile: Layout }) {
   const box = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
+  // The still fallback gets its own canvas: once `canvas` has had a WebGL context it can never hand out a 2D one.
+  const still = useRef<HTMLCanvasElement>(null);
   const links = useRef<(HTMLAnchorElement | null)[]>([]);
   const engine = useRef<Engine | null>(null);
   const plates = useRef(new Map<number, ReturnType<typeof plate>>());
@@ -106,14 +108,14 @@ export function ColonyField({ colonies, desktop, mobile }: { colonies: Colony[];
   };
 
   useEffect(() => {
-    const b = box.current!, c = canvas.current!;
+    const b = box.current!, c = canvas.current!, sc = still.current!;
     const e = startColonies(b, c, discs, b.clientWidth < 768);
     if (e) {
       engine.current = e;
       return () => e.stop();
     }
     setGl(false);
-    const draw = () => staticColonies(b, c, discs());
+    const draw = () => staticColonies(b, sc, discs());
     draw();
     const ro = new ResizeObserver(draw);
     ro.observe(b);
@@ -183,7 +185,8 @@ export function ColonyField({ colonies, desktop, mobile }: { colonies: Colony[];
       className="relative aspect-[1/var(--am)] md:aspect-[1/var(--ad)]"
       style={{ "--ad": desktop.aspect, "--am": mobile.aspect } as React.CSSProperties}
     >
-      <canvas ref={canvas} aria-hidden className="absolute inset-0 size-full [image-rendering:pixelated]" />
+      <canvas ref={canvas} aria-hidden className={`absolute inset-0 size-full [image-rendering:pixelated] ${gl ? "" : "hidden"}`} />
+      <canvas ref={still} aria-hidden className={`absolute inset-0 size-full [image-rendering:pixelated] ${gl ? "hidden" : ""}`} />
       <ul className="contents">
         {colonies.map((c, i) => {
           const d = desktop.spots[i], m = mobile.spots[i];

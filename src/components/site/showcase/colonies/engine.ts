@@ -355,7 +355,7 @@ export function startColonies(box: HTMLElement, canvas: HTMLCanvasElement, discs
       motion.removeEventListener("change", kick);
       unwatch();
       delete box.dataset.live;
-      gl.getExtension("WEBGL_lose_context")?.loseContext();
+      // No loseContext(): React remounts reuse this canvas, and a lost context can't be revived; the browser frees it with the canvas.
     },
   };
 }
