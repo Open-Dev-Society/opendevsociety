@@ -1,3 +1,16 @@
 {
-  "certificates": []
+  "certificates": [
+    {
+      "id": "ODS-2026-0668",
+      "name": "Bipin kumar Madhur",
+      "role": "maintainer",
+      "description": "for caring for Open Dev Society projects: reviewing every change with care, guiding new contributors and keeping the tools healthy, free and moving forward.",
+      "issuedOn": "2026.11.11",
+      "issuedBy": "Ravi Pratap Singh",
+      "issuerHandle": "@ravixalgorithm",
+      "status": "active",
+      "createdAt": "2026-11-11T14:15:34.744Z",
+      "updatedAt": "2026-11-11T14:15:34.744Z"
+    }
+  ]
 }
