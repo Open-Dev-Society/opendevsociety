@@ -110,7 +110,7 @@ export default async function Manifesto() {
         </p>
       </header>
 
-      <div className="mt-14 lg:grid lg:grid-cols-[minmax(0,68ch)_13rem] lg:justify-center lg:gap-x-10">
+      <div className="mt-14">
 
         <div data-column className="min-w-0">
           {/* Title page */}
