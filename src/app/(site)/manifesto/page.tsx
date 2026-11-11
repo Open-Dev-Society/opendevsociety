@@ -3,7 +3,7 @@ import { Fragment } from "react";
 import { LabButton } from "@/components/site/lab-hero/LabButton";
 import { REGIMES } from "@/components/site/lab-hero/field";
 import { contactEmail, social } from "@/content";
-import { manualContributors } from "@/data/contributors";
+import { manualContributors, roleLabel, signers } from "@/data/contributors";
 import { mentions } from "@/data/mentions";
 import { ago } from "@/lib/format";
 import { projectHref } from "@/lib/lab";
@@ -15,9 +15,7 @@ export const revalidate = 3600;
 const DATE = "10 Nov 2026";
 const TITLE = "Technology Should Belong to Everyone";
 
-const founders = manualContributors.filter((c) => c.role && /Founder/i.test(c.role)); // Founder first, then Co-Founder
 const maintainers = manualContributors.filter((c) => c.role && /Maintainer/i.test(c.role));
-const role = (r?: string) => (r && /Co-Founder/i.test(r) ? "Co-founder" : "Founder");
 
 export const metadata: Metadata = {
   title: `Manifesto: ${TITLE} · Open Dev Society`,
@@ -150,7 +148,7 @@ export default async function Manifesto() {
               {TITLE}
             </h1>
             <p className="mt-9 flex flex-wrap justify-center gap-x-8 gap-y-2 text-[22px]">
-              {founders.map((f) => (
+              {signers.map((f) => (
                 <span key={f.login}>
                   <a href={f.html_url} {...ext} className="sign text-(--fg) transition-colors duration-(--d-2) hover:text-(--accent)">
                     {f.name}
@@ -204,7 +202,7 @@ export default async function Manifesto() {
             <blockquote className="my-8 border-l-2 border-(--accent) py-1 pl-5 text-left indent-0 sm:pl-6">
               <p className="text-[19px] leading-[1.5] text-(--fg)">Knowledge isn&apos;t just code: it&apos;s conversation, collaboration, and connection.</p>
               <footer className="t-mono mt-2 text-[12px] text-(--fg-muted)">
-                <span className="sign text-[16px] text-(--fg)">{founders[0]?.name}</span>, {role(founders[0]?.role).toLowerCase()}, 2024
+                <span className="sign text-[16px] text-(--fg)">{signers[0].name}</span>, {roleLabel(signers[0].role).toLowerCase()}, 2024
               </footer>
             </blockquote>
             <Notes ns={[1, 2]} />
@@ -350,13 +348,13 @@ export default async function Manifesto() {
               <Note n={5} />
             </p>
             <div className="mt-10 grid grid-cols-1 gap-8 indent-0 sm:grid-cols-2">
-              {founders.map((f) => (
+              {signers.map((f) => (
                 <div key={f.login} className="text-left">
                   <a href={f.html_url} {...ext} className="sign block text-[30px] leading-none text-(--fg) transition-colors duration-(--d-2) hover:text-(--accent)">
                     {f.name}
                   </a>
                   <p className="t-mono mt-2 border-t border-(--fg) pt-1.5 text-[12px] text-(--fg-muted)">
-                    {f.name} · {role(f.role)} · July 2024
+                    {f.name} · {roleLabel(f.role)} · July 2024
                   </p>
                 </div>
               ))}

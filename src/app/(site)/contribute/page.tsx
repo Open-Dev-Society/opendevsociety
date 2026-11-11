@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { LabButton } from "@/components/site/lab-hero/LabButton";
 import { contactEmail, social } from "@/content";
-import { manualContributors } from "@/data/contributors";
+import { roleLabel, signers } from "@/data/contributors";
 import { nextMemberNo } from "@/lib/lab";
 import { getWorkshop } from "@/lib/workshop";
 import { Materials, Procedure, type Project } from "./protocol";
@@ -190,10 +190,6 @@ export default async function Contribute() {
     .map((r) => ({ name: r.name, language: r.language, open: r.open_issues, goodFirst: r.good_first_issues }));
   const open = projects.reduce((a, e) => a + e.open, 0);
   const seat = nextMemberNo(people);
-  const signers = [
-    ["founder", manualContributors.find((c) => c.role && /^(?!.*Co-Founder).*Founder/i.test(c.role))],
-    ["co-founder", manualContributors.find((c) => c.role && /Co-Founder/i.test(c.role))],
-  ] as const;
 
   const sheet = [
     ["Time", "30–60 min"],
@@ -238,18 +234,15 @@ export default async function Contribute() {
           </dl>
         </div>
         <div className="flex flex-wrap items-end gap-x-12 gap-y-6 border-t border-(--line) py-5">
-          <span className="t-mono text-[11px] tracking-[0.08em] text-(--fg-subtle) uppercase">From the founders</span>
-          {signers.map(
-            ([role, p]) =>
-              p && (
-                <a key={role} href={p.html_url} {...ext} className="group block min-w-[13rem]">
-                  <span className="sign block border-b border-(--fg-subtle) pb-1 text-[26px] leading-none text-(--accent) group-hover:text-(--accent-hover)">
-                    {p.name}
-                  </span>
-                  <span className="t-mono mt-1.5 block text-[11px] text-(--fg-subtle)">{role}</span>
-                </a>
-              ),
-          )}
+          <span className="t-mono text-[11px] tracking-[0.08em] text-(--fg-subtle) uppercase">From the team</span>
+          {signers.map((p) => (
+            <a key={p.login} href={p.html_url} {...ext} className="group block min-w-[13rem]">
+              <span className="sign block border-b border-(--fg-subtle) pb-1 text-[26px] leading-none text-(--accent) group-hover:text-(--accent-hover)">
+                {p.name}
+              </span>
+              <span className="t-mono mt-1.5 block text-[11px] text-(--fg-subtle)">{roleLabel(p.role).toLowerCase()}</span>
+            </a>
+          ))}
         </div>
       </header>
 

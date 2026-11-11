@@ -3,7 +3,7 @@ export interface Contributor {
     name?: string;
     avatar_url: string;
     html_url: string;
-    role?: string; // "Founder", "Co-Founder" or "Maintainer" (maintainers not in GitHub's stats are added by getOrgContributors)
+    role?: string; // "Founder" or "Maintainer" (maintainers not in GitHub's stats are added by getOrgContributors)
     twitter?: string;
     type: 'User' | 'Bot';
 }
@@ -22,7 +22,7 @@ export const manualContributors: Contributor[] = [
         name: "Priyanshu Bhardwaj",
         avatar_url: "https://avatars.githubusercontent.com/priyanshucosmos",
         html_url: "https://github.com/priyanshucosmos",
-        role: "Co-Founder",
+        role: "Maintainer",
         type: "User"
     },
     {
@@ -43,3 +43,9 @@ export const manualContributors: Contributor[] = [
     },
     // Add more manual entries here
 ];
+
+/** Who signs the manifesto and the contribute page: the founder, then the first maintainer. */
+export const signers = ["ravixalgorithm", "priyanshucosmos"].map((l) => manualContributors.find((c) => c.login === l)!);
+
+/** "Founder" or "Maintainer", as shown under a signature. */
+export const roleLabel = (r = "") => (/Founder/i.test(r) ? "Founder" : "Maintainer");
