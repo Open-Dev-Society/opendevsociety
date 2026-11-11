@@ -26,7 +26,8 @@ const promises = [
 // Every outside quote about us (not our own posts), short enough for the stack (it is as tall as the longest),
 // cleaned of the quote marks they are stored with.
 const quotes = mentions
-  .filter((m) => m.highlight && m.highlight.length <= 240 && !m.author.startsWith("Ravi Pratap Singh"))
+  // English lines only on Home (the full list, in every language, is on What people say).
+  .filter((m) => m.highlight && m.highlight.length <= 240 && !m.author.startsWith("Ravi Pratap Singh") && !/[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]/.test(m.highlight))
   .map((m) => ({
     text: m.highlight!.replace(/^["“]|["”]$/g, "").replace(/'/g, "’"),
     who: m.author.split(/ (?:at|via) /)[0],

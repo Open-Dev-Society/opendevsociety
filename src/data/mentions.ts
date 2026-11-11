@@ -245,15 +245,6 @@ export const mentions: Mention[] = [
 
     // ─── Twitter / X ───
     {
-        title: "THIS is such an underrated Claude Code tip.",
-        description: "Ram Maheshwari shares kitbash: have Claude search GitHub for existing open-source projects before building from scratch.",
-        source: "twitter",
-        author: "Ram Maheshwari at X",
-        url: "https://x.com/rammcodes/status/2114803566879838510",
-        date: "2026",
-        highlight: "\"You could save development time AND tokens by avoiding unnecessary trial and error.\"",
-    },
-    {
         title: "OpenStock 是由 Open Dev Society 社区打造的一款永久免费、开源的股票市场追踪平台",
         description: "",
         source: "twitter",
