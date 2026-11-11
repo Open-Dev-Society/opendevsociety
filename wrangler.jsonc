@@ -4,25 +4,48 @@
 	"main": ".open-next/worker.js",
 	"name": "opendevsociety",
 	"compatibility_date": "2026-11-01",
-	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+	"compatibility_flags": [
+		"nodejs_compat",
+		"global_fetch_strictly_public"
+	],
 	"assets": {
 		"directory": ".open-next/assets",
 		"binding": "ASSETS"
 	},
-	"observability": { "enabled": true },
+	"observability": {
+		"enabled": true
+	},
 	"services": [
 		// Self-reference used by ISR revalidation; must match "name" above.
-		{ "binding": "WORKER_SELF_REFERENCE", "service": "opendevsociety" }
+		{
+			"binding": "WORKER_SELF_REFERENCE",
+			"service": "opendevsociety"
+		}
 	],
 	"r2_buckets": [
 		// ISR / fetch cache. Create it once: npx wrangler r2 bucket create opendevsociety-cache
-		{ "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "opendevsociety-cache" }
+		{
+			"binding": "NEXT_INC_CACHE_R2_BUCKET",
+			"bucket_name": "opendevsociety-cache"
+		}
 	],
 	"durable_objects": {
 		// Queue that dedupes the hourly (revalidate: 3600) regenerations. Created by the deploy itself.
-		"bindings": [{ "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" }]
+		"bindings": [
+			{
+				"name": "NEXT_CACHE_DO_QUEUE",
+				"class_name": "DOQueueHandler"
+			}
+		]
 	},
-	"migrations": [{ "tag": "v1", "new_sqlite_classes": ["DOQueueHandler"] }]
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_sqlite_classes": [
+				"DOQueueHandler"
+			]
+		}
+	]
 	// Secrets (not in this file): GITHUB_TOKEN, CERT_PASSWORD via `npx wrangler secret put <NAME>`.
 	// The custom domain is attached in the dashboard (Workers > opendevsociety > Settings > Domains & Routes),
 	// or uncomment and set it here:
