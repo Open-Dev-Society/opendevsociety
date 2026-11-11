@@ -4,12 +4,12 @@ import { compact } from "@/lib/format";
 import { getOrgTotals } from "@/lib/github";
 import { logo, siteName, social } from "@/content";
 
-// The IA (brief §8). On Home the links scroll to their section; elsewhere they mark the route.
+// Every link opens its page (never a section of Home); Contribute is the button.
 const links = [
-  { label: "Projects", href: "/projects", section: "work" },
-  { label: "Contributors", href: "/contributors", section: "people" },
+  { label: "Projects", href: "/projects" },
+  { label: "Contributors", href: "/contributors" },
   { label: "Manifesto", href: "/manifesto" },
-  { label: "What people say", href: "/word-of-mouth", section: "signal" },
+  { label: "What people say", href: "/word-of-mouth" },
 ];
 const socials = [social.github, social.discord, social.linkedin, { ...social.twitter, label: "X" }];
 

@@ -8,18 +8,13 @@ import { Menu, X } from "lucide-react";
 import { cn } from "./cn";
 import { LabButton } from "./lab-hero/LabButton";
 
-export type NavLink = {
-  label: string;
-  href: string;
-  /** On Home, the link scrolls to this section id and the marker follows the section in view. */
-  section?: string;
-};
+export type NavLink = { label: string; href: string };
 
 const isActive = (path: string, href: string) => path === href || path.startsWith(`${href}/`);
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus)";
 
 /**
- * Sticky site nav: logo + wordmark, mono labels with a sliding teal marker,
+ * Sticky site nav: logo + wordmark, page links with a sliding teal marker on the current page,
  * a plain stars label and the primary button. On Home it is fixed (takes no space) and hidden while the [data-under-nav] hero
  * is in view, so the field owns the whole screen; it slides in past the hero, or as soon as keyboard focus enters it.
  * Elsewhere it is sticky and always shown. Below 768 the links move into a modal sheet (Escape closes it).
@@ -40,7 +35,6 @@ export function Nav({
   const path = usePathname();
   const home = path === "/";
   const [open, setOpen] = useState(false);
-  const [section, setSection] = useState<string | null>(null);
   // Home renders hidden from the server (the page loads at the top, over the hero); the observer corrects it from there.
   const [overHero, setOverHero] = useState(true);
   // Keyboard focus (focus-visible only, so a clicked #link doesn't pin it open over the hero) reveals it.
@@ -54,22 +48,6 @@ export function Nav({
     io.observe(hero);
     return () => io.disconnect();
   }, [path]);
-
-  // Home: the marker follows the section in view.
-  useEffect(() => {
-    if (!home) return;
-    const els = links.flatMap((l) => (l.section ? [document.getElementById(l.section)] : [])).filter((e): e is HTMLElement => !!e);
-    const inView = new Set<string>();
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => (e.isIntersecting ? inView.add(e.target.id) : inView.delete(e.target.id)));
-        setSection(els.find((el) => inView.has(el.id))?.id ?? null);
-      },
-      { rootMargin: "-45% 0px -50% 0px" },
-    );
-    els.forEach((e) => io.observe(e));
-    return () => io.disconnect();
-  }, [home, links]);
 
   // Close the sheet on route change (adjusted during render, no effect) and on Escape.
   const [lastPath, setLastPath] = useState(path);
@@ -90,8 +68,6 @@ export function Nav({
     };
   }, [open]);
 
-  const hrefFor = (l: NavLink) => (home && l.section ? `#${l.section}` : l.href);
-  const activeFor = (l: NavLink) => (home ? !!l.section && section === l.section : isActive(path, l.href));
 
   return (
     <>
@@ -114,12 +90,12 @@ export function Nav({
 
           <ul className="hidden items-center md:flex">
             {links.map((l) => {
-              const active = activeFor(l);
+              const active = isActive(path, l.href);
               return (
                 <li key={l.href}>
                   <a
-                    href={hrefFor(l)}
-                    aria-current={active ? (home ? "location" : "page") : undefined}
+                    href={l.href}
+                    aria-current={active ? "page" : undefined}
                     className={cn(
                       focus,
                       "relative flex h-11 items-center px-3 transition-colors duration-(--d-2)",
@@ -184,9 +160,9 @@ export function Nav({
               {links.map((l, i) => (
                 <li key={l.href} className="border-b border-(--line)">
                   <a
-                    href={hrefFor(l)}
+                    href={l.href}
                     onClick={() => setOpen(false)}
-                    aria-current={activeFor(l) ? (home ? "location" : "page") : undefined}
+                    aria-current={isActive(path, l.href) ? "page" : undefined}
                     className={cn(focus, "flex items-baseline gap-4 py-4 text-[22px] text-(--fg) aria-[current]:text-(--accent)")}
                   >
                     <span aria-hidden className="text-[12px] text-(--fg-subtle) tabular-nums">
