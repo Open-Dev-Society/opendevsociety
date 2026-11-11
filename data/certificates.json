@@ -11,6 +11,18 @@
       "status": "active",
       "createdAt": "2026-11-11T14:15:34.744Z",
       "updatedAt": "2026-11-11T14:15:34.744Z"
+    },
+    {
+      "id": "ODS-2026-UBVM",
+      "name": "Priyanshu Bhardwaj",
+      "role": "maintainer",
+      "description": "for caring for Open Dev Society projects: reviewing every change with care, guiding new contributors and keeping the tools healthy, free and moving forward.",
+      "issuedOn": "2026.11.11",
+      "issuedBy": "Ravi Pratap Singh",
+      "issuerHandle": "@ravixalgorithm",
+      "status": "active",
+      "createdAt": "2026-11-11T14:43:49.546Z",
+      "updatedAt": "2026-11-11T14:43:49.546Z"
     }
   ]
 }
