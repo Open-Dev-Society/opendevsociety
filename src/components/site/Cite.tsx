@@ -12,9 +12,11 @@ export function Num({ n, on, size = "size-[18px] text-[10px] md:size-5 md:text-[
   return (
     <span
       aria-hidden
-      className={`t-mono grid ${size} shrink-0 place-items-center border border-(--accent) leading-none font-normal tracking-normal not-italic transition-colors duration-150 motion-reduce:transition-none ${on ? "bg-(--accent) text-(--accent-fg)" : "bg-(--bg) text-(--accent)"}`}
+      className={`t-mono grid ${size} shrink-0 place-items-center border border-(--accent) indent-0 leading-none font-normal [font-variant-numeric:tabular-nums_lining-nums] [text-align:center] tracking-normal not-italic transition-colors duration-150 motion-reduce:transition-none ${on ? "bg-(--accent) text-(--accent-fg)" : "bg-(--bg) text-(--accent)"}`}
     >
-      {n}
+      {/* Mono digits sit on the baseline, a hair below the box's centre: nudge them up so they read centred.
+          indent-0: prose paragraphs indent their first line, and the square would inherit it. */}
+      <span className="-translate-y-[0.06em]">{n}</span>
     </span>
   );
 }
@@ -103,7 +105,8 @@ export function Cite({ n, note, children }: { n: number; note: React.ReactNode; 
         className={`cursor-help whitespace-nowrap underline decoration-(--accent) decoration-2 underline-offset-[0.18em] [text-decoration-skip-ink:none] ${focus}`}
       >
         {children}
-        <span className="relative -top-[0.5em] ml-0.5 inline-block align-baseline">
+        {/* Hung from the text's top edge (not an em offset), so every square sits at the same height whatever the type size. */}
+        <span className="relative -top-[5px] ml-0.5 inline-block align-text-top">
           <Num n={n} on={open} size="size-[15px] text-[10px]" />
         </span>
       </button>

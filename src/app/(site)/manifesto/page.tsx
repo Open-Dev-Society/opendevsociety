@@ -18,6 +18,9 @@ const DATE = "10 Nov 2026";
 const TITLE = "Technology Should Belong to Everyone";
 
 const maintainers = manualContributors.filter((c) => c.role && /Maintainer/i.test(c.role));
+// Thanks names the lead maintainer first, then the other maintainers.
+const lead = maintainers.find((c) => /Lead Maintainer/i.test(c.role ?? ""));
+const others = maintainers.filter((c) => c !== lead);
 
 export const metadata: Metadata = {
   title: `Manifesto: ${TITLE} · Open Dev Society`,
@@ -351,20 +354,29 @@ export default async function Manifesto() {
 
             <h2 className="mt-16 mb-4 text-[1.0625rem] font-[650] text-(--fg)">Thanks</h2>
             <p>
-              Maintained with{" "}
-              {maintainers.map((m, i) => (
+              Thank you to{" "}
+              {lead && (
+                <>
+                  <a href={lead.html_url} {...ext} className="sign hover:text-(--accent)">
+                    {lead.name}
+                  </a>
+                  , our lead maintainer, who keeps the projects moving;{" "}
+                </>
+              )}
+              to our maintainers{" "}
+              {others.map((m, i) => (
                 <Fragment key={m.login}>
-                  {i > 0 && (i === maintainers.length - 1 ? " and " : ", ")}
+                  {i > 0 && (i === others.length - 1 ? " and " : ", ")}
                   <a href={m.html_url} {...ext} className="sign hover:text-(--accent)">
                     {m.name}
                   </a>
                 </Fragment>
               ))}
-              , and written in public with{" "}
+              , who review every change; and to all{" "}
               <a href="/contributors" className="ink-link">
                 {people.length} contributors
-              </a>
-              .
+              </a>{" "}
+              who build this in public, one pull request at a time. None of it exists without you.
             </p>
           </div>
 
