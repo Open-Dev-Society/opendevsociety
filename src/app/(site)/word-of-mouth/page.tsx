@@ -138,7 +138,7 @@ export default async function WordOfMouth() {
 
         {/* Active: full cards, logos in ink. */}
         <h3 className="t-mono mt-12 text-[12px] text-(--fg-muted)">Active · {activePartners.length}</h3>
-        <ul className="mt-3 grid grid-cols-1 gap-px border border-(--line) bg-(--line) md:grid-cols-2">
+        <ul className={`mt-3 grid grid-cols-1 gap-px border border-(--line) bg-(--line) ${activePartners.length > 1 ? "md:grid-cols-2" : ""}`}>
           {activePartners.map((p) => (
             <li key={p.name} className="flex flex-col bg-(--bg) p-5 sm:p-6">
               <div className="flex items-start justify-between gap-4">
@@ -161,12 +161,12 @@ export default async function WordOfMouth() {
 
         {/* Past: the same grid, quieter. Logos in the subtle ink, ink again on hover. */}
         <h3 className="t-mono mt-10 text-[12px] text-(--fg-muted)">Past sponsors and partners · {pastPartners.length}</h3>
-        <ul className="mt-3 grid grid-cols-1 gap-px border border-(--line) bg-(--line) sm:grid-cols-3">
+        <ul className="mt-3 grid grid-cols-1 gap-px border border-(--line) bg-(--line) sm:grid-cols-2 lg:grid-cols-4">
           {pastPartners.map((p) => (
             <li key={p.name} className="bg-(--bg)">
-              <a href={p.url} target="_blank" rel="noopener noreferrer" className="group flex h-full flex-col p-5 hover:bg-(--surface-2)" aria-label={`${p.name}, past sponsor (opens in a new tab)`}>
+              <a href={p.url} target="_blank" rel="noopener noreferrer" className="group flex h-full flex-col p-5 hover:bg-(--surface-2)" aria-label={`${p.name}, past ${p.kind} (opens in a new tab)`}>
                 <div className="flex items-start justify-between gap-3">
-                  <p className="t-mono text-[12px] text-(--fg-subtle)">{p.tier?.toLowerCase()} tier</p>
+                  <p className="t-mono text-[12px] text-(--fg-subtle)">{p.tier ? `${p.tier.toLowerCase()} tier` : p.kind}</p>
                   <Plate>past{p.period && ` · ${p.period}`}</Plate>
                 </div>
                 <PartnerLogo p={p} className="mt-6 h-6 w-36 text-[17px] text-(--fg-subtle) transition-colors duration-(--d-2) group-hover:text-(--fg)" />
