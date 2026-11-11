@@ -7,4 +7,6 @@ import doQueue from "@opennextjs/cloudflare/overrides/queue/do-queue";
 export default defineCloudflareConfig({
   incrementalCache: r2IncrementalCache,
   queue: doQueue,
+  // Serve cached ISR/SSG pages straight from the cache without booting the Next server (keeps CPU low on Workers).
+  enableCacheInterception: true,
 });
