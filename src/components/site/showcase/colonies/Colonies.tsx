@@ -27,7 +27,7 @@ export async function Colonies() {
       name: t.name,
       href: `/projects/${t.name}`,
       tagline: catalog[t.name].tagline,
-      shot: catalog[t.name].shot,
+      // No screenshots: every colony reveals its name, the same for all projects.
       stars: t.stars,
       contributors: details[i]?.contributors.length ?? 0,
       commits: (details[i]?.weeks ?? []).slice(-8).reduce((n, w) => n + w.commits, 0),
