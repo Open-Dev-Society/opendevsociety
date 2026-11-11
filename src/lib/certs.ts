@@ -183,3 +183,12 @@ export async function setCertStatus(
   await saveFile(store, sha, `cert: ${verb} ${id}`);
   return cert;
 }
+
+/** Removes a certificate for good: its /verify page then says it isn't in the registry. Git history keeps the record. */
+export async function deleteCert(id: string): Promise<void> {
+  const { store, sha } = await loadFile();
+  const cert = store.certificates.find((c) => c.id === id);
+  if (!cert) throw new Error("Certificate not found.");
+  store.certificates = store.certificates.filter((c) => c.id !== id);
+  await saveFile(store, sha, `cert: delete ${id} (${cert.name})`);
+}

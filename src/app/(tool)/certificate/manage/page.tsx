@@ -30,7 +30,7 @@ const columns: LedgerColumn[] = [
   { key: "role", label: "Role", width: "minmax(0,1fr)" },
   { key: "issued", label: "Issued", width: "6.5rem", mono: true },
   { key: "status", label: "Status", width: "5.5rem" },
-  { key: "actions", label: "", width: "15.5rem", align: "end" },
+  { key: "actions", label: "", width: "20rem", align: "end" },
 ];
 
 export default function ManagePage() {
@@ -40,7 +40,7 @@ export default function ManagePage() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [filter, setFilter] = useState("");
   // The inline confirmation that replaces window.prompt/confirm: which cert, which way, and the optional reason.
-  const [pending, setPending] = useState<{ cert: Cert; status: CertStatus } | null>(null);
+  const [pending, setPending] = useState<{ cert: Cert; status: CertStatus | "deleted" } | null>(null);
   const [reason, setReason] = useState("");
 
   async function load() {
@@ -62,7 +62,7 @@ export default function ManagePage() {
     load();
   }, []);
 
-  function ask(cert: Cert, status: CertStatus) {
+  function ask(cert: Cert, status: CertStatus | "deleted") {
     setReason("");
     setError(null);
     setPending({ cert, status });
@@ -74,6 +74,19 @@ export default function ManagePage() {
     const why = status === "revoked" ? reason.trim() || undefined : undefined;
     setPending(null);
     setBusyId(cert.id);
+    if (status === "deleted") {
+      try {
+        const res = await fetch(`/api/certs/${encodeURIComponent(cert.id)}`, { method: "DELETE" });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || "Delete failed.");
+        setCerts((prev) => prev.filter((c) => c.id !== cert.id));
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Delete failed.");
+      } finally {
+        setBusyId(null);
+      }
+      return;
+    }
     try {
       const res = await fetch(`/api/certs/${encodeURIComponent(cert.id)}`, {
         method: "PATCH",
@@ -122,6 +135,14 @@ export default function ManagePage() {
             className={toolButton("quiet")}
           >
             {busyId === c.id ? "Saving…" : c.status === "active" ? "Revoke" : "Restore"}
+          </button>
+          <button
+            type="button"
+            disabled={busyId === c.id}
+            onClick={() => ask(c, "deleted")}
+            className={toolButton("quiet", "text-(--mark-ink) hover:text-(--mark-ink)")}
+          >
+            Delete
           </button>
         </span>
       ),
@@ -187,9 +208,15 @@ export default function ManagePage() {
           <Container className="flex flex-col gap-3 py-4 md:flex-row md:items-end">
             <div className="min-w-0 flex-1">
               <p className="text-sm text-(--fg)">
-                {pending.status === "revoked" ? "Revoke" : "Restore"} <span className="font-mono">{pending.cert.id}</span> for{" "}
-                <span className="sign">{pending.cert.name}</span>?
+                {pending.status === "revoked" ? "Revoke" : pending.status === "deleted" ? "Delete" : "Restore"}{" "}
+                <span className="font-mono">{pending.cert.id}</span> for <span className="sign">{pending.cert.name}</span>?
                 {pending.status === "active" && <span className="text-(--fg-muted)"> It becomes valid again.</span>}
+                {pending.status === "deleted" && (
+                  <span className="text-(--fg-muted)">
+                    {" "}
+                    It disappears from the registry and its verify link will say it isn&apos;t found. Revoke instead to keep it on record.
+                  </span>
+                )}
               </p>
               {pending.status === "revoked" && (
                 <Field
@@ -203,8 +230,8 @@ export default function ManagePage() {
               )}
             </div>
             <div className="flex gap-2">
-              <button type="button" onClick={confirm} className={toolButton("primary")} autoFocus={pending.status === "active"}>
-                {pending.status === "revoked" ? "Revoke" : "Restore"}
+              <button type="button" onClick={confirm} className={toolButton("primary")} autoFocus={pending.status !== "revoked"}>
+                {pending.status === "revoked" ? "Revoke" : pending.status === "deleted" ? "Delete for good" : "Restore"}
               </button>
               <button type="button" onClick={() => setPending(null)} className={toolButton("quiet")}>
                 Cancel
