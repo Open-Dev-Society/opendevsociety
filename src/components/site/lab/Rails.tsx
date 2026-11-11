@@ -73,9 +73,11 @@ export function Rails() {
     let raf = 0;
     const update = () => {
       raf = 0;
+      // A frame queued before unmount can still run once the refs are detached.
+      if (!readout.current || !marker.current) return;
       const c = Math.round(scrollY + innerHeight / 2);
-      readout.current!.textContent = String(c);
-      marker.current!.dataset.on = String(!!sheet && c >= sheet.start && c < sheet.height);
+      readout.current.textContent = String(c);
+      marker.current.dataset.on = String(!!sheet && c >= sheet.start && c < sheet.height);
       const b0 = Math.floor((scrollY - innerHeight / 2) / 500);
       const b1 = Math.floor((scrollY + innerHeight * 1.5) / 500);
       setBlocks((b) => (b[0] === b0 && b[1] === b1 ? b : [b0, b1]));
