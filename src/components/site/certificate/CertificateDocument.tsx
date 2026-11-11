@@ -27,15 +27,10 @@ const nameSize = (name: string) => (name.length <= 20 ? "6.4cqw" : name.length <
 const hair = "border-[length:max(1px,0.08cqw)] border-(--line)";
 const label = "font-mono text-[0.78cqw] leading-none tracking-[0.12em] uppercase text-(--fg-subtle)";
 
-/** The issuer signs first; the other signer (founder or lead maintainer, src/data/contributors.ts) countersigns. */
-function signatures(cert: CertificateData) {
-  const handle = cert.issuerHandle.replace(/^@/, "").toLowerCase();
-  const isIssuer = (s: (typeof signers)[number]) => s.login.toLowerCase() === handle || s.name === cert.issuedBy;
-  const issuer = signers.find(isIssuer);
-  return [
-    { name: cert.issuedBy || "Issuer", title: issuer ? roleLabel(issuer.role) : "Issuer", handle: cert.issuerHandle },
-    ...signers.filter((s) => !isIssuer(s)).map((s) => ({ name: s.name!, title: roleLabel(s.role), handle: `@${s.login}` })),
-  ].slice(0, 2);
+/** One signature: the founder's (signers[0] in src/data/contributors.ts), on every certificate. */
+function signature() {
+  const founder = signers[0];
+  return { name: founder.name!, title: roleLabel(founder.role) };
 }
 
 /** The verify link as SVG path data, one 1×1 square per dark module (no quiet zone; the plate around it is the margin). */
@@ -222,9 +217,9 @@ export function CertificateDocument({
         </div>
 
         {/* Signatures, then the title block: who signed, when, and how to check it. */}
-        <div className="grid grid-cols-[1fr_1fr_1.35fr] items-end gap-[2.6cqw]">
-          {signatures(cert).map((s) => (
-            <div key={s.name}>
+        <div className="grid grid-cols-[1fr_1.35fr] items-end gap-[2.6cqw]">
+          {[signature()].map((s) => (
+            <div key={s.name} className="max-w-[30cqw]">
               <div className="signature truncate border-b-[length:max(1px,0.1cqw)] border-(--fg) pb-[0.2cqw] text-[3.3cqw] text-(--fg)">{s.name}</div>
               <div className="mt-[0.6cqw] text-[1.05cqw] leading-tight font-semibold">{s.name}</div>
               <div className="mt-[0.25cqw] text-[0.95cqw] leading-tight text-(--fg-muted)">
