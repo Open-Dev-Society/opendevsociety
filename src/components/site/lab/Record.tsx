@@ -14,8 +14,6 @@ export function Record({
   className = "",
   children,
 }: {
-  /** @deprecated Ignored; section numbers are gone. Remove from callers. */
-  n?: string;
   /** Label, set in caps: "Projects". */
   name: string;
   meta?: React.ReactNode[];

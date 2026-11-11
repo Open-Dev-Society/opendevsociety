@@ -5,7 +5,7 @@ import { LabButton } from "@/components/site/lab-hero/LabButton";
 import { contactEmail, partnershipMailto } from "@/content";
 import { mentions, type MentionSource } from "@/data/mentions";
 import { events, partners } from "@/data/partners";
-import { expHref } from "@/lib/lab";
+import { projectHref } from "@/lib/lab";
 import { getWorkshop } from "@/lib/workshop";
 import { Bibliography, type Kind, type Ref } from "./Bibliography";
 
@@ -66,7 +66,7 @@ export default async function WordOfMouth() {
       outlet,
       year: m.date,
       href: m.url,
-      re: tool ? { name: tool, href: expHref(tool) } : undefined,
+      re: tool ? { name: tool, href: projectHref(tool) } : undefined,
     };
   });
   const epigraph = refs.find((r) => r.author === "Tattva Tarang")!;
@@ -78,7 +78,6 @@ export default async function WordOfMouth() {
         <Record
           as="h1"
           size="page"
-          n="06"
           name="Word of mouth"
           meta={[`${refs.length} mentions`, `${years[0]}–${years.at(-1)}`]}
           title={
@@ -120,7 +119,6 @@ export default async function WordOfMouth() {
       <section id="partners" aria-labelledby="partners-h" data-grid="Partners" className="pt-24 scroll-mt-20 lg:pt-32">
         <div className="grid gap-y-6 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
           <Record
-            n="06.1"
             name="Partners"
             meta={[`${partners.length} partners`, `${events.length} events`]}
             id="partners-h"

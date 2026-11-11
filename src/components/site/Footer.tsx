@@ -83,13 +83,13 @@ export function Footer() {
             </div>
           </div>
 
-          <p className="t-mono mt-6 flex flex-wrap justify-between gap-x-6 gap-y-1 text-[12px] text-(--fg-subtle)">
+          <div className="t-mono mt-6 flex flex-wrap justify-between gap-x-6 gap-y-1 text-[12px] text-(--fg-subtle)">
             <span>© {new Date().getFullYear()} Open Dev Society · free, open source</span>
             <ScaleBar className="hidden md:flex" />
             <a href={`${social.github.href}/opendevsociety`} target="_blank" rel="noopener noreferrer" className={link}>
               This site is open source ↗
             </a>
-          </p>
+          </div>
         </Container>
       </div>
     </footer>
