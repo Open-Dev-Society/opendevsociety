@@ -1,4 +1,4 @@
-/* Architect's scale rails (Rails.tsx). Colours are tokens only: each band carries .tone-inverse / .tone-emerald,
+/* Architect's scale rails (Rails.tsx). Colours are tokens only: each band carries .tone-inverse,
    so --bg, --line and --fg-subtle resolve to that band. Hidden below 768, where the gutter is narrower than a rail. */
 .layer {
   --rail: 16px;

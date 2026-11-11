@@ -4,13 +4,13 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import s from "./Rails.module.css";
 
-type Tone = "" | "tone-inverse" | "tone-emerald";
+type Tone = "" | "tone-inverse";
 type Band = { top: number; bottom: number; tone: Tone };
 type GridRef = { y: number; letter: string; name: string; tone: Tone };
 type Sheet = { height: number; start: number; bands: Band[]; refs: GridRef[] };
 
 const toneOf = (el: Element | null): Tone =>
-  el?.classList.contains("tone-emerald") ? "tone-emerald" : el?.classList.contains("tone-inverse") ? "tone-inverse" : "";
+  el?.classList.contains("tone-inverse") ? "tone-inverse" : "";
 
 // Everything in page px. The sheet starts under a [data-under-nav] hero (its corner plates sit flush on the edges),
 // and is cut into bands wherever a full-bleed ink or emerald section runs, so each band re-points the tokens.
@@ -22,7 +22,7 @@ function measure(site: HTMLElement): Sheet {
   const height = site.offsetHeight;
   const bands: Band[] = [];
   let at = start;
-  for (const el of document.querySelectorAll(".tone-inverse, .tone-emerald")) {
+  for (const el of document.querySelectorAll(".tone-inverse")) {
     const r = el.getBoundingClientRect();
     const top = Math.round(r.top + y);
     const bottom = Math.round(r.bottom + y);
@@ -40,7 +40,7 @@ function measure(site: HTMLElement): Sheet {
       y,
       letter: String.fromCharCode(65 + i),
       name: el.dataset.grid ?? "",
-      tone: toneOf(el.closest(".tone-inverse, .tone-emerald")),
+      tone: toneOf(el.closest(".tone-inverse")),
     }));
   return { height, start, bands, refs };
 }

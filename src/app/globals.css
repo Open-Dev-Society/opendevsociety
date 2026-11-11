@@ -13,7 +13,7 @@
   --fg-muted: oklch(0.44 0.025 212); /* #43565b 7.3:1, 6.8:1 on surface-2 */
   --fg-subtle: oklch(0.52 0.02 212); /* #5c6c70 5.2:1, 4.8:1 on surface-2. Meta only */
   --line: oklch(0.21 0.03 212 / 0.1);
-  --accent-brand: #10777b; /* the one emerald: the hero field, dither ink and plates all match the emerald bands (5.0:1) */
+  --accent-brand: #10777b; /* the one emerald: the hero field, dither ink, plates and buttons (5.0:1) */
   --accent: oklch(0.52 0.085 199); /* #10777b the logo teal one step deeper, for links, buttons, names. 5.0:1; white on it 5.3:1 */
   --accent-hover: oklch(0.46 0.08 200); /* #00656a white on it 6.8:1 */
   --accent-fg: oklch(1 0 0);
@@ -94,21 +94,6 @@ body {
   --shadow-lg: 0 0 0 1px var(--line), 0 2px 4px oklch(0 0 0 / 0.2), 0 32px 64px -32px oklch(0 0 0 / 0.6);
   background: var(--bg);
   color: var(--fg);
-}
-
-/* The emerald band: content on solid --accent (#10777b), as the hero's corner plates. Ratios are on --bg, then on --surface-2. */
-.tone-emerald {
-  /* User decision: section backgrounds are WHITE; emerald (#10777b) is for accents only (buttons, corner plates,
-     field and dither ink, links). The class stays so existing markup keeps working, but it no longer re-colours
-     anything: bands marked tone-emerald now sit on paper with the default tokens. */
-  background: var(--bg);
-  color: var(--fg);
-}
-
-/* The hero's bottom DitherEdge dissolves the field into emerald; with white sections below it must not show.
-   Remove this rule once LabHero.tsx drops that edge. */
-section[data-under-nav] > svg.absolute.bottom-0 {
-  display: none;
 }
 
 /* Type tokens (brief §3). Width rides on font-variation-settings, weight on font-weight. */
