@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, MotionConfig, motion } from "framer-motion";
-import { Close, Menu } from "./Icon";
+import { ArrowRight, Close, Discord, GitHub, LinkedIn, Menu, Star, XMark } from "./Icon";
 import { cn } from "./cn";
 import { LabButton } from "./lab-hero/LabButton";
 
@@ -14,6 +14,10 @@ const isActive = (path: string, href: string) => path === href || path.startsWit
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus)";
 // A title-block cell: full bar height, a hairline on its left.
 const cell = "flex h-full shrink-0 items-center border-l border-(--line) px-3.5";
+
+// Iconsax's arrow instead of a text "→" (the mono glyph sits thin and off the grid); it nudges forward on hover.
+const arrow = <ArrowRight size={16} className="transition-transform duration-(--d-2) ease-(--ease-ui) group-hover:translate-x-0.5 motion-reduce:transition-none" />;
+const marks: Record<string, (p: { size?: number }) => React.ReactNode> = { GitHub, Discord, LinkedIn, X: XMark };
 
 type Here = { letter: string; name: string };
 
@@ -167,7 +171,7 @@ export function Nav({
                         aria-current={active ? "page" : undefined}
                         className={cn(
                           focus,
-                          "relative flex h-11 items-center px-3 whitespace-nowrap transition-colors duration-(--d-2)",
+                          "relative flex h-11 items-center px-2.5 whitespace-nowrap transition-colors duration-(--d-2)",
                           active ? "text-(--bg)" : "text-(--fg-muted) hover:text-(--fg)",
                         )}
                       >
@@ -193,7 +197,7 @@ export function Nav({
                 <i className="size-1.5 bg-(--mark)" />
                 you are here
               </span>
-              <span className="flex max-w-full min-w-0 items-center gap-2 text-[12px] leading-none text-(--fg)">
+              <span className="flex max-w-full min-w-0 items-center gap-1.5 text-[11px] leading-none text-(--fg)">
                 {here?.letter && (
                   <span className="grid size-4 shrink-0 place-items-center text-[10px] shadow-[inset_0_0_0_1px_var(--fg-subtle)]">{here.letter}</span>
                 )}
@@ -207,18 +211,18 @@ export function Nav({
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`${stars.label} stars on GitHub`}
-              className={cn(focus, cell, fold, "hidden flex-col items-start justify-center gap-1 hover:bg-(--surface-2) xl:flex")}
+              className={cn(focus, cell, fold, "group hidden gap-2 text-(--fg) tabular-nums hover:bg-(--surface-2) xl:flex")}
             >
-              <span className="text-[10px] tracking-[0.04em] text-(--fg-subtle)">on GitHub</span>
-              <span className="text-[12px] leading-none text-(--fg) tabular-nums">
-                {stars.label}&nbsp;<span aria-hidden>★</span>
-              </span>
+              <GitHub size={16} />
+              {stars.label}
+              <Star size={14} className="-ml-0.5 text-(--fg-subtle) transition-colors duration-(--d-2) group-hover:text-(--accent)" />
             </a>
 
             {/* Below 640 the wordmark needs the room; the sheet carries the button. */}
             <div className={cn(cell, fold, "pr-0 max-sm:hidden")}>
-              <LabButton href={contribute.href} size="md" aria-current={isActive(path, contribute.href) ? "page" : undefined}>
+              <LabButton href={contribute.href} size="md" className="group" aria-current={isActive(path, contribute.href) ? "page" : undefined}>
                 {contribute.label}
+                {arrow}
               </LabButton>
             </div>
 
@@ -274,18 +278,31 @@ export function Nav({
                 </li>
               ))}
             </ul>
-            <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3 font-mono text-[13px] text-(--fg-muted)">
-              <a href={stars.href} target="_blank" rel="noopener noreferrer" className={cn(focus, "min-h-11 content-center tabular-nums text-(--fg)")}>
-                {stars.label}&nbsp;<span aria-hidden>★</span>
+            {/* Stars and socials as a ruled grid of cells, like the bar. */}
+            <div className="mt-8 grid grid-cols-2 gap-px bg-(--line) font-mono text-[13px] text-(--fg-muted) shadow-[0_0_0_1px_var(--line)]">
+              <a
+                href={stars.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(focus, "col-span-2 flex min-h-12 items-center gap-2 bg-(--bg) px-4 tabular-nums text-(--fg)")}
+              >
+                <Star size={16} className="text-(--accent)" />
+                {stars.label}
+                <span className="text-(--fg-muted)">stars on GitHub</span>
               </a>
-              {socials.map((s) => (
-                <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer" className={cn(focus, "min-h-11 content-center hover:text-(--fg)")}>
-                  {s.label}
-                </a>
-              ))}
+              {socials.map((s) => {
+                const Mark = marks[s.label];
+                return (
+                  <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer" className={cn(focus, "flex min-h-12 items-center gap-2 bg-(--bg) px-4 hover:text-(--fg)")}>
+                    {Mark && <Mark size={16} />}
+                    {s.label}
+                  </a>
+                );
+              })}
             </div>
-            <LabButton href={contribute.href} onClick={() => setOpen(false)} className="mt-auto w-full">
+            <LabButton href={contribute.href} onClick={() => setOpen(false)} className="group mt-auto w-full">
               {contribute.label}
+              {arrow}
             </LabButton>
           </motion.div>
         )}
