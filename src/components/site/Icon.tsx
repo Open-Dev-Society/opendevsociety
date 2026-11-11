@@ -5,6 +5,7 @@ import {
   ArrowDown as IxArrowDown,
   ArrowRight as IxArrowRight,
   ArrowUp as IxArrowUp,
+  Chart as IxChart,
   CommandSquare as IxCommand,
   CopySuccess as IxCopySuccess,
   HamburgerMenu as IxMenu,
@@ -12,6 +13,8 @@ import {
   InfoCircle as IxInfoCircle,
   Link as IxLink,
   MagicStar as IxMagicStar,
+  Record as IxRecord,
+  RecordCircle as IxRecordCircle,
   Refresh as IxRefresh,
   Star1 as IxStar,
   TickCircle as IxTickCircle,
@@ -32,9 +35,9 @@ const base = "inline-block shrink-0 align-[-0.125em]";
 const a11y = (label?: string) => (label ? { role: "img", "aria-label": label } : { "aria-hidden": true as const });
 
 // Only the icons the site uses: every export lands in any client chunk that imports this file (Turbopack keeps unused exports), so add one when you need it.
-const Ix = ({ glyph: Glyph, rotate, size = 16, label, className }: Props & { glyph: IconsaxIcon; rotate?: number }) => (
+const Ix = ({ glyph: Glyph, rotate, bold, size = 16, label, className }: Props & { glyph: IconsaxIcon; rotate?: number; bold?: boolean }) => (
   <Glyph
-    variant="Linear"
+    variant={bold ? "Bold" : "Linear"}
     size={size}
     color="currentColor"
     focusable="false"
@@ -62,6 +65,12 @@ export const Download = (p: Props) => <Ix glyph={IxImport} {...p} />;
 export const Refresh = (p: Props) => <Ix glyph={IxRefresh} {...p} />;
 export const Terminal = (p: Props) => <Ix glyph={IxCommand} {...p} />;
 export const Agent = (p: Props) => <Ix glyph={IxMagicStar} {...p} />;
+/** Difficulty / level: three rising bars. */
+export const Level = (p: Props) => <Ix glyph={IxChart} {...p} />;
+/** Something running right now ("live", "active"): the filled record dot, the same mark as StatusDot's running. */
+export const Live = (p: Props) => <Ix glyph={IxRecordCircle} bold {...p} />;
+/** An empty slot: the bare record ring (archived, unselected). */
+export const Ring = (p: Props) => <Ix glyph={IxRecord} {...p} />;
 
 // Brand marks: filled logos on the same 24 grid, so they sit at the same size as the Linear icons.
 const Brand = ({ d, size = 16, label, className }: Props & { d: string }) => (
@@ -75,17 +84,9 @@ export const Discord = (p: Props) => <Brand d={"M19.27 5.33A16.6 16.6 0 0 0 15.1
 export const XMark = (p: Props) => <Brand d={"M17.75 3h3.07l-6.7 7.66L22 21h-6.17l-4.83-6.32L5.47 21H2.4l7.17-8.2L2 3h6.33l4.37 5.78L17.75 3Zm-1.08 16.17h1.7L7.4 4.73H5.58l11.09 14.44Z"} {...p} />;
 export const LinkedIn = (p: Props) => <Brand d={"M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z"} {...p} />;
 
-/** Project status as a small CSS dot: filled (running), half (paused), ring (archived). Reads better than an icon at label size. */
+/** Project status as Iconsax's record set, emptying as it winds down: filled dot (running), ringed dot (paused), bare ring (archived). */
 export function StatusDot({ status, className }: { status: "running" | "paused" | "archived"; className?: string }) {
-  return (
-    <span
-      aria-hidden
-      className={cn(
-        "inline-block size-[0.6em] shrink-0 rounded-full border border-current align-[0.05em]",
-        status === "running" && "bg-current",
-        status === "paused" && "bg-[linear-gradient(90deg,currentColor_50%,transparent_50%)]",
-        className,
-      )}
-    />
-  );
+  if (status === "running") return <Live size="1em" className={className} />;
+  if (status === "paused") return <Ix glyph={IxRecordCircle} size="1em" className={className} />;
+  return <Ring size="1em" className={className} />;
 }

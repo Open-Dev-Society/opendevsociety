@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ArrowDown, ArrowRight, ArrowUp, External, Level } from "@/components/site/Icon";
 import { LabButton } from "@/components/site/lab-hero/LabButton";
 import { contactEmail, social } from "@/content";
 import { roleLabel, signers } from "@/data/contributors";
@@ -86,7 +87,7 @@ const questions: { q: string; a: React.ReactNode }[] = [
       <>
         Open a GitHub Discussion on the repo, or ask in the{" "}
         <a href={social.discord.href} className="ink-link" {...ext}>
-          Discord ↗
+          Discord <External size="1em" />
         </a>
         .
       </>
@@ -100,7 +101,7 @@ const questions: { q: string; a: React.ReactNode }[] = [
       <>
         Yes, and it stays yours.{" "}
         <a href="/manifesto" className="ink-link">
-          Read the manifesto →
+          Read the manifesto <ArrowRight size="1em" />
         </a>
       </>
     ),
@@ -114,7 +115,7 @@ const materials = [
       <>
         Free.{" "}
         <a href="https://github.com/signup" className="ink-link" {...ext}>
-          github.com/signup ↗
+          github.com/signup <External size="1em" />
         </a>
       </>
     ),
@@ -125,7 +126,7 @@ const materials = [
       <>
         The CLI does fork, clone and PR in one tool.{" "}
         <a href="https://cli.github.com" className="ink-link" {...ext}>
-          cli.github.com ↗
+          cli.github.com <External size="1em" />
         </a>
       </>
     ),
@@ -159,9 +160,13 @@ function Figure({ repo }: { repo: string }) {
           <text x="0" y="146" fill="var(--mark-ink)">
             you/first-pr
           </text>
-          <text x="232" y="68" fill="var(--accent)">
-            draft PR → review
-          </text>
+          <g fill="var(--accent)" color="var(--accent)">
+            <text x="232" y="68">draft PR</text>
+            <g transform="translate(293 57)">
+              <ArrowRight size={12} />
+            </g>
+            <text x="309" y="68">review</text>
+          </g>
         </g>
         <path d="M0 30 H420" stroke="var(--fg)" strokeWidth="1.5" />
         {[20, 70, 120, 330, 390].map((x) => (
@@ -175,7 +180,7 @@ function Figure({ repo }: { repo: string }) {
         <path d="M325 44 L330 36 L335 44" fill="none" stroke="var(--accent)" strokeWidth="1.5" />
       </svg>
       <figcaption className="t-mono mt-3 text-[12px] text-(--fg-subtle)">
-        Fork → branch → commit → draft PR → merge into main.
+        Fork <ArrowRight size="1em" /> branch <ArrowRight size="1em" /> commit <ArrowRight size="1em" /> draft PR <ArrowRight size="1em" /> merge into main.
       </figcaption>
     </figure>
   );
@@ -191,9 +196,9 @@ export default async function Contribute() {
   const open = projects.reduce((a, e) => a + e.open, 0);
   const seat = nextMemberNo(people);
 
-  const sheet = [
+  const sheet: [string, React.ReactNode][] = [
     ["Time", "30–60 min"],
-    ["Level", "beginner ■□□"],
+    ["Level", <>beginner <Level size="1em" /></>],
     ["Open issues", `${open} across ${projects.length} projects`],
     ["You end with", "1 draft pull request"],
   ];
@@ -218,7 +223,7 @@ export default async function Contribute() {
               Contributors page.
             </p>
             <p className="mt-8 flex flex-wrap gap-3">
-              <LabButton href="#procedure">Start now ↓</LabButton>
+              <LabButton href="#procedure">Start now <ArrowDown size="1em" /></LabButton>
               <LabButton href="#alternatives" variant="secondary">
                 Not a coder?
               </LabButton>
@@ -304,7 +309,7 @@ export default async function Contribute() {
             <span className="my-10 block text-[clamp(4rem,2rem+6vw,7.5rem)] leading-[0.85] font-[800] text-(--mark-ink) [font-stretch:75%]">{seat}</span>
             <span className="t-mono flex justify-between border-t border-(--mark) pt-3 text-[12px] text-(--mark-ink)">
               <span>you</span>
-              <span className="group-hover:underline">on Contributors →</span>
+              <span className="group-hover:underline">on Contributors <ArrowRight size="1em" /></span>
             </span>
           </a>
           <ol className="self-end lg:col-span-7 lg:col-start-6">
@@ -339,7 +344,7 @@ export default async function Contribute() {
                   ))}
                 </ul>
                 <a href={r.link.href} {...ext} className="ink-link t-mono col-start-2 inline-flex min-h-11 items-center text-[13px] md:col-start-auto md:justify-self-end">
-                  {r.link.label} ↗
+                  {r.link.label} <External size="1em" />
                 </a>
               </div>
             ))}
@@ -376,7 +381,7 @@ export default async function Contribute() {
             </a>
             .{" "}
             <a href={CONDUCT} className="ink-link whitespace-nowrap" {...ext}>
-              Read the full code of conduct ↗
+              Read the full code of conduct <External size="1em" />
             </a>
           </p>
         </section>
@@ -411,9 +416,9 @@ export default async function Contribute() {
         <footer className="flex flex-col items-start gap-6 border-t-[3px] border-double border-(--fg) pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="t-mono text-[12px] text-(--fg-subtle)">That&apos;s it. Stuck at any step? Ask in the Discord.</p>
           <p className="flex flex-wrap gap-3">
-            <LabButton href="#procedure">Back to the steps ↑</LabButton>
+            <LabButton href="#procedure">Back to the steps <ArrowUp size="1em" /></LabButton>
             <LabButton href={social.discord.href} variant="secondary" {...ext}>
-              Discord ↗
+              Discord <External size="1em" />
             </LabButton>
           </p>
         </footer>

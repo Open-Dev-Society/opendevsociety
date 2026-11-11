@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { memberNos, nextMemberNo, projectHref } from "@/lib/lab";
 import { getWorkshop } from "@/lib/workshop";
+import { ArrowRight } from "@/components/site/Icon";
 import { Record } from "@/components/site/lab/Record";
 import { Badge, OpenSpot, type Contributor } from "./Badge";
 
@@ -121,7 +122,7 @@ export default async function ContributorsPage() {
                 <td className="py-1.5 pr-4">{open}</td>
                 <td className="py-1.5 pr-4" colSpan={4}>
                   <a href="/contribute" className="hover:underline">
-                    you · open to everyone · make your first contribution →
+                    you · open to everyone · make your first contribution <ArrowRight size="1em" />
                   </a>
                 </td>
                 <td className="py-1.5 text-right">0</td>

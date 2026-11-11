@@ -223,7 +223,7 @@ export function ColonyField({ colonies, desktop, mobile }: { colonies: Colony[];
                     focus?.under.includes(i) ? "opacity-0" : hot ? "text-(--accent)" : focus ? "text-(--fg-muted) opacity-40" : "text-(--fg)"
                   }`}
                 >
-                  {c.name} <span className="text-(--fg-muted)">★ {compact(c.stars)}</span>
+                  {c.name} <span className="text-(--fg-muted)"><Star size="1em" label="stars" /> {compact(c.stars)}</span>
                 </span>
               </a>
             </li>

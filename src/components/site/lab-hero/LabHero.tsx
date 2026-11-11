@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import { ago, compact } from "@/lib/format";
 import type { getWorkshop } from "@/lib/workshop";
 import { REGIMES } from "./field";
+import { ArrowRight, Star } from "../Icon";
 import { LabButton } from "./LabButton";
 import { LabClock, TuringField } from "./TuringField";
 
@@ -46,14 +47,18 @@ export function LabHero({ now, tools, people, lastPush, stars }: Pick<Workshop, 
       </Label>
       <Label className="top-0 right-0 hidden text-right lg:flex">
         <span className="text-(--accent-fg)">
-          Gray–Scott · f {num(spots[0])}→{num(coral[0])} · k {num(spots[1])}→{num(coral[1])}
+          Gray–Scott · f {num(spots[0])}
+          <ArrowRight size="1em" />
+          {num(coral[0])} · k {num(spots[1])}
+          <ArrowRight size="1em" />
+          {num(coral[1])}
         </span>
         <span>dither Bayer 8×8 · 1-bit</span>
       </Label>
       <Label className="bottom-0 left-0">
         <span>
           <span className="text-(--accent-fg)">{people.length}</span> contributors · <span className="text-(--accent-fg)">{tools.length}</span> projects ·{" "}
-          <span className="text-(--accent-fg)">{compact(stars)}</span> ★
+          <span className="text-(--accent-fg)">{compact(stars)}</span> <Star size="1em" label="stars" />
         </span>
         <span>est. July 2024 · free, open source</span>
       </Label>
@@ -85,7 +90,7 @@ export function LabHero({ now, tools, people, lastPush, stars }: Pick<Workshop, 
         </h1>
         <p className="mt-8 flex flex-wrap items-center justify-center gap-3 md:mt-10">
           <LabButton href="/contribute" data-plate>
-            Start contributing →
+            Start contributing <ArrowRight size="1em" />
           </LabButton>
           <LabButton href="/projects" variant="secondary" data-plate>
             See projects
