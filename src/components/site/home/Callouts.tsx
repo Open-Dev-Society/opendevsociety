@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { Num } from "../Cite";
 import { display, focus } from "./ui";
 
 export type Part = string | { word: string; note: string };
@@ -8,18 +9,6 @@ export type Part = string | { word: string; note: string };
 /** The fixed nav (h-16) plus a little air: a card that would sit under it flips below its word. */
 const TOP = 72;
 const GAP = 10;
-
-/** A citation number in a small square; `on` fills it. */
-function Num({ n, on }: { n: number; on?: boolean }) {
-  return (
-    <span
-      aria-hidden
-      className={`t-mono grid size-[18px] place-items-center border border-(--accent) text-[10px] md:size-5 md:text-[11px] leading-none font-normal tracking-normal not-italic transition-colors duration-150 motion-reduce:transition-none ${on ? "bg-(--accent) text-(--accent-fg)" : "bg-(--bg) text-(--accent)"}`}
-    >
-      {n}
-    </span>
-  );
-}
 
 /**
  * A display statement with citations: each marked word is underlined with its number in a square on its top-right.
