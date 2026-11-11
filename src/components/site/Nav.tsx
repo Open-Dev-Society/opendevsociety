@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Close, Menu } from "./Icon";
 import { cn } from "./cn";
 import { LabButton } from "./lab-hero/LabButton";
 
@@ -17,7 +17,7 @@ const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visi
  * Sticky site nav: logo + wordmark, page links with a sliding teal marker on the current page,
  * a plain stars label and the primary button. On Home it is fixed (takes no space) and hidden while the [data-under-nav] hero
  * is in view, so the field owns the whole screen; it slides in past the hero, or as soon as keyboard focus enters it.
- * Elsewhere it is sticky and always shown. Below 768 the links move into a modal sheet (Escape closes it).
+ * Elsewhere it is sticky and always shown. Below 1024 (where the row stops fitting) the links move into a modal sheet (Escape closes it).
  */
 export function Nav({
   brand,
@@ -82,13 +82,13 @@ export function Nav({
         )}
       >
         <nav aria-label="Main" className="mx-auto flex h-16 w-full max-w-(--container) items-center gap-3 px-(--gutter) font-mono text-[13px]">
-          <Link href="/" aria-label={`${brand.name}, home`} className={cn(focus, "mr-auto flex items-center gap-2.5 md:mr-6")}>
+          <Link href="/" aria-label={`${brand.name}, home`} className={cn(focus, "mr-auto flex items-center gap-2.5 lg:mr-6")}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={brand.logo} alt="" width={24} height={24} className="size-6 rounded-md" />
             <span className="font-medium tracking-[0.02em] whitespace-nowrap text-(--fg)">{brand.name}</span>
           </Link>
 
-          <ul className="hidden items-center md:flex">
+          <ul className="hidden items-center lg:flex">
             {links.map((l) => {
               const active = isActive(path, l.href);
               return (
@@ -121,7 +121,7 @@ export function Nav({
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`${stars.label} stars on GitHub`}
-            className={cn(focus, "ml-auto hidden h-11 items-center px-2 tabular-nums text-(--fg-muted) transition-colors duration-(--d-2) hover:text-(--fg) md:inline-flex")}
+            className={cn(focus, "ml-auto hidden h-11 items-center px-2 tabular-nums text-(--fg-muted) transition-colors duration-(--d-2) hover:text-(--fg) lg:inline-flex")}
           >
             {stars.label}&nbsp;<span aria-hidden>★</span>
           </a>
@@ -136,9 +136,9 @@ export function Nav({
             aria-controls="site-sheet"
             aria-label={open ? "Close menu" : "Open menu"}
             onClick={() => setOpen((v) => !v)}
-            className={cn(focus, "-mr-2.5 grid size-11 place-items-center text-(--fg) md:hidden")}
+            className={cn(focus, "-mr-2.5 grid size-11 place-items-center text-(--fg) lg:hidden")}
           >
-            {open ? <X className="size-5" strokeWidth={1.75} /> : <Menu className="size-5" strokeWidth={1.75} />}
+            {open ? <Close size={20} /> : <Menu size={20} />}
           </button>
         </nav>
       </header>
@@ -154,7 +154,7 @@ export function Nav({
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0, transition: { duration: 0.28, ease: [0.16, 1, 0.3, 1] } }}
             exit={{ opacity: 0, y: -8, transition: { duration: 0.18, ease: [0.2, 0, 0, 1] } }}
-            className="fixed inset-x-0 top-16 bottom-0 z-40 flex flex-col overflow-y-auto bg-(--bg) px-(--gutter) pb-8 pt-4 md:hidden"
+            className="fixed inset-x-0 top-16 bottom-0 z-40 flex flex-col overflow-y-auto bg-(--bg) px-(--gutter) pb-8 pt-4 lg:hidden"
           >
             <ul className="flex flex-col font-mono">
               {links.map((l, i) => (
