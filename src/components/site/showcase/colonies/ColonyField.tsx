@@ -115,7 +115,11 @@ export function ColonyField({ colonies, desktop, mobile }: { colonies: Colony[];
       return () => e.stop();
     }
     setGl(false);
-    const draw = () => staticColonies(b, sc, discs());
+    // Observers can fire between React detaching the refs and this effect's cleanup: skip once unmounted.
+    const draw = () => {
+      if (!box.current || !still.current) return;
+      staticColonies(b, sc, discs());
+    };
     draw();
     const ro = new ResizeObserver(draw);
     ro.observe(b);
