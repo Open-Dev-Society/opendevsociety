@@ -68,11 +68,12 @@ export function Bibliography({ refs }: { refs: Ref[] }) {
               </span>
               <a href={r.href} target="_blank" rel="noopener noreferrer" className="text-(--fg) decoration-(--accent) underline-offset-[0.2em] hover:underline">
                 <span lang={cjk(r.text)}>{r.quoted ? <>&ldquo;{r.text}&rdquo;</> : r.text}</span>
+                <External size="0.9em" className="ml-1 text-(--accent)" />
               </a>{" "}
-              <span className="whitespace-nowrap">
+              {/* Where and when, as small mono metadata (not text that looks like a second link). */}
+              <span className="t-mono ml-1 text-[12px] whitespace-nowrap text-(--fg-subtle)">
                 {r.outlet}
-                {r.year && <>, {r.year}</>}.{" "}
-                <External size="1em" className="text-(--accent)" />
+                {r.year && <> · {r.year}</>}
               </span>
               {r.excerpt && (
                 <p lang={cjk(r.excerpt)} className="mt-2 border-l border-(--line) pl-3 text-[14px] leading-[1.55] text-(--fg-muted)">
