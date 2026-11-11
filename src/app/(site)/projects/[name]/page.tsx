@@ -72,7 +72,8 @@ export default async function ProjectPage({ params }: Props) {
     ["Contributors", people],
     ["Language", repo.language ?? "—"],
     ["License", repo.license ?? "—"],
-    ["Last push", `${ago(repo.pushed_at, now)} · ${labDate(repo.pushed_at)}`],
+    // Non-breaking spaces inside the date, so it can only wrap at the dot.
+    ["Last push", `${ago(repo.pushed_at, now)} · ${labDate(repo.pushed_at).replaceAll(" ", "\u00a0")}`],
     ["Started", labDate(repo.created_at)],
   ];
 

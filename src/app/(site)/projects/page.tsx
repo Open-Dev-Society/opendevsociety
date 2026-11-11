@@ -64,7 +64,8 @@ export default async function ProjectsPage() {
     ["Forks", lead.forks.toLocaleString("en-US")],
     ["Contributors", leadTeam.length],
     ["Language", lead.language ?? "—"],
-    ["Last push", `${ago(lead.pushed_at, now)} · ${labDate(lead.pushed_at)}`],
+    // Non-breaking spaces inside the date, so it can only wrap at the dot.
+    ["Last push", `${ago(lead.pushed_at, now)} · ${labDate(lead.pushed_at).replaceAll(" ", "\u00a0")}`],
     ["Open issues", lead.open_issues],
   ];
 
