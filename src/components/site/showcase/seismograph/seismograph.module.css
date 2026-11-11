@@ -1,0 +1,104 @@
+/* The lanes trade height like a fisheye inside a stack whose height never changes, so nothing below it moves.
+   Idle: every lane --idle tall. One open: it takes --le, the rest --lc. Lanes are placed with transform and cut with
+   clip-path (Lanes.tsx sets --y, --h, --t per lane), so opening one is not a layout shift at all (CLS 0). */
+.stack {
+  --lc: 68px;
+  --le: 372px;
+  --idle: calc(((var(--n) - 1) * var(--lc) + var(--le)) / var(--n));
+  position: relative;
+  height: calc((var(--n) - 1) * var(--lc) + var(--le));
+}
+@media (min-width: 768px) {
+  .stack {
+    --lc: 44px;
+    --le: 300px;
+  }
+}
+
+.lane,
+.rule,
+.top {
+  transition-duration: var(--d-4);
+  transition-timing-function: var(--ease-in-out);
+}
+.lane {
+  position: absolute;
+  inset: 0 0 auto;
+  height: var(--le);
+  transform: translateY(var(--y));
+  clip-path: inset(0 0 calc(var(--le) - var(--h)) 0);
+  transition-property: transform, clip-path;
+}
+/* The hairline under each lane rides its clip edge. */
+.rule {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: var(--line);
+  transform: translateY(calc(var(--h) - 1px));
+  transition-property: transform;
+}
+/* The name, trace and stars: always --lc tall, centred in an idle lane. */
+.top {
+  height: var(--lc);
+  transform: translateY(var(--t));
+  transition-property: transform;
+}
+.detail {
+  height: calc(var(--le) - var(--lc));
+}
+/* Re-ordering: lanes jump to their slot and glide there with `translate` (FLIP) instead. */
+.stack[data-instant] .lane {
+  transition: none;
+}
+
+.trace {
+  transition: opacity var(--d-3) var(--ease-ui);
+}
+.stack[data-open] .lane:not([data-open]) .trace {
+  opacity: 0.45;
+}
+
+/* The pen recorder: armed (hidden) until the stack is in view, then every trace draws left to right under one pen. */
+[data-pen="armed"] .trace canvas {
+  clip-path: inset(0 100% 0 0);
+}
+[data-pen="go"] .trace canvas {
+  animation: reveal 2.4s linear both;
+}
+.pen {
+  opacity: 0;
+}
+[data-pen="go"] .pen {
+  animation: pen 2.4s linear both;
+}
+@keyframes reveal {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+@keyframes pen {
+  0% {
+    translate: 0;
+    opacity: 1;
+  }
+  97% {
+    translate: 100%;
+    opacity: 1;
+  }
+  100% {
+    translate: 100%;
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lane,
+  .rule,
+  .top {
+    transition: none;
+  }
+}
