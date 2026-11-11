@@ -38,7 +38,7 @@ export const partners: Partner[] = [
         url: "https://stellailoom.com",
         logo: "/partners/stellailoomLogo.svg",
         kind: "technology partner",
-        status: "active",
+        status: "past",
         line: "A hub where creators publish AI tools and everyone else finds and tries them.",
     },
     {

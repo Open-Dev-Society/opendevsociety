@@ -118,14 +118,14 @@ export default async function WordOfMouth() {
         <div className="grid gap-y-6 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
           <Record
             name="Sponsors and partners"
-            meta={[`${activePartners.length} active`, `${pastPartners.length} past`, `${supporters.length} supporters`]}
+            meta={[`${activePartners.length} active`, `${pastPartners.length} past`, `${supporters.length} past supporters`]}
             id="partners-h"
             title="Who backs the work."
             className="lg:col-span-5"
           />
           <p className="max-w-[62ch] text-[17px] leading-[1.7] text-(--fg) hyphens-auto lg:col-span-6 lg:col-start-7 lg:pt-9">
             The tools stay free with help from {list(activePartners.map((p) => p.name))}. Before them, {list(pastPartners.map((p) => p.name))}{" "}
-            sponsored the work, and {list(supporters.map((s) => s.name))} back it on GitHub Sponsors. We also thank the organisers of{" "}
+            sponsored the work, and {list(supporters.map((s) => s.name))} backed it on GitHub Sponsors. We also thank the organisers of{" "}
             {events.map((e, i) => (
               <Fragment key={e.name}>
                 {i > 0 && (i === events.length - 1 ? " and " : ", ")}
@@ -160,7 +160,7 @@ export default async function WordOfMouth() {
         </ul>
 
         {/* Past: the same grid, quieter. Logos in the subtle ink, ink again on hover. */}
-        <h3 className="t-mono mt-10 text-[12px] text-(--fg-muted)">Past sponsors · {pastPartners.length}</h3>
+        <h3 className="t-mono mt-10 text-[12px] text-(--fg-muted)">Past sponsors and partners · {pastPartners.length}</h3>
         <ul className="mt-3 grid grid-cols-1 gap-px border border-(--line) bg-(--line) sm:grid-cols-3">
           {pastPartners.map((p) => (
             <li key={p.name} className="bg-(--bg)">
@@ -178,7 +178,7 @@ export default async function WordOfMouth() {
         </ul>
 
         {/* People who sponsor publicly, in their real colours. */}
-        <h3 className="t-mono mt-10 text-[12px] text-(--fg-muted)">Individual supporters · {supporters.length}</h3>
+        <h3 className="t-mono mt-10 text-[12px] text-(--fg-muted)">Past individual supporters · {supporters.length}</h3>
         <ul className="mt-3 flex flex-wrap gap-x-8 gap-y-4 border-t border-(--line) pt-4">
           {supporters.map((s) => (
             <li key={s.login}>

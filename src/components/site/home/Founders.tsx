@@ -73,7 +73,7 @@ export function Founders() {
 
           <div className="lg:col-span-4 lg:col-start-9">
             <p className={label}>Sponsors and partners</p>
-            <ul className="mt-3 grid grid-cols-2 border-t border-l border-(--line)">
+            <ul className={`mt-3 grid border-t border-l border-(--line) ${activePartners.length > 1 ? "grid-cols-2" : "grid-cols-1"}`}>
               {activePartners.map((p) => (
                 <li key={p.name} className="border-r border-b border-(--line)">
                   <a
