@@ -19,6 +19,9 @@ const cell = "flex h-full shrink-0 items-center border-l border-(--line) px-3.5"
 const arrow = <ArrowRight size={16} className="transition-transform duration-(--d-2) ease-(--ease-ui) group-hover:translate-x-0.5 motion-reduce:transition-none" />;
 const marks: Record<string, (p: { size?: number }) => React.ReactNode> = { GitHub, Discord, LinkedIn, X: XMark };
 
+// Home sections that stand for a page: the thumb follows them as you scroll (aria-current="location"; "page" stays for real pages).
+const sectionPage: Record<string, string> = { Projects: "/projects", Contributors: "/contributors", "For founders": "/word-of-mouth" };
+
 type Here = { letter: string; name: string };
 
 // The section under the viewport centre, lettered like the rails (Rails.tsx): [data-grid] sections below the home hero, A, B, C…
@@ -62,6 +65,9 @@ export function Nav({
   const [scrolled, setScrolled] = useState(false);
   const [here, setHere] = useState<Here | null>(null);
   const current = links.find((l) => isActive(path, l.href));
+  // Same middle-of-screen rule as the readout, so the thumb and the readout always agree.
+  const marked = current ?? (home ? links.find((l) => l.href === sectionPage[here?.name ?? ""]) : undefined);
+  const mark = (l: NavLink) => (l === current ? ("page" as const) : l === marked ? ("location" as const) : undefined);
 
   useEffect(() => {
     const hero = document.querySelector("[data-under-nav]");
@@ -163,23 +169,24 @@ export function Nav({
             <div className={cn(cell, fold, "hidden lg:flex")}>
               <ul className="flex h-11 shadow-[inset_0_0_0_1px_var(--line)]">
                 {links.map((l) => {
-                  const active = l === current;
+                  const active = l === marked;
                   return (
                     <li key={l.href}>
                       <Link
                         href={l.href}
-                        aria-current={active ? "page" : undefined}
+                        aria-current={mark(l)}
                         className={cn(
                           focus,
                           "relative flex h-11 items-center px-2.5 whitespace-nowrap transition-colors duration-(--d-2)",
                           active ? "text-(--bg)" : "text-(--fg-muted) hover:text-(--fg)",
                         )}
                       >
+                        {/* Slides between links (layoutId); fades in where there was none (@starting-style). */}
                         {active && (
                           <motion.span
                             layoutId="site-nav-thumb"
                             aria-hidden
-                            className="absolute inset-1 bg-(--fg)"
+                            className="absolute inset-1 bg-(--fg) transition-opacity duration-(--d-2) starting:opacity-0 motion-reduce:transition-none"
                             transition={{ type: "spring", duration: 0.35, bounce: 0 }}
                           />
                         )}
@@ -261,14 +268,14 @@ export function Nav({
                   <Link
                     href={l.href}
                     onClick={() => setOpen(false)}
-                    aria-current={l === current ? "page" : undefined}
+                    aria-current={mark(l)}
                     className={cn(focus, "flex items-baseline gap-4 py-4 text-[22px] text-(--fg) aria-[current]:text-(--accent)")}
                   >
                     <span aria-hidden className="text-[12px] text-(--fg-subtle) tabular-nums">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     {l.label}
-                    {l === current && (
+                    {l === marked && (
                       <span aria-hidden className="ml-auto flex items-center gap-1.5 self-center text-[11px] text-(--fg-subtle)">
                         <i className="size-1.5 bg-(--mark)" />
                         you are here
