@@ -10,24 +10,20 @@ import { band, label } from "./ui";
 export async function Projects({ tools, builders, now }: { tools: OrgRepo[]; builders: Builder[]; now: number }) {
   const active = tools.filter((t) => status(t, now) === "running").length;
   const top = [...tools].sort((a, b) => b.stars - a.stars).slice(0, 8);
-  // Same cached calls as each project's page; only the weeks are used (the fallback stage's activity strip).
+  // Same cached calls as each project's page; only the weeks are used (the stage's activity strip).
   const details = await Promise.all(top.map((t) => getProject(t.name)));
-  const rows: SpotRow[] = top.map((t, i) => {
-    const shot = catalog[t.name].shot;
-    return {
-      name: t.name,
-      tagline: catalog[t.name].tagline,
-      stars: t.stars,
-      contributors: builders.filter((b) => b.repos.includes(t.name)).length,
-      language: t.language,
-      status: status(t, now),
-      shot,
-      // A shot is only captured when the homepage answers (scripts/capture-shots.mjs), so it vouches for the link.
-      homepage: shot ? t.homepage : null,
-      repo: t.html_url,
-      weeks: details[i]?.weeks.map((w) => w.commits) ?? [],
-    };
-  });
+  const rows: SpotRow[] = top.map((t, i) => ({
+    name: t.name,
+    tagline: catalog[t.name].tagline,
+    stars: t.stars,
+    contributors: builders.filter((b) => b.repos.includes(t.name)).length,
+    language: t.language,
+    status: status(t, now),
+    // A shot is only captured when the homepage answers (scripts/capture-shots.mjs), so it vouches for the link.
+    homepage: catalog[t.name].shot ? t.homepage : null,
+    repo: t.html_url,
+    weeks: details[i]?.weeks.map((w) => w.commits) ?? [],
+  }));
 
   return (
     <section id="work" aria-labelledby="work-h" data-grid="Projects" className={`scroll-mt-16 border-t border-(--line) ${band}`}>
