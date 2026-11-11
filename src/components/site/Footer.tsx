@@ -3,7 +3,7 @@ import { catalog } from "@/data/catalog";
 import { ago, isLive } from "@/lib/format";
 import { getCommitsThisWeek, getOrgRepos } from "@/lib/github";
 import { VerifyForm } from "./Field";
-import { ArrowRight, Discord, External } from "./Icon";
+import { ArrowRight, Discord, External, Live } from "./Icon";
 import { DitherEdge } from "./lab/DitherEdge";
 import { LabButton } from "./lab-hero/LabButton";
 import { Container } from "./Section";
@@ -67,9 +67,9 @@ export async function Footer() {
           <p className="t-mono flex flex-wrap items-center justify-between gap-x-6 gap-y-1 border-b border-(--line) pb-3 text-[12px] text-(--fg-subtle)">
             {last ? (
               <a href={last.html_url} {...out} className={`inline-flex min-w-0 items-center gap-2 ${link}`}>
-                <span aria-hidden className="relative inline-flex size-2 shrink-0">
-                  {live && <span className="absolute inset-0 bg-(--accent-brand) motion-safe:animate-ping" />}
-                  <span className="relative size-2 bg-(--accent-brand)" />
+                <span aria-hidden className="relative inline-flex shrink-0 text-(--accent-brand)">
+                  {live && <Live size={12} className="absolute inset-0 motion-safe:animate-ping" />}
+                  <Live size={12} className="relative" />
                 </span>
                 <span>
                   {count !== null && <>{count} commits this week · </>}

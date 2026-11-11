@@ -1,6 +1,7 @@
 import { ago } from "@/lib/format";
 import type { Activity } from "@/lib/github";
 import { TypeLine } from "./live";
+import { Live } from "../Icon";
 import { Container } from "../Section";
 import { band, display, ext, focus, label } from "./ui";
 
@@ -25,7 +26,7 @@ export function Now({ activity, now }: { activity: Activity[]; now: number }) {
             Merged pull requests, releases and new contributors, straight from GitHub.
           </p>
           <p className={`${label} mt-6 flex items-center gap-2`}>
-            <span aria-hidden className="size-2 bg-(--accent)" /> live · checked hourly
+            <Live size={12} className="text-(--accent)" /> live · checked hourly
           </p>
         </div>
 
