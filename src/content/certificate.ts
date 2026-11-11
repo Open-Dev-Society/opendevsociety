@@ -8,25 +8,25 @@ export const certificateRoles: Record<CertRoleKey, { label: string; mono: string
     label: "Active Member",
     mono: "MEMBERSHIP",
     description:
-      "in recognition of their active participation in the Open Dev Society — a decentralized network of developers, designers, and writers building free, open-source public goods.",
+      "in recognition of being a valued member of Open Dev Society: showing up, sharing ideas and helping build free, open-source tools that anyone can use.",
   },
   contributor: {
     label: "Code Contributor",
     mono: "CONTRIBUTION",
     description:
-      "for meaningful contributions to open-source modules under the Open Dev Society — shipping code, fixing bugs, and advancing software made freely available to the world.",
+      "for real contributions to Open Dev Society projects: writing code, fixing bugs and shipping improvements that make free, open-source software better for everyone.",
   },
   maintainer: {
     label: "Core Maintainer",
     mono: "MAINTAINERSHIP",
     description:
-      "for stewardship of Open Dev Society — reviewing pull requests, guiding contributors, and keeping public-good software healthy and shipping.",
+      "for caring for Open Dev Society projects: reviewing every change with care, guiding new contributors and keeping the tools healthy, free and moving forward.",
   },
   mentor: {
     label: "Mentor & Educator",
     mono: "MENTORSHIP",
     description:
-      "for sharing knowledge with the Open Dev Society community — teaching, writing, and lifting the next generation of open-source operators.",
+      "for lifting others in the Open Dev Society community: teaching, answering questions and helping newcomers make their first contribution to open source.",
   },
 };
 
