@@ -306,8 +306,9 @@ export default async function Manifesto() {
             <p>Our principles can change as we learn. These three promises cannot.</p>
             <ol className="my-8 space-y-3 border-y border-(--fg) py-6 text-left indent-0">
               {promise.map((l, i) => (
-                <li key={l} className="grid grid-cols-[2.5rem_minmax(0,1fr)] items-baseline text-[clamp(1.25rem,1rem+1vw,1.625rem)] leading-tight font-[650] tracking-[-0.015em]">
-                  <span className="font-mono text-[13px] font-normal text-(--fg-muted)">({["i", "ii", "iii"][i]})</span>
+                <li key={l} className="grid grid-cols-[3rem_minmax(0,1fr)] items-baseline gap-x-4 text-[clamp(1.25rem,1rem+1vw,1.625rem)] leading-tight font-[650] tracking-[-0.015em]">
+                  {/* Right-aligned, so (i) (ii) (iii) end on the same edge next to the text. */}
+                  <span className="text-right font-mono text-[13px] font-normal text-(--fg-muted)">({["i", "ii", "iii"][i]})</span>
                   {l}
                 </li>
               ))}
@@ -318,7 +319,7 @@ export default async function Manifesto() {
             <div className="mt-10 grid grid-cols-1 gap-8 indent-0 sm:grid-cols-2">
               {signers.map((f) => (
                 <div key={f.login} className="text-left">
-                  <a href={f.html_url} {...ext} className="sign block text-[30px] leading-none text-(--fg) transition-colors duration-(--d-2) hover:text-(--accent)">
+                  <a href={f.html_url} {...ext} className="signature block text-[44px] text-(--fg) transition-colors duration-(--d-2) hover:text-(--accent)">
                     {f.name}
                   </a>
                   <p className="t-mono mt-2 border-t border-(--fg) pt-1.5 text-[12px] text-(--fg-muted)">

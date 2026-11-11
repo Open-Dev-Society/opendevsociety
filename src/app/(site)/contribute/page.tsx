@@ -237,7 +237,7 @@ export default async function Contribute() {
           <span className="t-mono text-[11px] tracking-[0.08em] text-(--fg-subtle) uppercase">From the team</span>
           {signers.map((p) => (
             <a key={p.login} href={p.html_url} {...ext} className="group block min-w-[13rem]">
-              <span className="sign block border-b border-(--fg-subtle) pb-1 text-[26px] leading-none text-(--accent) group-hover:text-(--accent-hover)">
+              <span className="signature block border-b border-(--fg-subtle) pb-1 text-[40px] text-(--accent) group-hover:text-(--accent-hover)">
                 {p.name}
               </span>
               <span className="t-mono mt-1.5 block text-[11px] text-(--fg-subtle)">{roleLabel(p.role).toLowerCase()}</span>

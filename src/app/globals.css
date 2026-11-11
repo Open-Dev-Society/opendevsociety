@@ -163,6 +163,15 @@ body {
   font-size: 1.08em;
   letter-spacing: -0.01em;
 }
+/* A pen signature: only where someone signs (manifesto, contribute). Sits a little low and large, like ink over the rule. */
+.signature {
+  font-family: var(--font-signature);
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: 0;
+  padding-top: 0.15em;
+}
 .quote-feature {
   font-family: var(--font-sign);
   font-style: italic;
