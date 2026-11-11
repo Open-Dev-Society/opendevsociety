@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 const base =
-  "relative isolate inline-flex items-center justify-center rounded-[2px] font-mono leading-none whitespace-nowrap transition-[translate,background-color,color] duration-(--d-2) ease-(--ease-ui) active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus)";
+  "relative isolate inline-flex items-center justify-center gap-[0.5em] rounded-[2px] font-mono leading-none whitespace-nowrap transition-[translate,background-color,color] duration-(--d-2) ease-(--ease-ui) active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus)";
 const sizes = { lg: "min-h-13 px-6 py-4 text-[15px]", md: "min-h-11 px-5 py-3 text-[14px]", sm: "min-h-9 px-3.5 py-2 text-[13px]" };
 const variants = {
   // Solid deep teal (white on it 5.3:1). Hover: a 2px checker of --accent-hover (6.8:1) sweeps in left to right in hard steps: a 1-bit dissolve.

@@ -3,7 +3,7 @@ export interface Contributor {
     name?: string;
     avatar_url: string;
     html_url: string;
-    role?: string; // e.g., "Core Operator", "Maintainer", "Algorithmist"
+    role?: string; // "Founder", "Co-Founder" or "Maintainer" (maintainers not in GitHub's stats are added by getOrgContributors)
     twitter?: string;
     type: 'User' | 'Bot';
 }
@@ -12,7 +12,7 @@ export const manualContributors: Contributor[] = [
     {
         login: "ravixalgorithm",
         name: "Ravi Pratap Singh",
-        avatar_url: "https://github.com/ravixalgorithm.png",
+        avatar_url: "https://avatars.githubusercontent.com/ravixalgorithm",
         html_url: "https://github.com/ravixalgorithm",
         role: "System Architect // Founder",
         type: "User"
@@ -20,7 +20,7 @@ export const manualContributors: Contributor[] = [
     {
         login: "priyanshucosmos",
         name: "Priyanshu Bhardwaj",
-        avatar_url: "https://github.com/priyanshucosmos.png",
+        avatar_url: "https://avatars.githubusercontent.com/priyanshucosmos",
         html_url: "https://github.com/priyanshucosmos",
         role: "Co-Founder",
         type: "User"
@@ -28,17 +28,17 @@ export const manualContributors: Contributor[] = [
     {
         login: "bipin325",
         name: "Bipin kumar Madhur",
-        avatar_url: "https://github.com/bipin325.png",
+        avatar_url: "https://avatars.githubusercontent.com/bipin325",
         html_url: "https://github.com/bipin325",
-        role: "Core Maintainer",
+        role: "Maintainer",
         type: "User"
     },
     {
         login: "error404p",
         name: "Mahin Chauhan",
-        avatar_url: "https://github.com/error404p.png",
+        avatar_url: "https://avatars.githubusercontent.com/error404p",
         html_url: "https://github.com/error404p",
-        role: "Core Maintainer",
+        role: "Maintainer",
         type: "User"
     },
     // Add more manual entries here

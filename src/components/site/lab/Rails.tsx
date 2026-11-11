@@ -138,7 +138,7 @@ export function Rails() {
 /** A drawing-sheet scale bar in real px: 0 · 50 · 100 · 200, alternating filled and empty. */
 export function ScaleBar({ className = "" }: { className?: string }) {
   return (
-    <div aria-hidden="true" className={`${s.scale} ${className}`}>
+    <span aria-hidden="true" className={`${s.scale} ${className}`}>
       <span className={s.bar}>
         {[0, 50, 100, 200].map((n) => (
           <span key={n} className={s.mark} style={{ left: n }}>
@@ -147,6 +147,6 @@ export function ScaleBar({ className = "" }: { className?: string }) {
         ))}
       </span>
       <span>scale 1:1</span>
-    </div>
+    </span>
   );
 }

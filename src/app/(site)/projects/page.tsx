@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Container } from "@/components/site";
 import { LabButton } from "@/components/site/lab-hero/LabButton";
 import { Dither } from "@/components/site/lab/Dither";
@@ -6,7 +7,8 @@ import { Plate } from "@/components/site/lab/Plate";
 import { Record } from "@/components/site/lab/Record";
 import { catalog, languageColors } from "@/data/catalog";
 import { ago, compact } from "@/lib/format";
-import { labDate, status, STATUS_MARK } from "@/lib/lab";
+import { labDate, status } from "@/lib/lab";
+import { ArrowRight, External, Star, StatusDot } from "@/components/site/Icon";
 import { getWorkshop } from "@/lib/workshop";
 import { Log, type LogRow } from "./Log";
 import { STATUS_LABEL } from "./status";
@@ -55,9 +57,9 @@ export default async function ProjectsPage() {
   const live = lead.homepage ?? lead.html_url;
   // The lead's facts, read left to right.
   const sheet: [string, React.ReactNode][] = [
-    ["Status", `${STATUS_MARK[leadStatus]} ${STATUS_LABEL[leadStatus]}`],
+    ["Status", <><StatusDot status={leadStatus} /> {STATUS_LABEL[leadStatus]}</>],
     ["Started", lead.created_at ? labDate(lead.created_at) : "—"],
-    ["Stars", `${lead.stars.toLocaleString("en-US")} ★`],
+    ["Stars", <>{lead.stars.toLocaleString("en-US")} <Star size="1em" label="stars" /></>],
     ["Forks", lead.forks.toLocaleString("en-US")],
     ["Contributors", leadTeam.length],
     ["Language", lead.language ?? "—"],
@@ -94,12 +96,12 @@ export default async function ProjectsPage() {
         <article id={lead.name} aria-labelledby="lead-name" className="scroll-mt-24 border-t-[3px] border-double border-(--fg) pt-3">
           <div className="t-mono flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 text-[12px] text-(--fg-muted)">
             <span>
-              <span className="text-(--fg)">Most starred</span> · {compact(lead.stars)} ★
+              <span className="text-(--fg)">Most starred</span> · {compact(lead.stars)} <Star size="1em" label="stars" />
             </span>
             <span>{live.replace(/^https?:\/\//, "")}</span>
           </div>
 
-          <a href={live} className="group relative mt-3 block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--focus)">
+          <Link href={`/projects/${lead.name}`} className="group relative mt-3 block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--focus)">
             <Dither
               src="/shots/openstock-desktop.jpg"
               alt={`${lead.name}, live: index prices, the market clock and a chart`}
@@ -115,28 +117,33 @@ export default async function ProjectsPage() {
               {lead.name}
             </Plate>
             <Plate as="div" tone={leadStatus === "running" ? "accent" : "plain"} className="absolute top-3 right-3 md:top-4 md:right-4">
-              {STATUS_MARK[leadStatus]} {STATUS_LABEL[leadStatus]}
+              <StatusDot status={leadStatus} /> {STATUS_LABEL[leadStatus]}
             </Plate>
             <Plate as="div" className="absolute bottom-3 left-3 hidden md:bottom-4 md:left-4 md:inline-flex">
               <span className="group-hover:hidden group-focus-visible:hidden">hover to see it</span>
-              <span className="hidden group-hover:inline group-focus-visible:inline">open the live site ↗</span>
+              <span className="hidden group-hover:inline group-focus-visible:inline">see the project <ArrowRight size="1em" /></span>
             </Plate>
-          </a>
+          </Link>
 
           <div className="mt-8 grid gap-x-(--grid-gap) gap-y-8 lg:grid-cols-12">
             <div className="lg:col-span-5">
               <h2 id="lead-name" className="text-[clamp(2.5rem,1rem+4vw,4.5rem)] leading-[0.9] font-[800] tracking-[-0.018em] text-(--fg) [font-stretch:75%]">
-                {lead.name}
+                <Link href={`/projects/${lead.name}`} className="underline-offset-8 hover:underline">
+                  {lead.name}
+                </Link>
               </h2>
               <p className="mt-4 max-w-[48ch] text-[17px] leading-relaxed text-(--fg-muted)">
                 {catalog[lead.name].tagline}
               </p>
               <p className="mt-6 flex flex-wrap gap-3">
-                <LabButton href={live} size="sm">
-                  Open the live site ↗
+                <LabButton href={`/projects/${lead.name}`} size="sm">
+                  See the project <ArrowRight size="1em" />
+                </LabButton>
+                <LabButton href={live} size="sm" variant="secondary">
+                  Open the live site <External size="1em" />
                 </LabButton>
                 <LabButton href={lead.html_url} size="sm" variant="secondary">
-                  Source on GitHub
+                  Source on GitHub <External size="1em" />
                 </LabButton>
               </p>
             </div>
@@ -191,7 +198,7 @@ export default async function ProjectsPage() {
               </p>
             </div>
             <p className="flex flex-wrap gap-3 md:col-span-5 md:justify-end">
-              <LabButton href="/contribute">Bring your project →</LabButton>
+              <LabButton href="/contribute">Bring your project <ArrowRight size="1em" /></LabButton>
               <LabButton href="/manifesto" variant="secondary">
                 See how it works
               </LabButton>

@@ -1,9 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { useId, useState } from "react";
 import { Dither } from "@/components/site/lab/Dither";
 import { Plate } from "@/components/site/lab/Plate";
-import { STATUS_MARK, type Status } from "@/lib/lab";
+import { External, Star, StatusDot } from "@/components/site/Icon";
+import type { Status } from "@/lib/lab";
 import { STATUS_LABEL } from "./status";
 import type { Audience } from "@/data/catalog";
 
@@ -39,7 +41,7 @@ function Track({ days }: { days: number }) {
   );
 }
 
-function Choice<T extends string>({ legend, value, options, onChange }: { legend: string; value: T; options: { v: T; label: string; n: number }[]; onChange: (v: T) => void }) {
+function Choice<T extends string>({ legend, value, options, onChange }: { legend: string; value: T; options: { v: T; label: React.ReactNode; n: number }[]; onChange: (v: T) => void }) {
   const name = useId();
   return (
     <fieldset className="flex flex-wrap items-center gap-1.5">
@@ -48,7 +50,7 @@ function Choice<T extends string>({ legend, value, options, onChange }: { legend
         <label key={o.v} className="cursor-pointer">
           <input type="radio" name={name} value={o.v} checked={value === o.v} onChange={() => onChange(o.v)} className="peer sr-only" />
           <span className="t-mono inline-flex min-h-8 items-center gap-1.5 px-2.5 text-[12px] text-(--fg-muted) shadow-[inset_0_0_0_1px_var(--line)] transition-colors duration-(--d-2) peer-checked:bg-(--fg) peer-checked:text-(--bg) peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-(--focus) hover:text-(--fg)">
-            {o.label} <span className="tabular-nums opacity-70">{o.n}</span>
+            <span className="inline-flex items-center gap-1.5">{o.label}</span> <span className="tabular-nums opacity-70">{o.n}</span>
           </span>
         </label>
       ))}
@@ -75,7 +77,7 @@ export function Log({ rows }: { rows: LogRow[] }) {
             onChange={setStatus}
             options={[
               { v: "all", label: "all", n: rows.length },
-              ...(["running", "paused", "archived"] as const).map((s) => ({ v: s, label: `${STATUS_MARK[s]} ${STATUS_LABEL[s]}`, n: count("status", s) })),
+              ...(["running", "paused", "archived"] as const).map((s) => ({ v: s, label: <><StatusDot status={s} /> {STATUS_LABEL[s]}</>, n: count("status", s) })),
             ]}
           />
           <Choice
@@ -98,7 +100,7 @@ export function Log({ rows }: { rows: LogRow[] }) {
         <span>#</span>
         <span>Project</span>
         <span>Status</span>
-        <span className="text-right">Stars ★</span>
+        <span className="flex items-center justify-end gap-1">Stars <Star size={12} /></span>
         <span className="text-right">Contributors</span>
         <span>Last push</span>
         <span>Preview</span>
@@ -114,20 +116,23 @@ export function Log({ rows }: { rows: LogRow[] }) {
           >
             <span className="t-mono col-start-1 row-start-1 text-[12px] text-(--fg-subtle) lg:col-auto lg:row-auto lg:text-(--fg)">{r.rank}</span>
             <div className="col-start-1 row-start-2 min-w-0 lg:col-auto lg:row-auto">
-              <a href={r.url} className="font-[700] text-(--fg) underline-offset-4 after:absolute after:inset-0 hover:underline focus-visible:outline-none [&:focus-visible]:after:outline-2 [&:focus-visible]:after:outline-(--focus)">
+              <Link href={`/projects/${r.name}`} className="font-[700] text-(--fg) underline-offset-4 after:absolute after:inset-0 hover:underline focus-visible:outline-none [&:focus-visible]:after:outline-2 [&:focus-visible]:after:outline-(--focus)">
                 {r.name}
-              </a>
+              </Link>
               {r.badge && <span className="t-mono ml-2 text-[11px] text-(--mark-ink)">{r.badge}</span>}
+              <a href={r.url} className="t-mono relative z-10 ml-2 text-[11px] text-(--fg-subtle) underline-offset-4 hover:text-(--fg) hover:underline">
+                GitHub <External size="1em" />
+              </a>
               <span className="mt-0.5 block text-[15px] leading-snug text-(--fg-muted) lg:truncate">{r.tagline}</span>
             </div>
             <span className="col-span-2 row-start-3 flex flex-wrap items-center gap-x-4 gap-y-2 lg:contents">
               <span className="lg:col-auto">
                 <Plate tone={r.status === "running" ? "accent" : "plain"}>
-                  {STATUS_MARK[r.status]} {STATUS_LABEL[r.status]}
+                  <StatusDot status={r.status} /> {STATUS_LABEL[r.status]}
                 </Plate>
               </span>
               <span className="t-mono text-[13px] text-(--fg) tabular-nums lg:text-right">
-                <span className="text-(--fg-subtle) lg:hidden">★ </span>
+                <Star size="1em" label="stars" className="mr-1 text-(--fg-subtle) lg:hidden" />
                 {r.stars}
               </span>
               <span className="t-mono text-[13px] text-(--fg) tabular-nums lg:text-right">

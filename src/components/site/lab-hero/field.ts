@@ -94,7 +94,7 @@ function texture(gl: WebGL2RenderingContext, filter: number) {
 
 // Each token with the value globals.css gives it, so a stylesheet that lacks one (an older build, a cached CSS) still
 // renders the brand: teal on off-white, never the canvas default black.
-const TOKENS = { paper: ["--bg", "#f8f9fa"], ink: ["--fg", "#051c20"], teal: ["--accent-brand", "#288488"] } as const;
+const TOKENS = { paper: ["--bg", "#f8f9fa"], ink: ["--fg", "#051c20"], teal: ["--accent-brand", "#10777b"] } as const;
 type Colors = Record<keyof typeof TOKENS, [number, number, number]>;
 
 /** The field's colours as sRGB 0..1, resolved where `el` sits (so they inherit like any text colour). */

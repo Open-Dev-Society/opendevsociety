@@ -8,6 +8,8 @@ const sign = Newsreader({ subsets: ["latin"], style: "italic", axes: ["opsz"], v
 const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {
+  // OG images and canonical URLs resolve against this; set NEXT_PUBLIC_SITE_URL to the real domain in production.
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://opendevsociety.vercel.app"),
   title: "Open Dev Society: free, open-source software, built in public",
   description:
     "A public workshop of developers, designers and writers building free, open-source tools. No paywalls, no interviews.",

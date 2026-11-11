@@ -3,6 +3,7 @@
 import { Newsreader } from "next/font/google";
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import { ArrowRight, Star } from "@/components/site/Icon";
 import { compact } from "@/lib/format";
 import type { getWorkshop } from "@/lib/workshop";
 import { Leaders } from "./Leaders";
@@ -144,7 +145,7 @@ export function Plate({ now, tools, people, lastPush }: Pick<Workshop, "now" | "
                   , <i className={s.bin}>{binomialOf(t.name)}</i>
                   <span className={s.meta}>
                     <span className={s.order}>Ord. {orderOf(t.language).order}</span>
-                    {compact(t.stars)} ★ · {compact(t.forks)} fork
+                    {compact(t.stars)} <Star size="1em" label="stars" /> · {compact(t.forks)} fork
                     {t.forks === 1 ? "" : "s"} · {n} discoverer{n === 1 ? "" : "s"}
                   </span>
                 </li>
@@ -171,9 +172,9 @@ export function Plate({ now, tools, people, lastPush }: Pick<Workshop, "now" | "
             whoever showed up. The vacant cell is yours.
           </p>
           <p className={s.links}>
-            <Link href="/contribute">Describe a new species&nbsp;→</Link>
+            <Link href="/contribute">Describe a new species&nbsp;<ArrowRight size="1em" /></Link>
             <span aria-hidden>·</span>
-            <Link href="/projects">Open the atlas&nbsp;→</Link>
+            <Link href="/projects">Open the atlas&nbsp;<ArrowRight size="1em" /></Link>
           </p>
         </div>
 
@@ -192,7 +193,7 @@ export function Plate({ now, tools, people, lastPush }: Pick<Workshop, "now" | "
                 </text>
               ))}
             </svg>
-            <span>one ring per decade of ★ · Σ {compact(stars)}</span>
+            <span>one ring per decade of stars · Σ {compact(stars)}</span>
           </span>
           <span>
             Collected <span className={s.mono}>{collected(lastPush)}</span>
