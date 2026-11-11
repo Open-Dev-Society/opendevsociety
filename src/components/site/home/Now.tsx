@@ -37,7 +37,7 @@ export function Now({ activity, now }: { activity: Activity[]; now: number }) {
               <a
                 href={a.url}
                 {...ext}
-                className={`grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-3 gap-y-1 border-b border-(--line) py-3 transition-colors duration-(--d-2) hover:bg-(--surface) sm:grid-cols-[4.5rem_minmax(0,1fr)_auto] sm:items-baseline ${focus}`}
+                className={`grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-3 gap-y-1 border-b border-(--line) px-3 py-3 transition-colors sm:px-4 duration-(--d-2) hover:bg-(--surface) sm:grid-cols-[4.5rem_minmax(0,1fr)_auto] sm:items-baseline ${focus}`}
               >
                 <span className="t-mono text-[12px] text-(--fg-subtle)">{ago(a.at, now)}</span>
                 <span className={`text-[15px] leading-snug ${i ? "text-(--fg-muted)" : "text-(--fg)"}`}>
