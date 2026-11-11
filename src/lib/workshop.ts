@@ -11,7 +11,12 @@ export type Builder = {
   contributions: number;
   repos: string[];
   core?: boolean;
+  /** First week with a commit (ISO), when GitHub's stats have it. */
+  joined?: string;
+  role?: "Founder" | "Co-founder" | "Maintainer";
 };
+
+const roleOf = (r = "") => (/Co-Founder/i.test(r) ? "Co-founder" : /Founder/i.test(r) ? "Founder" : /Maintainer/i.test(r) ? "Maintainer" : undefined);
 
 export async function getWorkshop() {
   const [repos, people] = await Promise.all([getOrgRepos(), getOrgContributors()]);
@@ -30,6 +35,8 @@ export async function getWorkshop() {
     contributions: p.contributions,
     repos: p.repos.filter((r) => catalog[r]), // only public tools, never .github or the site repo
     core: core.has(p.login.toLowerCase()),
+    joined: p.joined,
+    role: roleOf(core.get(p.login.toLowerCase())?.role),
   }));
 
   return {

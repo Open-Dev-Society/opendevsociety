@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { sizedAvatar } from "@/components/site/Avatar";
+import { month, Photo as Avatar } from "@/components/site/Avatar";
 import { Dither } from "@/components/site/lab/Dither";
 import { Plate } from "@/components/site/lab/Plate";
 
@@ -16,7 +16,6 @@ export type Contributor = {
 };
 
 const SHOW = 2;
-const month = (iso?: string) => (iso ? new Date(iso).toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" }) : "—");
 
 // A head and shoulders, dithered rose on the open spot.
 export const SILHOUETTE = `data:image/svg+xml,${encodeURIComponent(
@@ -28,7 +27,7 @@ function Photo({ src, alt, mark }: { src: string; alt: string; mark?: boolean })
     // The one motion on the page: the open spot's photo rests coarse and develops while you hover it.
     <Dither src={src} alt={alt} width={1} height={1} variant="mark" tone="duotone" develop className="w-full" />
   ) : (
-    <Dither src={sizedAvatar(src, 64)} alt={alt} width={1} height={1} tone="duotone" className="w-full" />
+    <Avatar src={src} px={112} alt={alt} className="w-full" />
   );
 }
 
@@ -70,7 +69,7 @@ export function Badge({ c: r }: { c: Contributor }) {
         </p>
         <p className="t-mono truncate text-[12px] text-(--fg-muted)">@{r.login}</p>
         <dl className="t-mono mt-3 space-y-0.5 border-t border-(--line) pt-2 text-[11px] leading-[1.6]">
-          <Field k="JOINED">{month(r.joined)}</Field>
+          <Field k="JOINED">{r.joined ? month(r.joined) : "—"}</Field>
           <Field k="PROJECTS">
             {r.projects.length === 0
               ? "—"

@@ -18,7 +18,8 @@ Split heroes (headline left, card right). Card grids with rounded shadows. Pill 
   - Body: Mona Sans at normal width, 16–18px, about 65ch.
   - Labels: Geist Mono (`--font-mono`), 11–13px, for metadata, counts, dates and tables.
   - Newsreader Italic (`--font-sign`) only for a person's name or signature, sparingly.
-- **Dither:** the signature texture. Project screenshots and avatars render 1-bit or duotone dithered through `src/components/site/lab/Dither.tsx` (it can "develop" from coarse to fine on hover). Static first paint, no CLS, alt text kept.
+- **Dither:** the signature texture. Project screenshots render 1-bit or duotone dithered through `src/components/site/lab/Dither.tsx` (it can "develop" from coarse to fine on hover). Static first paint, no CLS, alt text kept.
+- **Avatars:** real people in their real colours: `Photo` / `Face` in `src/components/site/Avatar.tsx` (next/image, square, a hairline inside the edge). A `Face` links to the person's GitHub and shows a `Tooltip` card (`src/components/site/Tooltip.tsx`): name, @login, role, facts. Never a native `title`. Only the rose open spot stays dithered: it is not a person.
 - **Plates:** small mono labels on a rectangle, like the hero corners. Use them for status, counts and dates.
 - **Edges:** bands meet through `src/components/site/lab/DitherEdge.tsx`, a 1-bit dissolve.
 - **Buttons:** `LabButton` (`src/components/site/lab-hero/LabButton.tsx`) only, with square corners.

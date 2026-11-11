@@ -2,8 +2,7 @@ import { compact } from "@/lib/format";
 import type { OrgRepo } from "@/lib/github";
 import { status } from "@/lib/lab";
 import type { Builder } from "@/lib/workshop";
-import { sizedAvatar } from "../Avatar";
-import { Dither } from "../lab/Dither";
+import { Face, facts } from "../Avatar";
 import { Container } from "../Section";
 import { Callouts } from "./Callouts";
 import { CountUp } from "./live";
@@ -67,18 +66,9 @@ export function About({
       what: "contributors",
       show: (
         <>
-          <span className={`${slot} items-center`} aria-hidden>
+          <span className={`${slot} items-center`}>
             {builders.slice(0, FACES).map((b) => (
-              <Dither
-                key={b.login}
-                src={sizedAvatar(b.avatar, 24)}
-                alt=""
-                width={1}
-                height={1}
-                tone="duotone"
-                cell={1}
-                className="-mr-1 size-6 ring-2 ring-(--bg)"
-              />
+              <Face key={b.login} p={{ ...b, line: facts(b) }} px={24} className="relative -mr-1 hover:z-10 focus-visible:z-10" photoClassName="size-6 ring-2 ring-(--bg)" />
             ))}
             {builders.length > FACES && <span className="ml-2.5">+{builders.length - FACES}</span>}
           </span>

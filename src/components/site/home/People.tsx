@@ -1,15 +1,15 @@
 import Link from "next/link";
 import { SILHOUETTE } from "@/app/(site)/contributors/Badge";
 import type { Builder } from "@/lib/workshop";
-import { sizedAvatar } from "../Avatar";
+import { Face, facts } from "../Avatar";
 import { Dither } from "../lab/Dither";
 import { Container } from "../Section";
-import { band, display, ext, focus, label } from "./ui";
+import { band, display, focus, label } from "./ui";
 import { ArrowRight } from "../Icon";
 
 const face = "size-11 sm:size-14";
 
-/** 04 · paper: a strip of duotone faces, the maintainers first, ending in the open rose spot. */
+/** 04 · paper: a strip of faces (hover, focus or tap one for who it is), the maintainers first, ending in the open rose spot. */
 export function People({ builders }: { builders: Builder[] }) {
   const faces = [...builders.filter((b) => b.core), ...builders.filter((b) => !b.core)];
   return (
@@ -23,9 +23,7 @@ export function People({ builders }: { builders: Builder[] }) {
         <ul aria-label="Contributors" className="mt-10 flex flex-wrap gap-1.5 md:mt-14">
           {faces.map((b) => (
             <li key={b.login}>
-              <a href={b.url} {...ext} title={b.name ?? `@${b.login}`} className={`block ${focus}`}>
-                <Dither src={sizedAvatar(b.avatar, 56)} alt={b.name ?? b.login} width={1} height={1} tone="duotone" cell={1} className={face} />
-              </a>
+              <Face p={{ ...b, line: facts(b) }} px={56} photoClassName={face} />
             </li>
           ))}
           <li>
