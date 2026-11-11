@@ -97,7 +97,7 @@ export default async function WordOfMouth() {
   return (
     <article data-grid="What people say" className="mx-auto w-full max-w-(--container) px-(--gutter) pt-12 pb-24 lg:pt-16 lg:pb-32">
       {/* Title block: the record, then the count as the headline; the epigraph beside it. */}
-      <div className="grid gap-y-10 lg:grid-cols-12 lg:gap-x-(--grid-gap)">
+      <div className="grid gap-y-10 pb-16 lg:grid-cols-12 lg:gap-x-(--grid-gap) lg:pb-24">
         <Record
           as="h1"
           size="page"
