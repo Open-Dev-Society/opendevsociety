@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fragment } from "react";
+import { Cite } from "@/components/site/Cite";
 import { LabButton } from "@/components/site/lab-hero/LabButton";
 import { REGIMES } from "@/components/site/lab-hero/field";
 import { contactEmail, social } from "@/content";
@@ -32,11 +33,6 @@ const rules = [
   { title: "Lift each other", body: "Everyone teaches, everyone learns." },
 ];
 const promise = ["We will never lock knowledge.", "We will never charge for access.", "We will never trade trust for money."];
-const ownership = [
-  { q: "Can I show the project as my own work?", a: "Yes. You keep full credit. We support your growth, we don't claim it." },
-  { q: "Do I lose ownership?", a: "No. ODS is a platform, not a company claiming your IP." },
-  { q: "Can I take my project back?", a: "Any time. There's no lock-in." },
-];
 
 const tarang = mentions.find((m) => m.author.startsWith("Tattva Tarang"))!;
 
@@ -66,36 +62,11 @@ const NOTES: Record<number, React.ReactNode> = {
   6: <>Every licence we use grants the right to fork. Leaving costs one <span className="whitespace-nowrap">git remote set-url</span>.</>,
 };
 
-// Footnotes: a superscript in the text; the note sits in the right margin on desktop, and at the foot of its section below that.
-const S = "font-mono text-[0.68em] leading-none align-super";
-function Note({ n }: { n: number }) {
-  return (
-    <>
-      <sup id={`fnref-${n}`} className={S}>
-        <a href={`#fn-${n}`} aria-label={`Note ${n}`} className="px-px text-(--accent) hover:underline">
-          {n}
-        </a>
-      </sup>
-      <span className="float-right clear-right -mr-[15.5rem] mb-4 hidden w-52 text-left indent-0 font-mono text-[12px] leading-[1.55] text-(--fg-muted) [hyphens:manual] lg:block">
-        <span className="text-(--fg)">{n}</span>&ensp;{NOTES[n]}
-      </span>
-    </>
-  );
-}
-function Notes({ ns }: { ns: number[] }) {
-  return (
-    <ol className="mt-6 space-y-2 border-t border-(--line) pt-4 font-mono text-[12px] leading-[1.55] text-(--fg-muted) lg:hidden">
-      {ns.map((n) => (
-        <li key={n} id={`fn-${n}`} className="grid scroll-mt-24 grid-cols-[1.5rem_minmax(0,1fr)]">
-          <a href={`#fnref-${n}`} aria-label={`Back to note ${n}`} className="text-(--fg)">
-            {n}
-          </a>
-          <span>{NOTES[n]}</span>
-        </li>
-      ))}
-    </ol>
-  );
-}
+const ownership = [
+  { q: "Can I show the project as my own work?", a: "Yes. You keep full credit. We support your growth, we don't claim it." },
+  { q: "Do I lose ownership?", a: "No. ODS is a platform, not a company claiming your IP." },
+  { q: "Can I take my project back?", a: <>Any time. There&apos;s <Cite n={6} note={NOTES[6]}>no lock-in</Cite>.</> },
+];
 
 function H2({ n, id, children }: { n: number; id: string; children: React.ReactNode }) {
   return (
@@ -141,7 +112,7 @@ export default async function Manifesto() {
 
       <div className="mt-14 lg:grid lg:grid-cols-[minmax(0,68ch)_13rem] lg:justify-center lg:gap-x-10">
 
-        <div className="min-w-0">
+        <div data-column className="min-w-0">
           {/* Title page */}
           <div className="text-center">
             <h1 className="mx-auto max-w-[14ch] text-[clamp(2.5rem,1.6rem+3.6vw,4.25rem)] leading-[0.92] font-[800] tracking-[-0.018em] text-balance text-(--fg) [font-stretch:75%]">
@@ -186,18 +157,14 @@ export default async function Manifesto() {
               Why we exist
             </H2>
             <p>
-              Open Dev Society
-              <Note n={1} />{" "}
-              is a community that builds free software in public. What we believe is short: technology should belong to everyone. Not licensed to them,
+              <Cite n={1} note={NOTES[1]}>Open Dev Society</Cite> is a community that builds free software in public. What we believe is short: technology should belong to everyone. Not licensed to them,
               rented to them, or shown to them after a sign-up form, but theirs, to use, read, change and pass on.
             </p>
             <p>
               The obstacles are familiar. Knowledge sits behind paywalls; tools sit behind subscriptions; the newcomer is asked for experience
               they could only have gained by being let in. As <A href={tarang.url}>one reviewer of OpenStock</A> put it, great tools &ldquo;shouldn&apos;t
               hide behind logins or price tiers&rdquo;. Our answer is not a policy but a practice: build the tools in
-              the open, free
-              <Note n={2} />
-              , and let anyone who shows up help.
+              the open, <Cite n={2} note={NOTES[2]}>free</Cite>, and let anyone who shows up help.
             </p>
             <blockquote className="my-8 border-l-2 border-(--accent) py-1 pl-5 text-left indent-0 sm:pl-6">
               <p className="text-[19px] leading-[1.5] text-(--fg)">Knowledge isn&apos;t just code: it&apos;s conversation, collaboration, and connection.</p>
@@ -205,7 +172,6 @@ export default async function Manifesto() {
                 <span className="sign text-[16px] text-(--fg)">{signers[0].name}</span>, {roleLabel(signers[0].role).toLowerCase()}, 2024
               </footer>
             </blockquote>
-            <Notes ns={[1, 2]} />
 
             <H2 n={2} id="principles">
               What we believe
@@ -226,8 +192,7 @@ export default async function Manifesto() {
                           decisions happen in their issues and pull requests.
                         </>,
                         <>
-                          The whole onboarding is <A href="/contribute">one page</A>: fork, branch, pull request.
-                          <Note n={3} />
+                          The whole onboarding is <A href="/contribute">one page</A>: fork, branch, <Cite n={3} note={NOTES[3]}>pull request</Cite>.
                         </>,
                         <>
                           The last commit landed {ago(lastPush, now)}{latest && <>, to {latest}</>}.
@@ -239,7 +204,6 @@ export default async function Manifesto() {
                 </div>
               ))}
             </div>
-            <Notes ns={[3]} />
 
             <H2 n={3} id="method">
               What we build
@@ -276,11 +240,10 @@ export default async function Manifesto() {
                 ))}
               </div>
               <figcaption className="mt-4 text-left text-[14px] leading-[1.6] text-(--fg-muted) hyphens-auto">
-                <span className="font-[650] text-(--fg)">One seed, one rule.</span> The pattern grows from a single point (
+                <span className="font-[650] text-(--fg)">One seed, one rule.</span> <Cite n={4} note={NOTES[4]}>The pattern</Cite> grows from a single point (
                 <span className="text-(--mark-ink)">+</span>, a first contribution). It&apos;s a reaction–diffusion pattern, first described by
                 Alan Turing in 1952 (Gray–Scott model, f = {num(REGIMES.coral[0])}, k = {num(REGIMES.coral[1])}), drawn 1-bit with an 8×8
                 dither. One simple rule, followed everywhere, fills the frame.
-                <Note n={4} />
               </figcaption>
             </figure>
 
@@ -329,7 +292,6 @@ export default async function Manifesto() {
                 </tbody>
               </table>
             </div>
-            <Notes ns={[4]} />
 
             <H2 n={4} id="promise">
               The promise
@@ -344,8 +306,7 @@ export default async function Manifesto() {
               ))}
             </ol>
             <p>
-              We run on transparency, donations and community.
-              <Note n={5} />
+              We run on transparency, <Cite n={5} note={NOTES[5]}>donations</Cite> and community.
             </p>
             <div className="mt-10 grid grid-cols-1 gap-8 indent-0 sm:grid-cols-2">
               {signers.map((f) => (
@@ -359,7 +320,6 @@ export default async function Manifesto() {
                 </div>
               ))}
             </div>
-            <Notes ns={[5]} />
 
             <H2 n={5} id="ownership">
               Ownership
@@ -369,13 +329,10 @@ export default async function Manifesto() {
               yours: the credit, the decisions and the right to leave. We bring contributors, visibility and public review, and we never take
               the credit. Your project. Your vision. Our community. Three questions come up every time.
             </p>
-            {ownership.map((f, i) => (
+            {ownership.map((f) => (
               <p key={f.q} className="mt-2 indent-0!">
                 <span className="font-[650]">{f.q}</span>{" "}
                 {f.a}
-                {i === 2 && (
-                  <Note n={6} />
-                )}
               </p>
             ))}
             <p className="mt-8 indent-0">
@@ -383,7 +340,6 @@ export default async function Manifesto() {
                 Bring it to the Discord ↗
               </LabButton>
             </p>
-            <Notes ns={[6]} />
 
             <h2 className="mt-16 mb-4 text-[1.0625rem] font-[650] text-(--fg)">Thanks</h2>
             <p>
