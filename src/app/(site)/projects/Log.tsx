@@ -46,7 +46,7 @@ function Track({ days }: { days: number }) {
 function Choice<T extends string>({ legend, value, options, onChange }: { legend: string; value: T; options: { v: T; label: React.ReactNode; n: number }[]; onChange: (v: T) => void }) {
   const name = useId();
   return (
-    <fieldset className="flex items-center gap-3">
+    <fieldset className="flex min-w-0 items-center gap-3">
       <legend className="t-mono float-left mr-1 text-[12px] text-(--fg-subtle)">{legend}</legend>
       <MotionConfig reducedMotion="user">
         <div className="inline-flex max-w-full overflow-x-auto p-1 shadow-[inset_0_0_0_1px_var(--line)]">
@@ -111,7 +111,7 @@ export function Log({ rows }: { rows: LogRow[] }) {
         </p>
       </div>
 
-      <div aria-hidden className={`t-mono hidden border-b border-(--fg) py-2 text-[11px] text-(--fg-subtle) uppercase ${COLS}`}>
+      <div aria-hidden className={`t-mono hidden border-b border-(--fg) px-4 py-2.5 text-[11px] text-(--fg-subtle) uppercase ${COLS}`}>
         <span>#</span>
         <span>Project</span>
         <span>Status</span>
@@ -127,7 +127,7 @@ export function Log({ rows }: { rows: LogRow[] }) {
             key={r.name}
             id={r.name}
             data-develop
-            className={`group relative grid scroll-mt-24 grid-cols-[minmax(0,1fr)_6rem] gap-x-4 gap-y-2 border-b border-(--line) py-4 transition-colors duration-(--d-2) hover:bg-(--surface-2) target:bg-(--accent-soft) lg:items-center lg:py-3 ${COLS}`}
+            className={`group relative grid scroll-mt-24 grid-cols-[minmax(0,1fr)_6rem] gap-x-4 gap-y-2 border-b border-(--line) px-3 py-4 transition-colors duration-(--d-2) hover:bg-(--surface-2) target:bg-(--accent-soft) sm:px-4 lg:items-center lg:py-5 ${COLS}`}
           >
             <span className="t-mono col-start-1 row-start-1 text-[12px] text-(--fg-subtle) lg:col-auto lg:row-auto lg:text-(--fg)">{r.rank}</span>
             <div className="col-start-1 row-start-2 min-w-0 lg:col-auto lg:row-auto">
@@ -154,10 +154,11 @@ export function Log({ rows }: { rows: LogRow[] }) {
                 {r.contributors}
                 <span className="text-(--fg-subtle) lg:hidden"> contributors</span>
               </span>
-              <span className="t-mono flex min-w-32 flex-col gap-1 text-[12px] text-(--fg-muted)">
+              <span className="t-mono flex min-w-32 flex-col gap-1.5 text-[12px] leading-tight text-(--fg-muted)">
                 <Track days={r.days} />
-                <span>
-                  {r.ago} · {r.date}
+                <span className="whitespace-nowrap">
+                  <span className="text-(--fg)">{r.ago}</span>
+                  <span className="text-(--fg-subtle) max-lg:before:content-['_·_'] lg:block">{r.date}</span>
                 </span>
               </span>
             </span>

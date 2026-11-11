@@ -100,7 +100,7 @@ export async function Footer() {
           </div>
 
           <div className="mt-16 grid gap-10 md:mt-24 md:grid-cols-12 md:gap-6">
-            <nav aria-label="Pages" className="md:col-span-5">
+            <nav aria-label="Pages" className="md:col-span-6 lg:col-span-5">
               <span className={label}>Pages</span>
               <ul>
                 {pages.map((a) => (
@@ -114,7 +114,7 @@ export async function Footer() {
               </ul>
             </nav>
 
-            <div className="md:col-span-4">
+            <div className="md:col-span-6 lg:col-span-4">
               <span className={label}>Find us</span>
               <ul className="t-mono text-[13px]">
                 {address.map((l) => (
@@ -128,7 +128,7 @@ export async function Footer() {
               </ul>
             </div>
 
-            <div className="md:col-span-3">
+            <div className="md:col-span-12 lg:col-span-3">
               <span className={label}>Certificates</span>
               <VerifyForm />
               <a href="/contribute#values" className={`t-mono mt-6 inline-block text-[12px] text-(--fg-muted) ${link}`}>

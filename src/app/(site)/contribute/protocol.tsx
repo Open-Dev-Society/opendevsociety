@@ -243,7 +243,7 @@ export function Procedure({ projects }: { projects: Project[] }) {
                   }
                 }}
                 tabIndex={mode === m ? 0 : -1}
-                className={`t-mono relative flex min-h-9 items-center justify-center gap-2 px-4 text-[13px] transition-colors duration-(--d-3) motion-reduce:transition-none ${
+                className={`t-mono relative flex min-h-9 items-center justify-center gap-2 px-4 text-[13px] focus-visible:outline-2! focus-visible:-outline-offset-4! focus-visible:outline-(--focus)! transition-colors duration-(--d-3) motion-reduce:transition-none ${
                   mode === m ? "text-(--bg)" : "text-(--fg-muted) hover:text-(--fg)"
                 }`}
               >
