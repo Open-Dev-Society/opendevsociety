@@ -5,6 +5,7 @@ import { LabButton } from "@/components/site/lab-hero/LabButton";
 import { REGIMES } from "@/components/site/lab-hero/field";
 import { contactEmail, social } from "@/content";
 import { manualContributors, roleLabel, signers } from "@/data/contributors";
+import { Plate } from "@/components/site/lab/Plate";
 import { mentions } from "@/data/mentions";
 import { ago } from "@/lib/format";
 import { projectHref } from "@/lib/lab";
@@ -251,40 +252,46 @@ export default async function Manifesto() {
               <p className="t-mono text-left text-[12px] text-(--fg-muted)">
                 <span className="font-sans text-[14px] font-[650] text-(--fg)">What we build</span>, and where each part stands on {DATE}.
               </p>
-              <table className="mt-3 w-full border-y-2 border-(--fg) text-left text-[15px] leading-[1.45]">
+              {/* Three columns at fixed shares, every cell padded alike and vertically centred; the status is a plate. */}
+              <table className="mt-3 w-full table-fixed border-y-2 border-(--fg) text-left text-[15px] leading-[1.45]">
+                <colgroup>
+                  <col className="w-[38%] sm:w-[22%]" />
+                  <col className="max-sm:hidden" />
+                  <col className="w-[62%] sm:w-[36%]" />
+                </colgroup>
                 <thead className="border-b border-(--fg)">
-                  <tr className="t-mono text-[12px] text-(--fg-muted)">
-                    <th scope="col" className="py-2 pr-4 font-normal">
+                  <tr className="t-mono text-[11px] tracking-[0.08em] text-(--fg-subtle) uppercase">
+                    <th scope="col" className="px-3 py-3 font-normal sm:px-4">
                       Area
                     </th>
-                    <th scope="col" className="py-2 pr-4 font-normal max-sm:hidden">
+                    <th scope="col" className="px-3 py-3 font-normal max-sm:hidden sm:px-4">
                       Aim
                     </th>
-                    <th scope="col" className="py-2 font-normal">
+                    <th scope="col" className="px-3 py-3 font-normal sm:px-4">
                       Status
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {table.map((r) => (
-                    <tr key={r.area} className="border-b border-(--line) align-baseline last:border-0">
-                      <th scope="row" className="py-2.5 pr-4 font-[650]">
+                    <tr key={r.area} className="border-b border-(--line) align-middle last:border-0">
+                      <th scope="row" className="px-3 py-4 font-[650] text-(--fg) sm:px-4">
                         {r.area}
-                        <span className="block text-[13px] font-normal text-(--fg-muted) sm:hidden">{r.aim}</span>
+                        <span className="mt-0.5 block text-[13px] font-normal text-(--fg-muted) sm:hidden">{r.aim}</span>
                       </th>
-                      <td className="py-2.5 pr-4 text-(--fg-muted) max-sm:hidden">{r.aim}</td>
-                      <td className="t-mono py-2.5 text-[12px]">
+                      <td className="px-3 py-4 text-(--fg-muted) max-sm:hidden sm:px-4">{r.aim}</td>
+                      <td className="px-3 py-4 sm:px-4">
                         {r.status ? (
-                          r.status.map((l, i) => (
-                            <Fragment key={l.href}>
-                              {i > 0 && <br />}
-                              <a href={l.href} className="ink-link" {...(l.href.startsWith("http") ? ext : {})}>
+                          <span className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                            <Plate tone="accent">● live</Plate>
+                            {r.status.map((l) => (
+                              <a key={l.href} href={l.href} className="ink-link t-mono text-[12px]" {...(l.href.startsWith("http") ? ext : {})}>
                                 {l.label}
                               </a>
-                            </Fragment>
-                          ))
+                            ))}
+                          </span>
                         ) : (
-                          <span className="text-(--fg-subtle)">planned</span>
+                          <Plate>planned</Plate>
                         )}
                       </td>
                     </tr>
