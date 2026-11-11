@@ -1,5 +1,7 @@
 import { mentions } from "@/data/mentions";
-import { partners } from "@/data/partners";
+import Link from "next/link";
+import { activePartners } from "@/data/partners";
+import { PartnerLogo } from "../PartnerLogo";
 import { LabButton } from "../lab-hero/LabButton";
 import { Container } from "../Section";
 import { Rotator } from "./live";
@@ -31,7 +33,7 @@ const quotes = mentions
     url: m.url,
   }));
 
-/** 06 · paper: the pitch to founders, a rotating press quote and the partners. */
+/** 06 · paper: the pitch to founders, a rotating press quote and the active sponsors and partners. */
 export function Founders() {
   return (
     <section id="signal" aria-labelledby="founders-h" data-grid="For founders" className={`scroll-mt-16 border-t border-(--line) ${band}`}>
@@ -70,37 +72,24 @@ export function Founders() {
           </figure>
 
           <div className="lg:col-span-4 lg:col-start-9">
-            <p className={label}>Partners</p>
-            <ul className="mt-3 grid grid-cols-3 border-t border-l border-(--line)">
-              {partners
-                .filter((p) => p.logo)
-                .map((p) => (
-                  <li key={p.name} className="border-r border-b border-(--line)">
-                    <a
-                      href={p.url}
-                      {...ext}
-                      aria-label={p.name}
-                      title={p.name}
-                      className={`flex h-16 items-center justify-center px-3 hover:bg-(--surface-2) ${focus}`}
-                    >
-                      <span
-                        aria-hidden
-                        className="block h-6 w-full bg-(--fg)"
-                        style={{
-                          maskImage: `url(${p.logo})`,
-                          WebkitMaskImage: `url(${p.logo})`,
-                          maskSize: "contain",
-                          WebkitMaskSize: "contain",
-                          maskRepeat: "no-repeat",
-                          WebkitMaskRepeat: "no-repeat",
-                          maskPosition: "center",
-                          WebkitMaskPosition: "center",
-                        }}
-                      />
-                    </a>
-                  </li>
-                ))}
+            <p className={label}>Sponsors and partners</p>
+            <ul className="mt-3 grid grid-cols-2 border-t border-l border-(--line)">
+              {activePartners.map((p) => (
+                <li key={p.name} className="border-r border-b border-(--line)">
+                  <a
+                    href={p.url}
+                    {...ext}
+                    aria-label={`${p.name} (opens in a new tab)`}
+                    className={`flex h-16 items-center justify-center px-3 text-(--fg) hover:bg-(--surface-2) hover:text-(--accent) ${focus}`}
+                  >
+                    <PartnerLogo p={p} position="center" className="h-6 w-full text-[18px]" />
+                  </a>
+                </li>
+              ))}
             </ul>
+            <Link href="/word-of-mouth#partners" className={`t-mono mt-3 inline-block text-[12px] text-(--fg-muted) hover:text-(--accent) ${focus}`}>
+              + past sponsors →
+            </Link>
           </div>
         </div>
 
