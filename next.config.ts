@@ -8,9 +8,12 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "github.com" },
     ],
   },
-  // Brief §8: /partners folded into Word of mouth.
+  // Brief §8: /partners folded into Word of mouth; /love (the wall of love) lives there too.
   async redirects() {
-    return [{ source: "/partners", destination: "/word-of-mouth#partners", permanent: true }];
+    return [
+      { source: "/partners", destination: "/word-of-mouth#partners", permanent: true },
+      { source: "/love", destination: "/word-of-mouth", permanent: true },
+    ];
   },
 };
 
