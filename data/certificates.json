@@ -23,6 +23,18 @@
       "status": "active",
       "createdAt": "2026-11-11T14:43:49.546Z",
       "updatedAt": "2026-11-11T14:43:49.546Z"
+    },
+    {
+      "id": "ODS-2026-SXWL",
+      "name": "Mahin Chauhan",
+      "role": "maintainer",
+      "description": "for caring for Open Dev Society projects: reviewing every change with care, guiding new contributors and keeping the tools healthy, free and moving forward.",
+      "issuedOn": "2026.11.11",
+      "issuedBy": "Ravi Pratap Singh",
+      "issuerHandle": "@ravixalgorithm",
+      "status": "active",
+      "createdAt": "2026-11-11T14:44:41.268Z",
+      "updatedAt": "2026-11-11T14:44:41.268Z"
     }
   ]
 }
