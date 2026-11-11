@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { isValidHandle, useHandle } from "@/lib/handle";
+import { Agent, Terminal } from "@/components/site/Icon";
 
 export type Project = { name: string; language: string | null; open: number; goodFirst: number };
 type Mode = "terminal" | "agent";
@@ -211,20 +212,46 @@ export function Procedure({ projects }: { projects: Project[] }) {
           />
           {bad && <span className="t-mono shrink-0 text-[11px] text-(--fg-subtle)">not a handle</span>}
         </label>
-        <div role="group" aria-label="Terminal or agent" className="flex bg-(--bg)">
-          {(["terminal", "agent"] as const).map((m) => (
-            <button
-              key={m}
-              type="button"
-              aria-pressed={mode === m}
-              onClick={() => setMode(m)}
-              className={`t-mono min-h-13 flex-1 px-5 text-[13px] capitalize transition-colors duration-(--d-2) sm:flex-none ${
-                mode === m ? "bg-(--fg) text-(--bg)" : "text-(--fg-muted) hover:text-(--fg)"
+        {/* A two-way toggle: an ink thumb slides under the chosen side. */}
+        <div className="flex items-center bg-(--bg) p-1.5">
+          <div role="radiogroup" aria-label="Run the steps in" className="relative grid flex-1 grid-cols-2 shadow-[inset_0_0_0_1px_var(--line)] sm:flex-none">
+            <span
+              aria-hidden
+              className={`absolute inset-y-0 left-0 w-1/2 bg-(--fg) transition-transform duration-(--d-3) ease-(--ease-ui) motion-reduce:transition-none ${
+                mode === "agent" ? "translate-x-full" : ""
               }`}
-            >
-              {m}
-            </button>
-          ))}
+            />
+            {(
+              [
+                ["terminal", "Terminal", Terminal],
+                ["agent", "Agent", Agent],
+              ] as const
+            ).map(([m, name, Glyph]) => (
+              <button
+                key={m}
+                type="button"
+                role="radio"
+                aria-checked={mode === m}
+                onClick={() => setMode(m)}
+                onKeyDown={(e) => {
+                  if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key)) {
+                    e.preventDefault();
+                    // Roving focus: arrows move to the other side and select it.
+                    const other = e.currentTarget.parentElement!.querySelectorAll("button")[m === "terminal" ? 1 : 0];
+                    other.focus();
+                    other.click();
+                  }
+                }}
+                tabIndex={mode === m ? 0 : -1}
+                className={`t-mono relative flex min-h-10 items-center justify-center gap-2 px-4 text-[13px] transition-colors duration-(--d-3) motion-reduce:transition-none ${
+                  mode === m ? "text-(--bg)" : "text-(--fg-muted) hover:text-(--fg)"
+                }`}
+              >
+                <Glyph size={16} />
+                {name}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

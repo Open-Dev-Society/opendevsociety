@@ -5,11 +5,13 @@ import {
   ArrowDown as IxArrowDown,
   ArrowRight as IxArrowRight,
   ArrowUp as IxArrowUp,
+  CommandSquare as IxCommand,
   CopySuccess as IxCopySuccess,
   HamburgerMenu as IxMenu,
   Import as IxImport,
   InfoCircle as IxInfoCircle,
   Link as IxLink,
+  MagicStar as IxMagicStar,
   Refresh as IxRefresh,
   Star1 as IxStar,
   TickCircle as IxTickCircle,
@@ -58,6 +60,8 @@ export const Plus = (p: Props) => <Ix glyph={IxAdd} {...p} />;
 export const LinkIcon = (p: Props) => <Ix glyph={IxLink} {...p} />;
 export const Download = (p: Props) => <Ix glyph={IxImport} {...p} />;
 export const Refresh = (p: Props) => <Ix glyph={IxRefresh} {...p} />;
+export const Terminal = (p: Props) => <Ix glyph={IxCommand} {...p} />;
+export const Agent = (p: Props) => <Ix glyph={IxMagicStar} {...p} />;
 
 // Brand marks: filled logos on the same 24 grid, so they sit at the same size as the Linear icons.
 const Brand = ({ d, size = 16, label, className }: Props & { d: string }) => (
