@@ -198,7 +198,7 @@ export async function getOrgContributors(): Promise<OrgContributor[]> {
     const people = await fetchContributors();
     const have = new Set(people.map((p) => p.login.toLowerCase()));
     const maintainers = manualContributors
-        .filter((c) => c.role === "Maintainer" && !have.has(c.login.toLowerCase()))
+        .filter((c) => /Maintainer/i.test(c.role ?? "") && !have.has(c.login.toLowerCase()))
         .map((c) => ({ login: c.login, avatar_url: c.avatar_url, html_url: c.html_url, contributions: 0, repos: [] }));
     return [...people, ...maintainers];
 }
