@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { manualContributors } from "@/data/contributors";
 import { memberNos, nextMemberNo, projectHref } from "@/lib/lab";
 import { getWorkshop } from "@/lib/workshop";
 import { Record } from "@/components/site/lab/Record";
@@ -13,12 +12,6 @@ async function getRoster() {
   const nos = memberNos(people);
   // A person's projects, most stars first.
   const rank = new Map([...tools].sort((a, b) => b.stars - a.stars || a.name.localeCompare(b.name)).map((r, i) => [r.name, i]));
-  const joined = new Map(people.map((p) => [p.login, p.joined]));
-  const roles = new Map(manualContributors.map((c) => [c.login.toLowerCase(), c.role ?? ""]));
-  const role = (login: string) => {
-    const r = roles.get(login.toLowerCase()) ?? "";
-    return /Co-Founder/i.test(r) ? "Co-founder" : /Founder/i.test(r) ? "Founder" : /Maintainer/i.test(r) ? "Maintainer" : undefined;
-  };
   const contributors: Contributor[] = builders
     .map((b) => ({
       no: nos.get(b.login)!,
@@ -26,8 +19,8 @@ async function getRoster() {
       name: b.name,
       avatar: b.avatar,
       url: b.url,
-      role: role(b.login),
-      joined: joined.get(b.login),
+      role: b.role,
+      joined: b.joined,
       projects: b.repos
         .filter((r) => rank.has(r))
         .sort((a, z) => rank.get(a)! - rank.get(z)!)

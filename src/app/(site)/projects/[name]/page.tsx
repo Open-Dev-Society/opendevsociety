@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
-import { Container, sizedAvatar } from "@/components/site";
+import { Container } from "@/components/site";
+import { Photo } from "@/components/site/Avatar";
 import { LabButton } from "@/components/site/lab-hero/LabButton";
 import { Dither } from "@/components/site/lab/Dither";
 import { Plate } from "@/components/site/lab/Plate";
@@ -158,7 +159,7 @@ export default async function ProjectPage({ params }: Props) {
           {p.contributors.slice(0, MAX_PEOPLE).map((c) => (
             <li key={c.login} className="border-b border-(--line) sm:border-r sm:[&:nth-child(2n)]:border-r-0 lg:[&:nth-child(2n)]:border-r lg:[&:nth-child(4n)]:border-r-0">
               <a href={c.html_url} className="group flex items-center gap-3 px-3 py-3 transition-colors duration-(--d-2) hover:bg-(--surface-2) focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--focus)">
-                <Dither src={sizedAvatar(c.avatar_url, 48)} alt="" width={1} height={1} tone="duotone" cell={1} develop className="size-12 shrink-0" />
+                <Photo src={c.avatar_url} px={48} className="size-12 shrink-0" />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate font-[700] text-(--fg) group-hover:underline group-hover:underline-offset-4">{realName(c.login) ?? c.login}</span>
                   <span className="t-mono block truncate text-[12px] text-(--fg-muted)">@{c.login}</span>

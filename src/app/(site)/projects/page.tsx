@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/site";
+import { Face, facts } from "@/components/site/Avatar";
 import { LabButton } from "@/components/site/lab-hero/LabButton";
 import { Dither } from "@/components/site/lab/Dither";
 import { Plate } from "@/components/site/lab/Plate";
@@ -28,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
 const DAY = 864e5;
 
 export default async function ProjectsPage() {
-  const { now, tools, people, lastPush } = await getWorkshop();
+  const { now, tools, people, builders, lastPush } = await getWorkshop();
   const byStars = [...tools].sort((a, b) => b.stars - a.stars || a.name.localeCompare(b.name));
   const team = (name: string) => people.filter((p) => p.repos.includes(name));
 
@@ -52,7 +53,7 @@ export default async function ProjectsPage() {
   const counts = (s: string) => rows.filter((r) => r.status === s).length;
 
   const lead = byStars[0];
-  const leadTeam = team(lead.name);
+  const leadTeam = builders.filter((b) => b.repos.includes(lead.name));
   const leadStatus = status(lead, now);
   const live = lead.homepage ?? lead.html_url;
   // The lead's facts, read left to right.
@@ -159,9 +160,7 @@ export default async function ProjectsPage() {
                 <dt className="t-mono text-[11px] text-(--fg-subtle) uppercase">People who built it</dt>
                 <dd className="mt-2 flex flex-wrap gap-1">
                   {leadTeam.map((p) => (
-                    <a key={p.login} href={p.html_url} title={p.login} className="block size-8 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-(--focus)">
-                      <Dither src={`${p.avatar_url}${p.avatar_url.includes("?") ? "&" : "?"}s=64`} alt={p.login} width={1} height={1} tone="duotone" cell={1} />
-                    </a>
+                    <Face key={p.login} p={{ ...p, line: facts(p) }} px={32} photoClassName="size-8" />
                   ))}
                 </dd>
               </div>
