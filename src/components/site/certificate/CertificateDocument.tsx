@@ -236,7 +236,7 @@ export function CertificateDocument({
               </div>
               <div className="border-b-[length:max(1px,0.08cqw)] border-(--line) px-[0.9cqw] py-[0.7cqw]">
                 <dt className={label}>Issued by</dt>
-                <dd className="mt-[0.45cqw] truncate font-mono text-[1cqw] leading-none">{cert.issuerHandle}</dd>
+                <dd className="mt-[0.3cqw] truncate font-mono text-[1cqw] leading-[1.3]">{cert.issuerHandle}</dd>
               </div>
               <div className="col-span-2 px-[0.9cqw] py-[0.7cqw]">
                 <dt className={label}>Verify at</dt>
