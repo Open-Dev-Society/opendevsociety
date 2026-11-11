@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { isValidHandle, useHandle } from "@/lib/handle";
-import { Agent, Terminal } from "@/components/site/Icon";
+import { Agent, Close, Copied, External, Live, Ring, Terminal } from "@/components/site/Icon";
 
 export type Project = { name: string; language: string | null; open: number; goodFirst: number };
 type Mode = "terminal" | "agent";
@@ -16,7 +16,7 @@ function Tick({ label, at, onChange, children }: { label: string; at?: string; o
     <label className="group/tick flex min-h-11 cursor-pointer items-baseline gap-3 py-2.5 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-(--focus)">
       <input type="checkbox" className="sr-only" checked={!!at} onChange={(e) => onChange(e.target.checked)} />
       <span aria-hidden className={`t-mono shrink-0 ${at ? "text-(--accent)" : "text-(--fg-subtle) group-hover/tick:text-(--fg)"}`}>
-        [{at ? "×" : " "}]
+        [<Close size="1ch" className={at ? "" : "invisible"} />]
       </span>
       <span className="min-w-0 flex-1">
         <span className={`text-(--fg) ${at ? "line-through decoration-(--fg-subtle) decoration-1" : ""}`}>{label}</span>
@@ -77,9 +77,17 @@ function CopyText({ text }: { text: string }) {
           }
           setTimeout(() => setState("idle"), 1500);
         }}
-        className="t-mono min-h-9 min-w-[8ch] shrink-0 px-2.5 text-[12px] text-(--fg-muted) shadow-[inset_0_0_0_1px_var(--line)] transition-colors duration-(--d-2) hover:bg-(--fg) hover:text-(--bg) motion-reduce:transition-none"
+        className="t-mono inline-flex min-h-9 min-w-[8ch] shrink-0 items-center justify-center gap-1 px-2.5 text-[12px] text-(--fg-muted) shadow-[inset_0_0_0_1px_var(--line)] transition-colors duration-(--d-2) hover:bg-(--fg) hover:text-(--bg) motion-reduce:transition-none"
       >
-        {state === "copied" ? "copied ✓" : state === "failed" ? "select it" : "copy"}
+        {state === "copied" ? (
+          <>
+            copied <Copied size="1em" />
+          </>
+        ) : state === "failed" ? (
+          "select it"
+        ) : (
+          "copy"
+        )}
         <span className="sr-only"> command</span>
       </button>
       <span role="status" aria-live="polite" className="sr-only">
@@ -268,7 +276,7 @@ export function Procedure({ projects }: { projects: Project[] }) {
                 }`}
               >
                 <input type="radio" name="project" value={e.name} checked={on} onChange={() => setPick(e.name)} className="sr-only" />
-                <span aria-hidden>{on ? "●" : "○"}</span>
+                {on ? <Live size="1em" /> : <Ring size="1em" />}
                 <span className={`truncate ${on ? "" : "text-(--fg)"}`}>{e.name}</span>
                 <span className="max-sm:hidden">{e.language ?? "—"}</span>
                 <span className="text-right whitespace-nowrap">
@@ -316,7 +324,7 @@ export function Procedure({ projects }: { projects: Project[] }) {
           <p className="t-mono mt-3 text-[12px] text-(--fg-subtle)">
             Rose = yours to fill in. Needs the GitHub CLI:{" "}
             <a href="https://cli.github.com" target="_blank" rel="noopener noreferrer" className="ink-link">
-              cli.github.com ↗
+              cli.github.com <External size="1em" />
             </a>
           </p>
         )}

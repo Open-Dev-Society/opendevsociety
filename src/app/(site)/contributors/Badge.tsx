@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight } from "@/components/site/Icon";
 import { month, Photo as Avatar } from "@/components/site/Avatar";
 import { Dither } from "@/components/site/lab/Dither";
 import { Plate } from "@/components/site/lab/Plate";
@@ -112,7 +113,7 @@ export function OpenSpot({ no }: { no: string }) {
             </div>
             <div className="grid grid-cols-[4.75rem_minmax(0,1fr)] gap-2">
               <dt className="opacity-75">NEXT</dt>
-              <dd className="group-hover:underline">Make your first contribution →</dd>
+              <dd className="group-hover:underline">Make your first contribution <ArrowRight size="1em" /></dd>
             </div>
           </dl>
         </div>

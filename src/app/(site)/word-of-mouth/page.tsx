@@ -6,7 +6,7 @@ import { contactEmail, partnershipMailto } from "@/content";
 import { mentions, type MentionSource } from "@/data/mentions";
 import { activePartners, events, pastPartners, sponsorUrl, supporters } from "@/data/partners";
 import { Photo } from "@/components/site/Avatar";
-import { External } from "@/components/site/Icon";
+import { ArrowRight, External, Live } from "@/components/site/Icon";
 import { PartnerLogo } from "@/components/site/PartnerLogo";
 import { Plate } from "@/components/site/lab/Plate";
 import { projectHref } from "@/lib/lab";
@@ -34,7 +34,7 @@ function OpenSlot({ compact = false, className = "" }: { compact?: boolean; clas
         <p className="mt-3 max-w-[52ch] text-[15px] leading-[1.55] text-(--fg-muted)">
           Get your logo featured on every Open Dev Society project, and keep the tools free for everyone.
         </p>
-        <span className="t-mono mt-auto pt-6 text-[12px] text-(--accent) group-hover:underline">Sponsor on GitHub ↗</span>
+        <span className="t-mono mt-auto pt-6 text-[12px] text-(--accent) group-hover:underline">Sponsor on GitHub <External size="1em" /></span>
       </a>
     </li>
   );
@@ -128,7 +128,7 @@ export default async function WordOfMouth() {
           <figcaption className="t-mono mt-4 text-right text-[12px] text-(--fg-muted)">
             <span className="sign text-[17px] text-(--fg)">Open Dev Society</span> ·{" "}
             <a href="/manifesto" className="text-(--accent) hover:underline">
-              read the manifesto →
+              read the manifesto <ArrowRight size="1em" />
             </a>
           </figcaption>
         </figure>
@@ -171,14 +171,16 @@ export default async function WordOfMouth() {
                   {p.kind}
                   {p.tier && ` · ${p.tier.toLowerCase()} tier`}
                 </p>
-                <Plate tone="accent">● active</Plate>
+                <Plate tone="accent">
+                  <Live size="1em" /> active
+                </Plate>
               </div>
               <a href={p.url} target="_blank" rel="noopener noreferrer" className="group mt-8 block w-fit" aria-label={`${p.name} (opens in a new tab)`}>
                 <PartnerLogo p={p} className="h-8 w-44 text-[22px] text-(--fg) transition-colors duration-(--d-2) group-hover:text-(--accent)" />
               </a>
               <p className="mt-6 max-w-[52ch] text-[15px] leading-[1.55] text-(--fg-muted)">{p.line}</p>
               <a href={p.url} target="_blank" rel="noopener noreferrer" className="t-mono mt-auto pt-6 text-[12px] text-(--accent) hover:underline">
-                {host(p.url)} ↗
+                {host(p.url)} <External size="1em" />
               </a>
             </li>
           ))}
@@ -197,7 +199,7 @@ export default async function WordOfMouth() {
                 </div>
                 <PartnerLogo p={p} className="mt-6 h-6 w-36 text-[17px] text-(--fg-subtle) transition-colors duration-(--d-2) group-hover:text-(--fg)" />
                 <p className="mt-4 text-[14px] leading-[1.5] text-(--fg-subtle)">{p.line}</p>
-                <span className="t-mono mt-auto pt-4 text-[12px] text-(--fg-muted) group-hover:text-(--accent)">{host(p.url)} ↗</span>
+                <span className="t-mono mt-auto pt-4 text-[12px] text-(--fg-muted) group-hover:text-(--accent)">{host(p.url)} <External size="1em" /></span>
               </a>
             </li>
           ))}

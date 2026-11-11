@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fragment } from "react";
 import { Cite } from "@/components/site/Cite";
+import { ArrowRight, External, Live } from "@/components/site/Icon";
 import { LabButton } from "@/components/site/lab-hero/LabButton";
 import { REGIMES } from "@/components/site/lab-hero/field";
 import { contactEmail, social } from "@/content";
@@ -87,17 +88,17 @@ export default async function Manifesto() {
   const frames = figureFrames();
   const num = (x: number) => x.toFixed(4).replace(/0+$/, "");
 
-  type Status = { label: string; href: string }[] | null;
+  type Status = { label: string; href: string; more?: true }[] | null;
   const tool = (n: string) => (tools.some((r) => r.name === n) ? [{ label: n, href: projectHref(n) }] : []);
   const table: { area: string; aim: string; status: Status }[] = [
-    { area: "Tools", aim: "Simple utilities, free to use.", status: [...tool("OpenStock"), ...tool("openreadme"), { label: `all ${tools.length} →`, href: "/projects" }] },
+    { area: "Tools", aim: "Simple utilities, free to use.", status: [...tool("OpenStock"), ...tool("openreadme"), { label: `all ${tools.length}`, href: "/projects", more: true }] },
     { area: "Library", aim: "A gateway to free books.", status: tool("booktrace").length ? tool("booktrace") : null },
     { area: "Learn", aim: "Roadmaps and mentorship.", status: null },
     { area: "Education", aim: "Free courses and workshops.", status: null },
     { area: "Media", aim: "Podcasts and tutorials.", status: null },
-    { area: "Events", aim: "Hackathons and conferences.", status: [{ label: "Apretre 3.0, JWOC 2026 →", href: "/word-of-mouth#partners" }] },
+    { area: "Events", aim: "Hackathons and conferences.", status: [{ label: "Apretre 3.0, JWOC 2026", href: "/word-of-mouth#partners", more: true }] },
     { area: "News", aim: "Information without an agenda.", status: null },
-    { area: "Community", aim: "A home for contributors.", status: [{ label: `${people.length} contributors →`, href: "/contributors" }] },
+    { area: "Community", aim: "A home for contributors.", status: [{ label: `${people.length} contributors`, href: "/contributors", more: true }] },
   ];
 
   const body = "text-[17px] leading-[1.7] text-(--fg) hyphens-auto sm:text-justify [&>p+p]:indent-6";
@@ -286,10 +287,13 @@ export default async function Manifesto() {
                       <td className="px-3 py-4 sm:px-4">
                         {r.status ? (
                           <span className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                            <Plate tone="accent">● live</Plate>
+                            <Plate tone="accent">
+                              <Live size="1em" /> live
+                            </Plate>
                             {r.status.map((l) => (
                               <a key={l.href} href={l.href} className="ink-link t-mono text-[12px]" {...(l.href.startsWith("http") ? ext : {})}>
                                 {l.label}
+                                {l.more && <> <ArrowRight size="1em" /></>}
                               </a>
                             ))}
                           </span>
@@ -348,7 +352,7 @@ export default async function Manifesto() {
             ))}
             <p className="mt-8 indent-0">
               <LabButton href={social.discord.href} {...ext}>
-                Bring it to the Discord ↗
+                Bring it to the Discord <External size="1em" />
               </LabButton>
             </p>
 
@@ -389,7 +393,7 @@ export default async function Manifesto() {
                 <li key={r.href}>
                   {r.by}. <span className="text-(--fg)">{r.title}.</span> {r.where}.{" "}
                   <a href={r.href} {...ext} className="t-mono text-[12px] break-all text-(--accent) hover:underline">
-                    {r.href.replace(/^https:\/\/(www\.)?/, "")} ↗
+                    {r.href.replace(/^https:\/\/(www\.)?/, "")} <External size="1em" />
                   </a>
                 </li>
               ))}

@@ -22,8 +22,6 @@ export function memberNos(people: Pick<OrgContributor, "login" | "joined">[]) {
 export const nextMemberNo = (people: unknown[]) => `#${pad(people.length + 1, 2)}`;
 
 export type Status = "running" | "paused" | "archived";
-/** The glyph each status carries on its plate. */
-export const STATUS_MARK: Record<Status, string> = { running: "●", paused: "◐", archived: "○" };
 
 /** running: pushed within 30 days · paused: within 180 · archived: older. */
 export function status(repo: Pick<OrgRepo, "pushed_at">, now = Date.now()): Status {

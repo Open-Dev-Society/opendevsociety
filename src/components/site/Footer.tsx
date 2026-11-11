@@ -132,7 +132,7 @@ export async function Footer() {
               <span className={label}>Certificates</span>
               <VerifyForm />
               <a href="/contribute#values" className={`t-mono mt-6 inline-block text-[12px] text-(--fg-muted) ${link}`}>
-                Code of conduct →
+                Code of conduct <ArrowRight size="1em" />
               </a>
             </div>
           </div>

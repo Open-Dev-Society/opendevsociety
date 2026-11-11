@@ -6,7 +6,7 @@ import { LabButton } from "../lab-hero/LabButton";
 import { Container } from "../Section";
 import { Rotator } from "./live";
 import { band, display, ext, focus, label } from "./ui";
-import { ArrowRight, External } from "../Icon";
+import { ArrowRight, External, Plus } from "../Icon";
 
 const promises = [
   {
@@ -90,7 +90,7 @@ export function Founders() {
               ))}
             </ul>
             <Link href="/word-of-mouth#partners" className={`t-mono mt-3 inline-block text-[12px] text-(--fg-muted) hover:text-(--accent) ${focus}`}>
-              + past sponsors →
+              <Plus size="1em" /> past sponsors <ArrowRight size="1em" />
             </Link>
           </div>
         </div>
