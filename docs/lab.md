@@ -12,7 +12,7 @@ Split heroes (headline left, card right). Card grids with rounded shadows. Pill 
 
 ## Materials
 
-- **Paper:** `--bg` off-white. **Ink:** `--fg` teal-black. **Emerald:** `--accent` #10777b for buttons, links, the corner plates and bands that ask you to act. **Teal:** `--accent-brand` #288488 for the field and dither. **Rose:** `--mark` #d03c5c, only for "you / your spot / new"; `--mark-ink` for rose text. `--line` for hairlines. `.tone-inverse` (ink) and `.tone-emerald` re-point tokens for dark and emerald bands. Tokens live in `src/app/globals.css`; never hard-code.
+- **Paper:** `--bg` off-white. Every section sits on paper (the user's rule: section backgrounds are white). **Ink:** `--fg` teal-black. **Emerald:** ONE emerald, #10777b, as both `--accent` (buttons, links, the hero's corner plates, active states, chips) and `--accent-brand` (the living field and dither ink). It's an accent only, never a section background. **Rose:** `--mark` #d03c5c, only for "you / your spot / new"; `--mark-ink` for rose text. `--line` for hairlines. `.tone-inverse` (ink) is used only for the footer. Tokens live in `src/app/globals.css`; never hard-code.
 - **Type:**
   - Display: Mona Sans (`--font-sans`) at `font-stretch: 75%`, weight 800, tight leading. Use it for page titles and big numbers.
   - Body: Mona Sans at normal width, 16–18px, about 65ch.
@@ -26,7 +26,7 @@ Split heroes (headline left, card right). Card grids with rounded shadows. Pill 
 
 ## Structure
 
-- Sections are full-width bands (paper, emerald or ink) joined by dither edges, not boxes on a background.
+- Sections are full-width paper bands separated by hairlines and the rails' section tags (no colour changes between sections). Only the footer is ink, reached through a DitherEdge.
 - Section heads: an optional small mono line with real metadata (e.g. `PROJECTS · 15 · updated 20h ago`), then a plain display title. Vary the composition between sections.
 - Each section shows at most one live thing from real data (`getWorkshop()` in `src/lib/workshop.ts`, `src/lib/github.ts`). No invented numbers. `prefers-reduced-motion` gets the final state. CLS 0.
 

@@ -99,8 +99,9 @@ export function Rails() {
   return (
     <>
       <div ref={layer} className={s.layer} style={{ height: sheet?.height ?? 0 }} aria-hidden="true">
-        {sheet?.bands.map((b) => (
-          <div key={b.top} className={`${s.band} ${b.tone}`} style={{ top: b.top, height: b.bottom - b.top, "--y": `${-b.top}px` } as CSSProperties}>
+        {sheet?.bands.map((b, i) => (
+          // Two bands can start at the same y (a band inside a band), so the top alone isn't a unique key.
+          <div key={`${i}-${b.top}`} className={`${s.band} ${b.tone}`} style={{ top: b.top, height: b.bottom - b.top, "--y": `${-b.top}px` } as CSSProperties}>
             <div className={s.rail} data-side="l" />
             <div className={s.rail} data-side="r" />
             <div className={s.guides} />
