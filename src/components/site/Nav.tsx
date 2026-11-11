@@ -19,28 +19,12 @@ const cell = "flex h-full shrink-0 items-center border-l border-(--line) px-3.5"
 const arrow = <ArrowRight size={16} className="transition-transform duration-(--d-2) ease-(--ease-ui) group-hover:translate-x-0.5 motion-reduce:transition-none" />;
 const marks: Record<string, (p: { size?: number }) => React.ReactNode> = { GitHub, Discord, LinkedIn, X: XMark };
 
-// Home sections that stand for a page: the thumb follows them as you scroll (aria-current="location"; "page" stays for real pages).
-const sectionPage: Record<string, string> = { Projects: "/projects", Contributors: "/contributors", "For founders": "/word-of-mouth" };
-
-type Here = { letter: string; name: string };
-
-// The section under the viewport centre, lettered like the rails (Rails.tsx): [data-grid] sections below the home hero, A, B, C…
-function sectionHere(): Here | null {
-  const hero = document.querySelector("[data-under-nav]");
-  const start = hero ? hero.getBoundingClientRect().bottom : -Infinity;
-  const refs = [...document.querySelectorAll<HTMLElement>("[data-grid]")].filter((el) => el.getBoundingClientRect().top >= start - 1);
-  if (!refs.length) return null;
-  let i = 0;
-  refs.forEach((el, j) => el.getBoundingClientRect().top <= innerHeight / 2 && (i = j));
-  return { letter: String.fromCharCode(65 + i), name: refs[i].dataset.grid ?? "" };
-}
-
 /**
  * The site nav as a drawing sheet's title block: hairline-divided cells for the name, the pages (one segmented track, an ink thumb on
- * the current page), a live "you are here" readout of the rails' section letter, the stars and the button. Fixed height (64px).
+ * the current page), the stars and the button. Fixed height (64px).
  * On Home it is fixed (takes no space) and, while the [data-under-nav] hero is in view, folded into the hero's centred brand tab; past
- * the hero, or as soon as keyboard focus enters it, the tab unfolds sideways into the full bar (and folds back on the way up). Elsewhere it is sticky and always shown; it frosts once the page
- * scrolls under it. Below 1024 the links move into a modal sheet (Escape closes it).
+ * the hero, or as soon as keyboard focus enters it, the tab unfolds sideways into the full bar (and folds back on the way up).
+ * Elsewhere it is sticky and always shown; it frosts once the page scrolls under it. Below 1024 the links move into a modal sheet (Escape closes it).
  */
 export function Nav({
   brand,
@@ -63,11 +47,7 @@ export function Nav({
   // Keyboard focus (focus-visible only, so a clicked #link doesn't pin it open over the hero) reveals it.
   const [focused, setFocused] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [here, setHere] = useState<Here | null>(null);
   const current = links.find((l) => isActive(path, l.href));
-  // Same middle-of-screen rule as the readout, so the thumb and the readout always agree.
-  const marked = current ?? (home ? links.find((l) => l.href === sectionPage[here?.name ?? ""]) : undefined);
-  const mark = (l: NavLink) => (l === current ? ("page" as const) : l === marked ? ("location" as const) : undefined);
 
   useEffect(() => {
     const hero = document.querySelector("[data-under-nav]");
@@ -77,25 +57,12 @@ export function Nav({
     return () => io.disconnect();
   }, [path]);
 
+  // Frosted once the page scrolls under it (same value, no re-render).
   useEffect(() => {
-    let raf = 0;
-    const update = () => {
-      raf = 0;
-      setScrolled(scrollY > 0);
-      const h = sectionHere();
-      setHere((p) => (p?.letter === h?.letter && p?.name === h?.name ? p : h));
-    };
-    const onScroll = () => {
-      raf ||= requestAnimationFrame(update);
-    };
+    const onScroll = () => setScrolled(scrollY > 0);
     onScroll();
     addEventListener("scroll", onScroll, { passive: true });
-    addEventListener("resize", onScroll, { passive: true });
-    return () => {
-      cancelAnimationFrame(raf);
-      removeEventListener("scroll", onScroll);
-      removeEventListener("resize", onScroll);
-    };
+    return () => removeEventListener("scroll", onScroll);
   }, [path]);
 
   // Close the sheet on route change (adjusted during render, no effect) and on Escape.
@@ -119,9 +86,13 @@ export function Nav({
 
   // Home only: over the hero the bar is folded into the centred tab (the hero's brand plate). Past it, or on keyboard focus, it unfolds.
   const tab = home && overHero && !focused && !open;
-  const morph = "transition-[translate,clip-path,opacity] duration-(--d-5) ease-(--ease-in-out) motion-reduce:transition-none!";
-  // The cells around the name: gone in the tab, back once the name has nearly landed (it travels over them on the way).
-  const fold = cn("transition-opacity duration-(--d-3) ease-(--ease-out) motion-reduce:transition-none!", tab ? "opacity-0" : "delay-[440ms]");
+  // The name travels over the other cells, so they never show while it passes: on the way out they appear once it has landed;
+  // on the way back they fade first, and the fold waits for them.
+  const morph = cn("transition-[translate,clip-path,opacity] duration-(--d-5) ease-(--ease-in-out) motion-reduce:transition-none!", tab && "delay-(--d-2)");
+  const fold = cn(
+    "transition-opacity ease-(--ease-out) motion-reduce:transition-none!",
+    tab ? "opacity-0 duration-(--d-2)" : "duration-(--d-3) delay-(--d-5)",
+  );
 
   return (
     <MotionConfig reducedMotion="user">
@@ -166,18 +137,19 @@ export function Nav({
               </span>
             </Link>
 
-            <div className={cn(cell, fold, "hidden lg:flex")}>
-              <ul className="flex h-11 shadow-[inset_0_0_0_1px_var(--line)]">
+            {/* The track takes the room left over, its links sharing it, so the block always fills the row. */}
+            <div className={cn(cell, fold, "hidden min-w-0 flex-1 lg:flex")}>
+              <ul className="flex h-11 flex-1 shadow-[inset_0_0_0_1px_var(--line)]">
                 {links.map((l) => {
-                  const active = l === marked;
+                  const active = l === current;
                   return (
-                    <li key={l.href}>
+                    <li key={l.href} className="flex-auto">
                       <Link
                         href={l.href}
-                        aria-current={mark(l)}
+                        aria-current={active ? "page" : undefined}
                         className={cn(
                           focus,
-                          "relative flex h-11 items-center px-2.5 whitespace-nowrap transition-colors duration-(--d-2)",
+                          "relative flex h-11 items-center justify-center px-2.5 whitespace-nowrap transition-colors duration-(--d-2)",
                           active ? "text-(--bg)" : "text-(--fg-muted) hover:text-(--fg)",
                         )}
                       >
@@ -198,20 +170,7 @@ export function Nav({
               </ul>
             </div>
 
-            {/* You are here: the rails' letter for the section at the viewport centre, or the page's name. */}
-            <div aria-hidden className={cn(cell, fold, "hidden min-w-0 flex-1 flex-col items-start justify-center gap-1 md:flex lg:hidden xl:flex")}>
-              <span className="flex items-center gap-1.5 text-[10px] tracking-[0.04em] whitespace-nowrap text-(--fg-subtle)">
-                <i className="size-1.5 bg-(--mark)" />
-                you are here
-              </span>
-              <span className="flex max-w-full min-w-0 items-center gap-1.5 text-[11px] leading-none text-(--fg)">
-                {here?.letter && (
-                  <span className="grid size-4 shrink-0 place-items-center text-[10px] shadow-[inset_0_0_0_1px_var(--fg-subtle)]">{here.letter}</span>
-                )}
-                <span className="truncate">{here?.name || current?.label || "Home"}</span>
-              </span>
-            </div>
-            <span className="flex-1 md:hidden lg:block xl:hidden" />
+            <span className="flex-1 lg:hidden" />
 
             <a
               href={stars.href}
@@ -268,19 +227,13 @@ export function Nav({
                   <Link
                     href={l.href}
                     onClick={() => setOpen(false)}
-                    aria-current={mark(l)}
+                    aria-current={l === current ? "page" : undefined}
                     className={cn(focus, "flex items-baseline gap-4 py-4 text-[22px] text-(--fg) aria-[current]:text-(--accent)")}
                   >
                     <span aria-hidden className="text-[12px] text-(--fg-subtle) tabular-nums">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     {l.label}
-                    {l === marked && (
-                      <span aria-hidden className="ml-auto flex items-center gap-1.5 self-center text-[11px] text-(--fg-subtle)">
-                        <i className="size-1.5 bg-(--mark)" />
-                        you are here
-                      </span>
-                    )}
                   </Link>
                 </li>
               ))}
