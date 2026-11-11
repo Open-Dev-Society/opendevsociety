@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import { Close, Menu } from "./Icon";
 import { cn } from "./cn";
 import { LabButton } from "./lab-hero/LabButton";
@@ -12,12 +12,28 @@ export type NavLink = { label: string; href: string };
 
 const isActive = (path: string, href: string) => path === href || path.startsWith(`${href}/`);
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus)";
+// A title-block cell: full bar height, a hairline on its left.
+const cell = "flex h-full shrink-0 items-center border-l border-(--line) px-3.5";
+
+type Here = { letter: string; name: string };
+
+// The section under the viewport centre, lettered like the rails (Rails.tsx): [data-grid] sections below the home hero, A, B, C…
+function sectionHere(): Here | null {
+  const hero = document.querySelector("[data-under-nav]");
+  const start = hero ? hero.getBoundingClientRect().bottom : -Infinity;
+  const refs = [...document.querySelectorAll<HTMLElement>("[data-grid]")].filter((el) => el.getBoundingClientRect().top >= start - 1);
+  if (!refs.length) return null;
+  let i = 0;
+  refs.forEach((el, j) => el.getBoundingClientRect().top <= innerHeight / 2 && (i = j));
+  return { letter: String.fromCharCode(65 + i), name: refs[i].dataset.grid ?? "" };
+}
 
 /**
- * Sticky site nav: logo + wordmark, page links with a sliding teal marker on the current page,
- * a plain stars label and the primary button. On Home it is fixed (takes no space) and hidden while the [data-under-nav] hero
- * is in view, so the field owns the whole screen; it slides in past the hero, or as soon as keyboard focus enters it.
- * Elsewhere it is sticky and always shown. Below 1024 (where the row stops fitting) the links move into a modal sheet (Escape closes it).
+ * The site nav as a drawing sheet's title block: hairline-divided cells for the name, the pages (one segmented track, an ink thumb on
+ * the current page), a live "you are here" readout of the rails' section letter, the stars and the button. Fixed height (64px).
+ * On Home it is fixed (takes no space) and, while the [data-under-nav] hero is in view, folded into the hero's centred brand tab; past
+ * the hero, or as soon as keyboard focus enters it, the tab unfolds sideways into the full bar (and folds back on the way up). Elsewhere it is sticky and always shown; it frosts once the page
+ * scrolls under it. Below 1024 the links move into a modal sheet (Escape closes it).
  */
 export function Nav({
   brand,
@@ -39,7 +55,9 @@ export function Nav({
   const [overHero, setOverHero] = useState(true);
   // Keyboard focus (focus-visible only, so a clicked #link doesn't pin it open over the hero) reveals it.
   const [focused, setFocused] = useState(false);
-  const hidden = home && overHero && !focused && !open;
+  const [scrolled, setScrolled] = useState(false);
+  const [here, setHere] = useState<Here | null>(null);
+  const current = links.find((l) => isActive(path, l.href));
 
   useEffect(() => {
     const hero = document.querySelector("[data-under-nav]");
@@ -47,6 +65,27 @@ export function Nav({
     const io = new IntersectionObserver(([e]) => setOverHero(e.isIntersecting), { rootMargin: "-64px 0px 0px 0px" });
     io.observe(hero);
     return () => io.disconnect();
+  }, [path]);
+
+  useEffect(() => {
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      setScrolled(scrollY > 0);
+      const h = sectionHere();
+      setHere((p) => (p?.letter === h?.letter && p?.name === h?.name ? p : h));
+    };
+    const onScroll = () => {
+      raf ||= requestAnimationFrame(update);
+    };
+    onScroll();
+    addEventListener("scroll", onScroll, { passive: true });
+    addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      removeEventListener("scroll", onScroll);
+      removeEventListener("resize", onScroll);
+    };
   }, [path]);
 
   // Close the sheet on route change (adjusted during render, no effect) and on Escape.
@@ -68,79 +107,135 @@ export function Nav({
     };
   }, [open]);
 
+  // Home only: over the hero the bar is folded into the centred tab (the hero's brand plate). Past it, or on keyboard focus, it unfolds.
+  const tab = home && overHero && !focused && !open;
+  const morph = "transition-[translate,clip-path,opacity] duration-(--d-5) ease-(--ease-in-out) motion-reduce:transition-none!";
+  // The cells around the name: gone in the tab, back once the name has nearly landed (it travels over them on the way).
+  const fold = cn("transition-opacity duration-(--d-3) ease-(--ease-out) motion-reduce:transition-none!", tab ? "opacity-0" : "delay-[440ms]");
 
   return (
-    <>
+    <MotionConfig reducedMotion="user">
       <header
-        aria-hidden={hidden || undefined}
         onFocus={(e) => e.target.matches(":focus-visible") && setFocused(true)}
         onBlur={(e) => !e.currentTarget.contains(e.relatedTarget) && setFocused(false)}
-        className={cn(
-          "top-0 z-50 bg-(--bg)/88 shadow-[0_1px_0_var(--line)] backdrop-blur-md backdrop-saturate-[1.4] transition-[translate,opacity] duration-(--d-3) ease-(--ease-ui) motion-reduce:transition-none!",
-          home ? "fixed inset-x-0" : "sticky",
-          hidden && "pointer-events-none -translate-y-full opacity-0",
-        )}
+        // --lw: the name cell's fixed width, so the tab's geometry is pure CSS (right on the server's first paint, CLS 0).
+        className={cn("@container top-0 z-50 [--lw:13rem]", home ? "fixed inset-x-0" : "sticky", tab && "pointer-events-none")}
       >
-        <nav aria-label="Main" className="mx-auto flex h-16 w-full max-w-(--container) items-center gap-3 px-(--gutter) font-mono text-[13px]">
-          <Link href="/" aria-label={`${brand.name}, home`} className={cn(focus, "mr-auto flex items-center gap-2.5 lg:mr-6")}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={brand.logo} alt="" width={24} height={24} className="size-6 rounded-md" />
-            <span className="font-medium tracking-[0.02em] whitespace-nowrap text-(--fg)">{brand.name}</span>
-          </Link>
+        <div
+          className={cn(
+            "relative shadow-[inset_0_-1px_0_var(--line)]",
+            scrolled && !tab ? "bg-(--bg)/85 backdrop-blur-md backdrop-saturate-[1.4]" : "bg-(--bg)",
+            home && morph,
+            home && (tab ? "[clip-path:inset(0_calc(50%-var(--lw)/2))]" : "[clip-path:inset(0)]"),
+          )}
+        >
+          {home && (
+            <>
+              {/* The tab's side hairlines; they travel out to the edges with the paper and fade there. */}
+              <i aria-hidden className={cn(morph, "absolute inset-y-0 left-1/2 w-px bg-(--line)", tab ? "-translate-x-[calc(var(--lw)/2)]" : "-translate-x-[50cqw] opacity-0")} />
+              <i aria-hidden className={cn(morph, "absolute inset-y-0 left-1/2 w-px bg-(--line)", tab ? "translate-x-[calc(var(--lw)/2-1px)]" : "translate-x-[calc(50cqw-1px)] opacity-0")} />
+            </>
+          )}
+          <nav aria-label="Main" className="mx-auto flex h-16 w-full max-w-(--container) items-center px-(--gutter) font-mono text-[13px]">
+            <Link
+              href="/"
+              aria-label={`${brand.name}, home`}
+              className={cn(
+                focus,
+                "pointer-events-auto -ml-5 flex h-12 w-(--lw) shrink-0 items-center gap-3 px-5",
+                home && morph,
+                // From the gutter to the centre: half the visible container, less the gutter, plus the -ml-5, less half the cell.
+                tab && "translate-x-[calc(min(100cqw,var(--container))/2-var(--gutter)+1.25rem-var(--lw)/2)]",
+              )}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={brand.logo} alt="" width={28} height={28} className="size-7" />
+              <span className="flex flex-col gap-1 leading-none whitespace-nowrap">
+                <span className="font-sans text-[18px] font-[800] tracking-[-0.01em] text-(--fg) [font-stretch:75%]">{brand.name}</span>
+                <span className="text-[10px] tracking-[0.04em] text-(--fg-subtle)">free, open source</span>
+              </span>
+            </Link>
 
-          <ul className="hidden items-center lg:flex">
-            {links.map((l) => {
-              const active = isActive(path, l.href);
-              return (
-                <li key={l.href}>
-                  <a
-                    href={l.href}
-                    aria-current={active ? "page" : undefined}
-                    className={cn(
-                      focus,
-                      "relative flex h-11 items-center px-3 transition-colors duration-(--d-2)",
-                      active ? "text-(--fg)" : "text-(--fg-muted) hover:text-(--fg)",
-                    )}
-                  >
-                    {active && (
-                      <motion.span
-                        layoutId="site-nav-marker"
-                        className="absolute inset-x-3 bottom-1.5 h-0.5 bg-(--accent-brand)"
-                        transition={{ type: "spring", duration: 0.35, bounce: 0 }}
-                      />
-                    )}
-                    {l.label}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
+            <div className={cn(cell, fold, "hidden lg:flex")}>
+              <ul className="flex h-11 shadow-[inset_0_0_0_1px_var(--line)]">
+                {links.map((l) => {
+                  const active = l === current;
+                  return (
+                    <li key={l.href}>
+                      <Link
+                        href={l.href}
+                        aria-current={active ? "page" : undefined}
+                        className={cn(
+                          focus,
+                          "relative flex h-11 items-center px-3 whitespace-nowrap transition-colors duration-(--d-2)",
+                          active ? "text-(--bg)" : "text-(--fg-muted) hover:text-(--fg)",
+                        )}
+                      >
+                        {active && (
+                          <motion.span
+                            layoutId="site-nav-thumb"
+                            aria-hidden
+                            className="absolute inset-1 bg-(--fg)"
+                            transition={{ type: "spring", duration: 0.35, bounce: 0 }}
+                          />
+                        )}
+                        <span className="relative">{l.label}</span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
 
-          <a
-            href={stars.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${stars.label} stars on GitHub`}
-            className={cn(focus, "ml-auto hidden h-11 items-center px-2 tabular-nums text-(--fg-muted) transition-colors duration-(--d-2) hover:text-(--fg) lg:inline-flex")}
-          >
-            {stars.label}&nbsp;<span aria-hidden>★</span>
-          </a>
-          {/* Below 640 the wordmark needs the room; the sheet carries the button. */}
-          <LabButton href={contribute.href} size="sm" className="max-sm:hidden">
-            {contribute.label}
-          </LabButton>
+            {/* You are here: the rails' letter for the section at the viewport centre, or the page's name. */}
+            <div aria-hidden className={cn(cell, fold, "hidden min-w-0 flex-1 flex-col items-start justify-center gap-1 md:flex lg:hidden xl:flex")}>
+              <span className="flex items-center gap-1.5 text-[10px] tracking-[0.04em] whitespace-nowrap text-(--fg-subtle)">
+                <i className="size-1.5 bg-(--mark)" />
+                you are here
+              </span>
+              <span className="flex max-w-full min-w-0 items-center gap-2 text-[12px] leading-none text-(--fg)">
+                {here?.letter && (
+                  <span className="grid size-4 shrink-0 place-items-center text-[10px] shadow-[inset_0_0_0_1px_var(--fg-subtle)]">{here.letter}</span>
+                )}
+                <span className="truncate">{here?.name || current?.label || "Home"}</span>
+              </span>
+            </div>
+            <span className="flex-1 md:hidden lg:block xl:hidden" />
 
-          <button
-            type="button"
-            aria-expanded={open}
-            aria-controls="site-sheet"
-            aria-label={open ? "Close menu" : "Open menu"}
-            onClick={() => setOpen((v) => !v)}
-            className={cn(focus, "-mr-2.5 grid size-11 place-items-center text-(--fg) lg:hidden")}
-          >
-            {open ? <Close size={20} /> : <Menu size={20} />}
-          </button>
-        </nav>
+            <a
+              href={stars.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${stars.label} stars on GitHub`}
+              className={cn(focus, cell, fold, "hidden flex-col items-start justify-center gap-1 hover:bg-(--surface-2) xl:flex")}
+            >
+              <span className="text-[10px] tracking-[0.04em] text-(--fg-subtle)">on GitHub</span>
+              <span className="text-[12px] leading-none text-(--fg) tabular-nums">
+                {stars.label}&nbsp;<span aria-hidden>★</span>
+              </span>
+            </a>
+
+            {/* Below 640 the wordmark needs the room; the sheet carries the button. */}
+            <div className={cn(cell, fold, "pr-0 max-sm:hidden")}>
+              <LabButton href={contribute.href} size="md" aria-current={isActive(path, contribute.href) ? "page" : undefined}>
+                {contribute.label}
+              </LabButton>
+            </div>
+
+            <div className={cn(cell, fold, "-mr-2.5 pr-0 pl-1.5 lg:hidden")}>
+              <button
+                type="button"
+                aria-expanded={open}
+                aria-controls="site-sheet"
+                aria-label={open ? "Close menu" : "Open menu"}
+                onClick={() => setOpen((v) => !v)}
+                className={cn(focus, "grid size-11 place-items-center text-(--fg)")}
+              >
+                {open ? <Close size={20} /> : <Menu size={20} />}
+              </button>
+            </div>
+          </nav>
+        </div>
       </header>
 
       {/* Outside <header>: its backdrop-filter would make it the containing block for this fixed sheet. */}
@@ -159,17 +254,23 @@ export function Nav({
             <ul className="flex flex-col font-mono">
               {links.map((l, i) => (
                 <li key={l.href} className="border-b border-(--line)">
-                  <a
+                  <Link
                     href={l.href}
                     onClick={() => setOpen(false)}
-                    aria-current={isActive(path, l.href) ? "page" : undefined}
+                    aria-current={l === current ? "page" : undefined}
                     className={cn(focus, "flex items-baseline gap-4 py-4 text-[22px] text-(--fg) aria-[current]:text-(--accent)")}
                   >
                     <span aria-hidden className="text-[12px] text-(--fg-subtle) tabular-nums">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     {l.label}
-                  </a>
+                    {l === current && (
+                      <span aria-hidden className="ml-auto flex items-center gap-1.5 self-center text-[11px] text-(--fg-subtle)">
+                        <i className="size-1.5 bg-(--mark)" />
+                        you are here
+                      </span>
+                    )}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -189,6 +290,6 @@ export function Nav({
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </MotionConfig>
   );
 }

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Fragment } from "react";
 import { ago, compact } from "@/lib/format";
 import type { getWorkshop } from "@/lib/workshop";
@@ -30,7 +29,7 @@ export function LabHero({ now, tools, people, lastPush, stars }: Pick<Workshop, 
   const { spots, coral } = REGIMES;
 
   return (
-    // Exactly one screen, field to the top edge: on Home the nav is fixed and hidden while this is in view (data-under-nav, Nav.tsx).
+    // Exactly one screen, field to the top edge: on Home the nav is fixed and folded into the brand tab while this is in view (data-under-nav, Nav.tsx).
     <section
       aria-labelledby="lab-h1"
       data-under-nav
@@ -39,14 +38,7 @@ export function LabHero({ now, tools, people, lastPush, stars }: Pick<Workshop, 
       <TuringField />
       {/* The field dissolves into the emerald band below (§01); the bottom plates stand on it like tabs. */}
 
-      {/* The nav is hidden over the hero, so the brand hangs from the top edge like a tab. */}
-      <div
-        data-plate
-        className="absolute top-0 left-1/2 flex -translate-x-1/2 items-center gap-2.5 border-x border-b border-(--line) bg-(--bg) py-2.5 pr-4 pl-3 whitespace-nowrap md:gap-3 md:py-3 md:pr-5 md:pl-3.5"
-      >
-        <Image src="/logo.png" alt="" width={40} height={40} priority className="size-8 md:size-10" />
-        <span className="text-[19px] leading-none font-[800] tracking-[-0.01em] text-(--fg) [font-stretch:75%] md:text-[23px]">Open Dev Society</span>
-      </div>
+      {/* The brand tab at the top centre is the nav itself, folded (Nav.tsx): past the hero it unfolds into the full bar. */}
 
       <Label className="top-[65px] left-0 lg:top-0">
         <span className="text-(--accent-fg)">Reaction–diffusion</span>
