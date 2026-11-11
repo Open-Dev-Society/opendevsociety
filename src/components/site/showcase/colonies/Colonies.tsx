@@ -40,7 +40,7 @@ export async function Colonies() {
   const live = colonies.filter((c) => c.pulse > 0).length;
 
   return (
-    <section id="work" aria-labelledby="colonies-h" className={`scroll-mt-16 overflow-x-clip border-t border-(--line) bg-(--bg) ${band}`}>
+    <section id="work" data-grid="Projects" aria-labelledby="colonies-h" className={`scroll-mt-16 overflow-x-clip border-t border-(--line) bg-(--bg) ${band}`}>
       <Container>
         <p className={`${label} flex justify-between gap-4 border-b border-(--line) pb-3`}>
           <span>

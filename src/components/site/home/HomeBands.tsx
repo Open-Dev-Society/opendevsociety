@@ -4,7 +4,7 @@ import { About } from "./About";
 import { Founders } from "./Founders";
 import { Now } from "./Now";
 import { People } from "./People";
-import { Projects } from "./Projects";
+import { Colonies } from "../showcase/colonies/Colonies";
 import { Start } from "./Start";
 
 /** Home, everything below the hero: six bands on paper, told apart by hairlines, the rails' tags and composition. */
@@ -22,7 +22,7 @@ export async function HomeBands() {
   return (
     <>
       <About tools={tools} builders={builders} stars={totals.stars} commits={commits.count} weeks={weeks} now={now} />
-      <Projects tools={tools} builders={builders} now={now} />
+      <Colonies />
       {activity.length > 0 && <Now activity={activity} now={now} />}
       <People builders={builders} />
       <Start issues={issues} tools={tools} />
