@@ -292,7 +292,7 @@ export const snapshotRepos: OrgRepo[] = [
     "name": "opendevsociety",
     "description": null,
     "html_url": "https://github.com/Open-Dev-Society/opendevsociety",
-    "homepage": "https://opendevsociety.vercel.app",
+    "homepage": "https://opendevsociety.org",
     "language": "TypeScript",
     "topics": [],
     "license": null,
