@@ -62,7 +62,10 @@ export function Bibliography({ refs }: { refs: Ref[] }) {
           >
             <span className="font-mono text-[13px] leading-[1.75] text-(--fg)">[{r.n}]</span>
             <div className="min-w-0 text-[16px] leading-[1.6] text-(--fg-muted)">
-              <span className="font-[650] text-(--fg)">{r.author.replace(/\.$/, "")}.</span>{" "}
+              {/* The author as an emerald chip, like the handles in Happening now. */}
+              <span className="t-mono mr-1.5 inline-block bg-(--accent) px-1.5 py-0.5 align-[0.08em] text-[12px] leading-none text-(--accent-fg)">
+                {r.author.replace(/\.$/, "")}
+              </span>
               <a href={r.href} target="_blank" rel="noopener noreferrer" className="text-(--fg) decoration-(--accent) underline-offset-[0.2em] hover:underline">
                 <span lang={cjk(r.text)}>{r.quoted ? <>&ldquo;{r.text}&rdquo;</> : r.text}</span>
               </a>{" "}
