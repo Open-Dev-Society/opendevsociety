@@ -4,7 +4,6 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { Container, sizedAvatar } from "@/components/site";
 import { LabButton } from "@/components/site/lab-hero/LabButton";
 import { Dither } from "@/components/site/lab/Dither";
-import { DitherEdge } from "@/components/site/lab/DitherEdge";
 import { Plate } from "@/components/site/lab/Plate";
 import { Record } from "@/components/site/lab/Record";
 import { catalog } from "@/data/catalog";
@@ -182,8 +181,7 @@ export default async function ProjectPage({ params }: Props) {
       </Container>
 
       {/* Emerald: the band that asks you to act. */}
-      <DitherEdge from="var(--bg)" to="var(--accent)" className="mt-24 lg:mt-32" />
-      <section aria-labelledby="help" className="tone-emerald bg-(--bg) py-16 lg:py-24">
+      <section aria-labelledby="help" className="mt-24 border-t border-(--line) py-16 lg:mt-32 lg:py-24">
         <Container data-grid="Help out" className="grid gap-x-(--grid-gap) gap-y-12 lg:grid-cols-12">
           <div className="min-w-0 lg:col-span-5">
             <Record name="Help out" meta={[`${p.issues.length} good first ${p.issues.length === 1 ? "issue" : "issues"}`]} title={`Make ${repo.name} better.`} id="help">
@@ -228,7 +226,6 @@ export default async function ProjectPage({ params }: Props) {
           </div>
         </Container>
       </section>
-      <DitherEdge from="var(--accent)" to="var(--bg)" />
 
       {(p.release || repo.topics.length > 0) && (
         <Container data-grid="Release and topics" className="grid gap-x-(--grid-gap) gap-y-12 pt-24 lg:grid-cols-12 lg:pt-32">
