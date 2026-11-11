@@ -30,7 +30,7 @@ export function People({ builders }: { builders: Builder[] }) {
             <Link href="/contributors" className={`group flex items-center gap-3 pr-1 ${focus}`}>
               <Dither
                 src={SILHOUETTE}
-                alt="An open spot: yours after your first merged pull request"
+                alt="Room for you: anyone joins after their first merged pull request"
                 width={1}
                 height={1}
                 variant="mark"

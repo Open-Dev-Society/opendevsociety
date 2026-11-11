@@ -27,7 +27,7 @@ function OpenSlot({ compact = false, className = "" }: { compact?: boolean; clas
         className={`group flex h-full flex-col bg-[repeating-linear-gradient(135deg,transparent_0_7px,var(--line)_7px_8px)] hover:bg-(--surface-2) ${compact ? "p-5" : "p-5 sm:p-6"}`}
       >
         <div className="flex items-start justify-between gap-4">
-          <p className="t-mono text-[12px] text-(--fg-subtle)">open spot</p>
+          <p className="t-mono text-[12px] text-(--fg-subtle)">open to any sponsor</p>
           <Plate tone="mark">your logo here</Plate>
         </div>
         <p className={`${compact ? "mt-6 text-[17px]" : "mt-8 text-[22px]"} font-semibold leading-tight text-(--fg) group-hover:text-(--accent)`}>Become a sponsor</p>

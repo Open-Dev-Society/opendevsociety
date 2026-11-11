@@ -35,7 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const { contributors } = await getRoster();
   return {
     title: `Contributors: ${contributors.length} people · Open Dev Society`,
-    description: `Everyone who has shipped to an Open Dev Society project: ${contributors.length} people, when they joined, what they worked on and how many commits. One spot is open for you.`,
+    description: `Everyone who has shipped to an Open Dev Society project: ${contributors.length} people, when they joined, what they worked on and how many commits. There's no limit: anyone can join.`,
   };
 }
 
@@ -57,11 +57,11 @@ export default async function ContributorsPage() {
         size="page"
         meta={[
           <span key="n"><span className="text-(--fg)">{contributors.length}</span> people</span>,
-          <span key="v" className="text-(--mark-ink)">1 open spot</span>,
+          <span key="v" className="text-(--mark-ink)">open to everyone</span>,
         ]}
         title={
           <span className="block max-w-[16ch]">
-            {contributors.length} people have shipped here. <span className="text-(--mark-ink)">One spot is open.</span>
+            {contributors.length} people have shipped here. <span className="text-(--mark-ink)">There’s room for you.</span>
           </span>
         }
       >
@@ -121,7 +121,7 @@ export default async function ContributorsPage() {
                 <td className="py-1.5 pr-4">{open}</td>
                 <td className="py-1.5 pr-4" colSpan={4}>
                   <a href="/contribute" className="hover:underline">
-                    you · open spot · make your first contribution →
+                    you · open to everyone · make your first contribution →
                   </a>
                 </td>
                 <td className="py-1.5 text-right">0</td>

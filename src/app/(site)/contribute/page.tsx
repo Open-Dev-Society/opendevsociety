@@ -299,7 +299,7 @@ export default async function Contribute() {
           >
             <span className="t-mono flex justify-between text-[12px] text-(--mark-ink)">
               <span>CONTRIBUTOR</span>
-              <span>open spot</span>
+              <span>open to everyone</span>
             </span>
             <span className="my-10 block text-[clamp(4rem,2rem+6vw,7.5rem)] leading-[0.85] font-[800] text-(--mark-ink) [font-stretch:75%]">{seat}</span>
             <span className="t-mono flex justify-between border-t border-(--mark) pt-3 text-[12px] text-(--mark-ink)">

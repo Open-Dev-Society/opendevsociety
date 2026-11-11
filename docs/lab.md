@@ -36,7 +36,7 @@ Split heroes (headline left, card right). Card grids with rounded shadows. Pill 
 |---|---|---|
 | `/` | Home | Everyone: what ODS is, the projects, the people, how to start |
 | `/projects` | Projects | Developers and founders: every project, its status, stars, contributors and activity |
-| `/contributors` | Contributors | Everyone: the people who build ODS, with a spot left open for you |
+| `/contributors` | Contributors | Everyone: the people who build ODS, always open to more (no fixed number of spots) |
 | `/manifesto` | Manifesto | Everyone: what we believe and promise |
 | `/contribute` | Contribute | Developers and creators: a step-by-step first contribution, roles for non-coders, code of conduct |
 | `/word-of-mouth` | What people say | Founders and partners: press mentions, partners, events |
