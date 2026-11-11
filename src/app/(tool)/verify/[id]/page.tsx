@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function VerifyPage({ params }: Props) {
   const { id } = await params;
   const { cert, error } = await lookup(id);
-  const host = (await headers()).get("host") ?? "opendevsociety.vercel.app";
+  const host = (await headers()).get("host") ?? "opendevsociety.org";
 
   return (
     <>

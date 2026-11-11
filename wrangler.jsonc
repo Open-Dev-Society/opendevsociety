@@ -45,12 +45,12 @@
 				"DOQueueHandler"
 			]
 		}
-	]
+	],
 	// Secrets (not in this file): GITHUB_TOKEN, CERT_PASSWORD via `npx wrangler secret put <NAME>`.
-	// The custom domain is attached in the dashboard (Workers > opendevsociety > Settings > Domains & Routes),
-	// or uncomment and set it here:
-	// "routes": [
-	// 	{ "pattern": "example.org", "custom_domain": true },
-	// 	{ "pattern": "www.example.org", "custom_domain": true }
-	// ]
+	// The site's domain (bought on Cloudflare, so its zone is in this account). www is redirected to the apex by a
+	// Cloudflare Redirect Rule (dashboard > opendevsociety.org > Rules > "Redirect from WWW to root").
+	"routes": [
+		{ "pattern": "opendevsociety.org", "custom_domain": true },
+		{ "pattern": "www.opendevsociety.org", "custom_domain": true }
+	]
 }

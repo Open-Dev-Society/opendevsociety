@@ -11,7 +11,7 @@ const signature = Lavishly_Yours({ subsets: ["latin"], weight: "400", variable: 
 
 export const metadata: Metadata = {
   // OG images and canonical URLs resolve against this; set NEXT_PUBLIC_SITE_URL to the real domain in production.
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://opendevsociety.vercel.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://opendevsociety.org"),
   title: "Open Dev Society: free, open-source software, built in public",
   description:
     "A public workshop of developers, designers and writers building free, open-source tools. No paywalls, no interviews.",

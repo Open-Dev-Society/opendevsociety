@@ -133,7 +133,7 @@ export function CertificateDocument({
   className,
 }: {
   cert: CertificateData;
-  /** the site's domain, e.g. "opendevsociety.vercel.app" */
+  /** the site's domain, e.g. "opendevsociety.org" */
   verifyHost: string;
   revokedOn?: string;
   className?: string;

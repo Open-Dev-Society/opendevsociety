@@ -11,7 +11,8 @@ import { mentions } from "@/data/mentions";
 import { ago } from "@/lib/format";
 import { projectHref } from "@/lib/lab";
 import { getWorkshop } from "@/lib/workshop";
-import { figureFrames, N, SEED, STEPS } from "./figure";
+import { N, SEED, STEPS } from "./figure";
+import { FRAMES } from "./frames";
 
 export const revalidate = 3600;
 
@@ -85,7 +86,8 @@ function H2({ n, id, children }: { n: number; id: string; children: React.ReactN
 export default async function Manifesto() {
   const { tools, people, lastPush, now } = await getWorkshop();
   const latest = tools.find((t) => t.pushed_at === lastPush)?.name;
-  const frames = figureFrames();
+  // Precomputed (scripts/manifesto-figure.ts): the simulation is too heavy to run per request on Workers.
+  const frames = FRAMES;
   const num = (x: number) => x.toFixed(4).replace(/0+$/, "");
 
   type Status = { label: string; href: string; more?: true }[] | null;
