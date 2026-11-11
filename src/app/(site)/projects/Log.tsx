@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useId, useState } from "react";
+import { MotionConfig, motion } from "framer-motion";
 import { Dither } from "@/components/site/lab/Dither";
 import { Plate } from "@/components/site/lab/Plate";
 import { External, Star, StatusDot } from "@/components/site/Icon";
@@ -41,19 +42,33 @@ function Track({ days }: { days: number }) {
   );
 }
 
+/** A segmented toggle (native radios): one hairline track, an ink thumb that slides to the chosen segment. */
 function Choice<T extends string>({ legend, value, options, onChange }: { legend: string; value: T; options: { v: T; label: React.ReactNode; n: number }[]; onChange: (v: T) => void }) {
   const name = useId();
   return (
-    <fieldset className="flex flex-wrap items-center gap-1.5">
-      <legend className="t-mono float-left mr-2 text-[12px] text-(--fg-subtle)">{legend}</legend>
-      {options.map((o) => (
-        <label key={o.v} className="cursor-pointer">
-          <input type="radio" name={name} value={o.v} checked={value === o.v} onChange={() => onChange(o.v)} className="peer sr-only" />
-          <span className="t-mono inline-flex min-h-8 items-center gap-1.5 px-2.5 text-[12px] text-(--fg-muted) shadow-[inset_0_0_0_1px_var(--line)] transition-colors duration-(--d-2) peer-checked:bg-(--fg) peer-checked:text-(--bg) peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-(--focus) hover:text-(--fg)">
-            <span className="inline-flex items-center gap-1.5">{o.label}</span> <span className="tabular-nums opacity-70">{o.n}</span>
-          </span>
-        </label>
-      ))}
+    <fieldset className="flex items-center gap-3">
+      <legend className="t-mono float-left mr-1 text-[12px] text-(--fg-subtle)">{legend}</legend>
+      <MotionConfig reducedMotion="user">
+        <div className="inline-flex max-w-full overflow-x-auto p-1 shadow-[inset_0_0_0_1px_var(--line)]">
+          {options.map((o) => {
+            const on = value === o.v;
+            return (
+              <label key={o.v} className="relative shrink-0 cursor-pointer">
+                <input type="radio" name={name} value={o.v} checked={on} onChange={() => onChange(o.v)} className="peer sr-only" />
+                {on && <motion.span layoutId={name} aria-hidden className="absolute inset-0 bg-(--fg)" transition={{ type: "spring", duration: 0.35, bounce: 0 }} />}
+                <span
+                  className={`t-mono relative inline-flex min-h-8 items-center gap-1.5 px-3 text-[12px] transition-colors duration-(--d-2) peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-(--focus) ${
+                    on ? "text-(--bg)" : "text-(--fg-muted) hover:text-(--fg)"
+                  }`}
+                >
+                  <span className="inline-flex items-center gap-1.5">{o.label}</span>
+                  <span className="tabular-nums opacity-60">{o.n}</span>
+                </span>
+              </label>
+            );
+          })}
+        </div>
+      </MotionConfig>
     </fieldset>
   );
 }

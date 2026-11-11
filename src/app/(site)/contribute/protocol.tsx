@@ -214,10 +214,10 @@ export function Procedure({ projects }: { projects: Project[] }) {
         </label>
         {/* A two-way toggle: an ink thumb slides under the chosen side. */}
         <div className="flex items-center bg-(--bg) p-1.5">
-          <div role="radiogroup" aria-label="Run the steps in" className="relative grid flex-1 grid-cols-2 shadow-[inset_0_0_0_1px_var(--line)] sm:flex-none">
+          <div role="radiogroup" aria-label="Run the steps in" className="relative grid flex-1 grid-cols-2 p-1 shadow-[inset_0_0_0_1px_var(--line)] sm:flex-none">
             <span
               aria-hidden
-              className={`absolute inset-y-0 left-0 w-1/2 bg-(--fg) transition-transform duration-(--d-3) ease-(--ease-ui) motion-reduce:transition-none ${
+              className={`absolute inset-y-1 left-1 w-[calc(50%-4px)] bg-(--fg) transition-transform duration-(--d-3) ease-(--ease-ui) motion-reduce:transition-none ${
                 mode === "agent" ? "translate-x-full" : ""
               }`}
             />
@@ -243,7 +243,7 @@ export function Procedure({ projects }: { projects: Project[] }) {
                   }
                 }}
                 tabIndex={mode === m ? 0 : -1}
-                className={`t-mono relative flex min-h-10 items-center justify-center gap-2 px-4 text-[13px] transition-colors duration-(--d-3) motion-reduce:transition-none ${
+                className={`t-mono relative flex min-h-9 items-center justify-center gap-2 px-4 text-[13px] transition-colors duration-(--d-3) motion-reduce:transition-none ${
                   mode === m ? "text-(--bg)" : "text-(--fg-muted) hover:text-(--fg)"
                 }`}
               >
