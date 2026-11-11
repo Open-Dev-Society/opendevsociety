@@ -49,6 +49,7 @@ export default function CertificatePage() {
     const iss = params.get("by");
     const issH = params.get("byh");
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- the draft lives in the URL, only readable after mount
     if (n && n !== certificateDefaults.name) setName(n);
     if (r && r in certificateRoles) {
       setRole(r);
