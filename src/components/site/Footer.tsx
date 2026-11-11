@@ -18,10 +18,15 @@ const pages = [
   { hint: "start here", label: "Contribute", href: "/contribute" },
   { hint: "press, partners", label: "What people say", href: "/word-of-mouth" },
 ];
-const address = [social.github, social.discord, social.linkedin, { ...social.twitter, label: "X" }, social.email].map((l) => ({
-  ...l,
-  shown: l.href.startsWith("mailto:") ? contactEmail : l.href.replace(/^https:\/\/(www\.)?/, "").replace(/\/$/, ""),
-}));
+// Short handles (the label already names the service), so nothing truncates in a narrow column.
+const handle = (href: string) => href.replace(/\/$/, "").split("/").pop()!;
+const address = [
+  { ...social.github, shown: handle(social.github.href) },
+  { ...social.discord, shown: `discord.gg/${handle(social.discord.href)}` },
+  { ...social.linkedin, shown: handle(social.linkedin.href) },
+  { ...social.twitter, label: "X", shown: `@${handle(social.twitter.href)}` },
+  { ...social.email, shown: contactEmail },
+];
 const out = { target: "_blank", rel: "noopener noreferrer" } as const;
 
 const link = "transition-colors duration-(--d-2) hover:text-(--fg)";
@@ -77,14 +82,14 @@ export async function Footer() {
             <span className="hidden sm:inline">since July 2024</span>
           </p>
 
-          <div className="mt-12 grid gap-8 md:mt-20 md:grid-cols-12 md:items-end">
-            <div className="md:col-span-8">
+          <div className="mt-12 grid gap-8 md:mt-20 xl:grid-cols-12 xl:items-end">
+            <div className="xl:col-span-8">
               <h2 className="text-[clamp(3rem,1.6rem+6vw,7rem)] leading-[0.9] font-[800] tracking-[-0.02em] text-(--fg) [font-stretch:75%]">Build it with us.</h2>
               <p className="mt-5 max-w-[46ch] text-[17px] leading-[1.55] text-pretty text-(--fg-muted)">
                 Free, open-source tools made in public by developers, founders and creators. Pick a project; your first change can ship this week.
               </p>
             </div>
-            <div className="flex flex-wrap gap-3 [--accent-fg:var(--inv-fg)] [--accent-hover:color-mix(in_oklch,var(--accent-brand),black_22%)] [--accent:var(--accent-brand)] md:col-span-4 md:justify-end">
+            <div className="flex flex-wrap gap-3 [--accent-fg:var(--inv-fg)] [--accent-hover:color-mix(in_oklch,var(--accent-brand),black_22%)] [--accent:var(--accent-brand)] xl:col-span-4 xl:justify-end">
               <LabButton href="/contribute">
                 Make your first contribution <ArrowRight />
               </LabButton>
