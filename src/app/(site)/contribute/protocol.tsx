@@ -191,7 +191,8 @@ export function Procedure({ projects }: { projects: Project[] }) {
     <div className="grid gap-y-10">
       {/* The blanks: your handle, and terminal or agent. */}
       <div className="grid gap-px bg-(--line) shadow-[0_0_0_1px_var(--line)] sm:grid-cols-[minmax(0,1fr)_auto]">
-        <label className="flex min-h-13 items-center gap-3 bg-(--bg) px-4">
+        {/* The whole field shows focus (an inset emerald ring), not the bare input inside it. */}
+        <label className="flex min-h-13 cursor-text items-center gap-3 bg-(--bg) px-4 transition-shadow duration-(--d-2) focus-within:shadow-[inset_0_0_0_2px_var(--focus)]">
           <span className="t-mono shrink-0 text-[11px] tracking-[0.08em] text-(--fg-subtle) uppercase">You</span>
           <span className="t-mono text-(--mark-ink)">@</span>
           <input
@@ -206,7 +207,7 @@ export function Procedure({ projects }: { projects: Project[] }) {
             spellCheck={false}
             aria-label="Your GitHub handle, used in the branch name"
             aria-invalid={bad || undefined}
-            className="t-mono -ml-2 min-w-0 flex-1 bg-transparent py-3 text-(--mark-ink) outline-none placeholder:text-(--fg-subtle)"
+            className="t-mono -ml-2 min-w-0 flex-1 bg-transparent py-3 text-(--mark-ink) outline-none! placeholder:text-(--fg-subtle)"
           />
           {bad && <span className="t-mono shrink-0 text-[11px] text-(--fg-subtle)">not a handle</span>}
         </label>
