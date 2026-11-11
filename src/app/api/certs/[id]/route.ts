@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getCert, setCertStatus } from "@/lib/certs";
+import { deleteCert, getCert, setCertStatus } from "@/lib/certs";
 import { isAuthed } from "@/lib/cert-auth";
 
 export const runtime = "nodejs";
@@ -68,6 +68,27 @@ export async function PATCH(
     return NextResponse.json({ ok: true, cert });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Update failed.";
+    const code = msg.includes("not found") ? 404 : 502;
+    return NextResponse.json({ ok: false, error: msg }, { status: code });
+  }
+}
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  if (!(await isAuthed(req))) {
+    return NextResponse.json(
+      { ok: false, error: "Unauthorized" },
+      { status: 401 }
+    );
+  }
+  const { id } = await params;
+  try {
+    await deleteCert(id);
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Delete failed.";
     const code = msg.includes("not found") ? 404 : 502;
     return NextResponse.json({ ok: false, error: msg }, { status: code });
   }
