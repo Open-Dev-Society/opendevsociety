@@ -39,13 +39,12 @@ const subscribe = (cb: () => void) => {
 const canAuto = () => !QUIET.some(media);
 const plate = "t-mono inline-flex items-center gap-1.5 px-2 py-1 text-[12px] shadow-[inset_0_0_0_1px_var(--line)]";
 
-/** No screenshot: the name set large on paper, its purpose, and the last 52 weeks of commits as a dithered strip. */
+/** No screenshot: the name set large on paper and the last 52 weeks of commits as a dithered strip. */
 function Fallback({ row }: { row: SpotRow }) {
   const max = Math.max(1, ...row.weeks);
   const total = row.weeks.reduce((a, b) => a + b, 0);
   return (
     <div className="absolute inset-0 flex flex-col justify-between gap-4 p-5 md:p-8">
-      <p className="t-mono text-[12px] text-(--fg-muted)">{row.tagline}</p>
       <p className={`${display} text-[clamp(3rem,1rem+8vw,8rem)] text-(--accent)!`}>{row.name}</p>
       <div>
         <div aria-hidden className="flex h-12 items-end gap-px md:h-16">
