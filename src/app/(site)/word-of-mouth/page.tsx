@@ -92,7 +92,6 @@ export default async function WordOfMouth() {
       re: tool ? { name: tool, href: projectHref(tool) } : undefined,
     };
   });
-  const epigraph = refs.find((r) => r.author === "Tattva Tarang")!;
 
   return (
     <article data-grid="What people say" className="mx-auto w-full max-w-(--container) px-(--gutter) pt-12 pb-24 lg:pt-16 lg:pb-32">
@@ -119,16 +118,16 @@ export default async function WordOfMouth() {
           </p>
         </Record>
 
-        {/* The epigraph: the most-quoted line, set large and flush right, as at the head of a book. */}
+        {/* The epigraph: Open Dev Society's own line, set large and flush right, as at the head of a book. */}
         <figure className="self-end lg:col-span-5 lg:pb-2">
           <blockquote className="text-right text-[clamp(1.5rem,1.1rem+1.4vw,2.25rem)] leading-[1.08] font-[700] tracking-[-0.015em] text-balance text-(--fg) [font-stretch:75%]">
-            <span className="text-(--fg-subtle)">&ldquo;…</span>great tools shouldn&apos;t hide behind logins or price tiers.
+            <span className="text-(--fg-subtle)">&ldquo;</span>The future belongs to those who build it openly.
             <span className="text-(--fg-subtle)">&rdquo;</span>
           </blockquote>
           <figcaption className="t-mono mt-4 text-right text-[12px] text-(--fg-muted)">
-            <span className="sign text-[17px] text-(--fg)">{epigraph.author}</span>, {epigraph.outlet}, {epigraph.year}{" "}
-            <a href={`#cite-${epigraph.n}`} className="text-(--accent) hover:underline">
-              [{epigraph.n}]
+            <span className="sign text-[17px] text-(--fg)">Open Dev Society</span> ·{" "}
+            <a href="/manifesto" className="text-(--accent) hover:underline">
+              read the manifesto →
             </a>
           </figcaption>
         </figure>
