@@ -23,9 +23,10 @@ const promises = [
   },
 ];
 
-// Short press lines (the stack is as tall as the longest), cleaned of the quote marks they are stored with.
+// Every outside quote about us (not our own posts), short enough for the stack (it is as tall as the longest),
+// cleaned of the quote marks they are stored with.
 const quotes = mentions
-  .filter((m) => m.highlight && m.source === "article" && m.highlight.length < 140)
+  .filter((m) => m.highlight && m.highlight.length <= 240 && !m.author.startsWith("Ravi Pratap Singh"))
   .map((m) => ({
     text: m.highlight!.replace(/^["“]|["”]$/g, ""),
     who: m.author.split(/ (?:at|via) /)[0],
