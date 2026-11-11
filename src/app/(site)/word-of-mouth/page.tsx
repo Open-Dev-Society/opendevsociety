@@ -15,6 +15,31 @@ import { Bibliography, type Kind, type Ref } from "./Bibliography";
 
 export const revalidate = 3600;
 
+/** An empty cell in a partner grid, offered to the next sponsor (rose: a spot that is yours to take). */
+function OpenSlot({ compact = false, className = "" }: { compact?: boolean; className?: string }) {
+  return (
+    <li className={`bg-(--bg) ${className}`}>
+      <a
+        href={sponsorUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Become a sponsor on GitHub Sponsors (opens in a new tab)"
+        className={`group flex h-full flex-col bg-[repeating-linear-gradient(135deg,transparent_0_7px,var(--line)_7px_8px)] hover:bg-(--surface-2) ${compact ? "p-5" : "p-5 sm:p-6"}`}
+      >
+        <div className="flex items-start justify-between gap-4">
+          <p className="t-mono text-[12px] text-(--fg-subtle)">open spot</p>
+          <Plate tone="mark">your logo here</Plate>
+        </div>
+        <p className={`${compact ? "mt-6 text-[17px]" : "mt-8 text-[22px]"} font-semibold leading-tight text-(--fg) group-hover:text-(--accent)`}>Become a sponsor</p>
+        <p className="mt-3 max-w-[52ch] text-[15px] leading-[1.55] text-(--fg-muted)">
+          Get your logo featured on every Open Dev Society project, and keep the tools free for everyone.
+        </p>
+        <span className="t-mono mt-auto pt-6 text-[12px] text-(--accent) group-hover:underline">Sponsor on GitHub ↗</span>
+      </a>
+    </li>
+  );
+}
+
 export const metadata: Metadata = {
   title: "Word of mouth: what people say about Open Dev Society",
   description: `Every article, thread and post about Open Dev Society's free, open-source tools (${mentions.length} so far), plus the sponsors, partners and events behind the work.`,
@@ -138,7 +163,7 @@ export default async function WordOfMouth() {
 
         {/* Active: full cards, logos in ink. */}
         <h3 className="t-mono mt-12 text-[12px] text-(--fg-muted)">Active · {activePartners.length}</h3>
-        <ul className={`mt-3 grid grid-cols-1 gap-px border border-(--line) bg-(--line) ${activePartners.length > 1 ? "md:grid-cols-2" : ""}`}>
+        <ul className={`mt-3 grid grid-cols-1 gap-px border border-(--line) bg-(--line) md:grid-cols-2`}>
           {activePartners.map((p) => (
             <li key={p.name} className="flex flex-col bg-(--bg) p-5 sm:p-6">
               <div className="flex items-start justify-between gap-4">
@@ -157,6 +182,7 @@ export default async function WordOfMouth() {
               </a>
             </li>
           ))}
+          <OpenSlot className={activePartners.length % 2 ? "" : "md:col-span-2"} />
         </ul>
 
         {/* Past: the same grid, quieter. Logos in the subtle ink, ink again on hover. */}
@@ -175,6 +201,7 @@ export default async function WordOfMouth() {
               </a>
             </li>
           ))}
+          {pastPartners.length % 2 > 0 && <OpenSlot compact />}
         </ul>
 
         {/* People who sponsor publicly, in their real colours. */}
